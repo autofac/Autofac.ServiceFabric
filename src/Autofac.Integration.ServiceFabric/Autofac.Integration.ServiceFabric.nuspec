@@ -6,8 +6,8 @@
     <authors>Autofac Contributors</authors>
     <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Autofac integration for Azure Service Fabric</description>
-    <summary>Provides service factory implementations for Actors, Stateful Services and Stateless Services.</summary>
+    <description>Provides service factory implementations for Actors, Stateful Services and Stateless Services.</description>
+    <summary>Autofac integration for Azure Service Fabric</summary>
     <language>en-US</language>
     <title>Autofac Service Fabric Integration</title>
     <projectUrl>http://autofac.org</projectUrl>
