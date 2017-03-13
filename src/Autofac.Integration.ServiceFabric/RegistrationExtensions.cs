@@ -33,6 +33,7 @@ namespace Autofac.Integration.ServiceFabric
     public static class RegistrationExtensions
     {
         private const string metadataKey = "__ServiceFabricRegistered";
+
         /// <summary>
         /// Adds the core services required by the Service Fabric integration.
         /// </summary>
