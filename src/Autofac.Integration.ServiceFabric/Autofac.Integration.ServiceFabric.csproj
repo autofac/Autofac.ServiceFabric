@@ -108,6 +108,7 @@
     <Compile Include="AutofacServiceExtensions.cs" />
     <Compile Include="AutofacServiceFabricModule.cs" />
     <Compile Include="AutofacServiceInterceptor.cs" />
+    <Compile Include="RegistrationExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

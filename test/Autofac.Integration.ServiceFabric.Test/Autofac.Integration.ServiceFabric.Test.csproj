@@ -121,6 +121,7 @@
     <Compile Include="AutofacServiceExtensionsTests.cs" />
     <Compile Include="AutofacServiceFabricModuleTests.cs" />
     <Compile Include="AutofacServiceInterceptorTests.cs" />
+    <Compile Include="RegistrationExtensionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -23,22 +23,29 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
+
 namespace Autofac.Integration.ServiceFabric
 {
     /// <summary>
-    /// Autofac module that registers the interceptors required for Service Fabric support.
+    /// Adds registration syntax to the <see cref="ContainerBuilder"/> type.
     /// </summary>
-    internal sealed class AutofacServiceFabricModule : Module
+    public static class RegistrationExtensions
     {
-        /// <summary>Adds registrations to the container.</summary>
-        /// <param name="builder">The builder through which components can be registered.</param>
-        protected override void Load(ContainerBuilder builder)
+        private const string metadataKey = "__ServiceFabricRegistered";
+        /// <summary>
+        /// Adds the core services required by the Service Fabric integration.
+        /// </summary>
+        /// <param name="builder">The container builder to register the services with.</param>
+        public static void RegisterServiceFabricSupport(this ContainerBuilder builder)
         {
-            builder.RegisterType<AutofacActorInterceptor>()
-                .InstancePerLifetimeScope();
+            if (builder == null) throw new ArgumentNullException(nameof(builder));
 
-            builder.RegisterType<AutofacServiceInterceptor>()
-                .InstancePerLifetimeScope();
+            if (builder.Properties.ContainsKey(metadataKey)) return;
+
+            builder.RegisterModule(new AutofacServiceFabricModule());
+
+            builder.Properties.Add(metadataKey, true);
         }
     }
 }
