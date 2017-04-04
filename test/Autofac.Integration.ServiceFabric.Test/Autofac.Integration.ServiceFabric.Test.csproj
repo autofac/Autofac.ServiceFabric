@@ -40,9 +40,8 @@
     <AssemblyOriginatorKeyFile>..\..\Autofac.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac, Version=4.3.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Autofac.4.3.0\lib\net45\Autofac.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Autofac, Version=4.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Autofac.4.5.0-develop-00406\lib\net45\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Castle.Core.4.0.0\lib\net45\Castle.Core.dll</HintPath>
@@ -117,10 +116,10 @@
   <ItemGroup>
     <Compile Include="Assertions.cs" />
     <Compile Include="AutofacActorExtensionsTests.cs" />
-    <Compile Include="AutofacActorInterceptorTests.cs" />
+    <Compile Include="ActorInterceptorTests.cs" />
     <Compile Include="AutofacServiceExtensionsTests.cs" />
-    <Compile Include="AutofacServiceFabricModuleTests.cs" />
-    <Compile Include="AutofacServiceInterceptorTests.cs" />
+    <Compile Include="ServiceFabricModuleTests.cs" />
+    <Compile Include="ServiceInterceptorTests.cs" />
     <Compile Include="RegistrationExtensionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -131,7 +130,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

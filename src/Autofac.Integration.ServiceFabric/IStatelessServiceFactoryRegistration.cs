@@ -1,5 +1,5 @@
-﻿// This software is part of the Autofac IoC container
-// Copyright © 2017 Autofac Contributors
+// This software is part of the Autofac IoC container
+// Copyright � 2017 Autofac Contributors
 // http://autofac.org
 //
 // Permission is hereby granted, free of charge, to any person
@@ -23,29 +23,12 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-using System.Diagnostics.CodeAnalysis;
-using Castle.DynamicProxy;
+using System;
 
 namespace Autofac.Integration.ServiceFabric
 {
-    internal sealed class AutofacServiceInterceptor : IInterceptor
+    internal interface IStatelessServiceFactoryRegistration
     {
-        private readonly ILifetimeScope _lifetimeScope;
-
-        public AutofacServiceInterceptor(ILifetimeScope lifetimeScope)
-        {
-            _lifetimeScope = lifetimeScope;
-        }
-
-        [SuppressMessage("Microsoft.Design", "CA1062", Justification = "The method is only called by Dynamic Proxy and always with a valid parameter.")]
-        public void Intercept(IInvocation invocation)
-        {
-            invocation.Proceed();
-
-            var methodName = invocation.Method.Name;
-
-            if (methodName == "OnCloseAsync" || methodName == "OnAbort")
-                _lifetimeScope.Dispose();
-        }
+        void RegisterStatelessServiceFactory(ILifetimeScope lifetimeScope, Type serviceType, string serviceTypeName);
     }
 }

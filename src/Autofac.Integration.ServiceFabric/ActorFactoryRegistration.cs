@@ -24,29 +24,36 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Reflection;
+using Microsoft.ServiceFabric.Actors.Runtime;
 
 namespace Autofac.Integration.ServiceFabric
 {
-    /// <summary>
-    /// Adds registration syntax to the <see cref="ContainerBuilder"/> type.
-    /// </summary>
-    public static class RegistrationExtensions
+    internal sealed class ActorFactoryRegistration : IActorFactoryRegistration
     {
-        private const string MetadataKey = "__ServiceFabricRegistered";
-
-        /// <summary>
-        /// Adds the core services required by the Service Fabric integration.
-        /// </summary>
-        /// <param name="builder">The container builder to register the services with.</param>
-        public static void RegisterServiceFabricSupport(this ContainerBuilder builder)
+        public void RegisterActorFactory(Type actorType, ILifetimeScope lifetimeScope)
         {
-            if (builder == null) throw new ArgumentNullException(nameof(builder));
+            var factoryMethod = typeof(ActorFactoryRegistration)
+                .GetMethod(nameof(RegisterFactoryWithActorRuntime), BindingFlags.NonPublic | BindingFlags.Static);
 
-            if (builder.Properties.ContainsKey(MetadataKey)) return;
+            var genericFactoryMethod = factoryMethod.MakeGenericMethod(actorType);
 
-            builder.RegisterModule(new ServiceFabricModule());
+            genericFactoryMethod.Invoke(null, new object[] {lifetimeScope});
+        }
 
-            builder.Properties.Add(MetadataKey, true);
+        private static void RegisterFactoryWithActorRuntime<TActor>(ILifetimeScope container) where TActor : ActorBase
+        {
+            ActorRuntime.RegisterActorAsync<TActor>((context, actorTypeInfo) =>
+            {
+                return new ActorService(context, actorTypeInfo, (actorService, actorId) =>
+                {
+                    var lifetimeScope = container.BeginLifetimeScope();
+                    var actor = lifetimeScope.Resolve<TActor>(
+                        TypedParameter.From(actorService),
+                        TypedParameter.From(actorId));
+                    return actor;
+                });
+            }).GetAwaiter().GetResult();
         }
     }
 }

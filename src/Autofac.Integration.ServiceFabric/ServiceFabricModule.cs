@@ -23,27 +23,34 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-using System.Diagnostics.CodeAnalysis;
-using Castle.DynamicProxy;
-
 namespace Autofac.Integration.ServiceFabric
 {
-    internal sealed class AutofacActorInterceptor : IInterceptor
+    /// <summary>
+    /// Autofac module that registers the interceptors required for Service Fabric support.
+    /// </summary>
+    internal sealed class ServiceFabricModule : Module
     {
-        private readonly ILifetimeScope _lifetimeScope;
-
-        public AutofacActorInterceptor(ILifetimeScope lifetimeScope)
+        /// <summary>Adds registrations to the container.</summary>
+        /// <param name="builder">The builder through which components can be registered.</param>
+        protected override void Load(ContainerBuilder builder)
         {
-            _lifetimeScope = lifetimeScope;
-        }
+            builder.RegisterType<ActorInterceptor>()
+                .InstancePerLifetimeScope();
 
-        [SuppressMessage("Microsoft.Design", "CA1062", Justification = "The method is only called by Dynamic Proxy and always with a valid parameter.")]
-        public void Intercept(IInvocation invocation)
-        {
-            invocation.Proceed();
+            builder.RegisterType<ServiceInterceptor>()
+                .InstancePerLifetimeScope();
 
-            if (invocation.Method.Name == "OnDeactivateAsync")
-                _lifetimeScope.Dispose();
+            builder.RegisterType<ActorFactoryRegistration>()
+                .As<IActorFactoryRegistration>()
+                .SingleInstance();
+
+            builder.RegisterType<StatelessServiceFactoryRegistration>()
+                .As<IStatelessServiceFactoryRegistration>()
+                .SingleInstance();
+
+            builder.RegisterType<StatefulServiceFactoryRegistration>()
+                .As<IStatefulServiceFactoryRegistration>()
+                .SingleInstance();
         }
     }
 }

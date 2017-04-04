@@ -24,29 +24,32 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Reflection;
+using Microsoft.ServiceFabric.Services.Runtime;
 
 namespace Autofac.Integration.ServiceFabric
 {
-    /// <summary>
-    /// Adds registration syntax to the <see cref="ContainerBuilder"/> type.
-    /// </summary>
-    public static class RegistrationExtensions
+    internal sealed class StatefulServiceFactoryRegistration : IStatefulServiceFactoryRegistration
     {
-        private const string MetadataKey = "__ServiceFabricRegistered";
-
-        /// <summary>
-        /// Adds the core services required by the Service Fabric integration.
-        /// </summary>
-        /// <param name="builder">The container builder to register the services with.</param>
-        public static void RegisterServiceFabricSupport(this ContainerBuilder builder)
+        public void RegisterStatefulServiceFactory(ILifetimeScope lifetimeScope, Type serviceType, string serviceTypeName)
         {
-            if (builder == null) throw new ArgumentNullException(nameof(builder));
+            var factoryMethod = typeof(StatefulServiceFactoryRegistration)
+                .GetMethod(nameof(RegisterFactoryWithServiceRuntime), BindingFlags.NonPublic | BindingFlags.Static);
 
-            if (builder.Properties.ContainsKey(MetadataKey)) return;
+            var genericFactoryMethod = factoryMethod.MakeGenericMethod(serviceType);
 
-            builder.RegisterModule(new ServiceFabricModule());
+            genericFactoryMethod.Invoke(null, new object[] {lifetimeScope, serviceTypeName});
+        }
 
-            builder.Properties.Add(MetadataKey, true);
+        private static void RegisterFactoryWithServiceRuntime<TService>(ILifetimeScope container, string serviceTypeName)
+            where TService : StatefulServiceBase
+        {
+            ServiceRuntime.RegisterServiceAsync(serviceTypeName, context =>
+            {
+                var lifetimeScope = container.BeginLifetimeScope();
+                var service = lifetimeScope.Resolve<TService>(TypedParameter.From(context));
+                return service;
+            }).GetAwaiter().GetResult();
         }
     }
 }

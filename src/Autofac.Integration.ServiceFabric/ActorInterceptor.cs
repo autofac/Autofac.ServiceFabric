@@ -23,30 +23,27 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
+using System.Diagnostics.CodeAnalysis;
+using Castle.DynamicProxy;
 
 namespace Autofac.Integration.ServiceFabric
 {
-    /// <summary>
-    /// Adds registration syntax to the <see cref="ContainerBuilder"/> type.
-    /// </summary>
-    public static class RegistrationExtensions
+    internal sealed class ActorInterceptor : IInterceptor
     {
-        private const string MetadataKey = "__ServiceFabricRegistered";
+        private readonly ILifetimeScope _lifetimeScope;
 
-        /// <summary>
-        /// Adds the core services required by the Service Fabric integration.
-        /// </summary>
-        /// <param name="builder">The container builder to register the services with.</param>
-        public static void RegisterServiceFabricSupport(this ContainerBuilder builder)
+        public ActorInterceptor(ILifetimeScope lifetimeScope)
         {
-            if (builder == null) throw new ArgumentNullException(nameof(builder));
+            _lifetimeScope = lifetimeScope;
+        }
 
-            if (builder.Properties.ContainsKey(MetadataKey)) return;
+        [SuppressMessage("Microsoft.Design", "CA1062", Justification = "The method is only called by Dynamic Proxy and always with a valid parameter.")]
+        public void Intercept(IInvocation invocation)
+        {
+            invocation.Proceed();
 
-            builder.RegisterModule(new ServiceFabricModule());
-
-            builder.Properties.Add(MetadataKey, true);
+            if (invocation.Method.Name == "OnDeactivateAsync")
+                _lifetimeScope.Dispose();
         }
     }
 }

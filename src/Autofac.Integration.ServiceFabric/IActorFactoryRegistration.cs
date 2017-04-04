@@ -27,26 +27,8 @@ using System;
 
 namespace Autofac.Integration.ServiceFabric
 {
-    /// <summary>
-    /// Adds registration syntax to the <see cref="ContainerBuilder"/> type.
-    /// </summary>
-    public static class RegistrationExtensions
+    internal interface IActorFactoryRegistration
     {
-        private const string MetadataKey = "__ServiceFabricRegistered";
-
-        /// <summary>
-        /// Adds the core services required by the Service Fabric integration.
-        /// </summary>
-        /// <param name="builder">The container builder to register the services with.</param>
-        public static void RegisterServiceFabricSupport(this ContainerBuilder builder)
-        {
-            if (builder == null) throw new ArgumentNullException(nameof(builder));
-
-            if (builder.Properties.ContainsKey(MetadataKey)) return;
-
-            builder.RegisterModule(new ServiceFabricModule());
-
-            builder.Properties.Add(MetadataKey, true);
-        }
+        void RegisterActorFactory(Type actorType, ILifetimeScope lifetimeScope);
     }
 }

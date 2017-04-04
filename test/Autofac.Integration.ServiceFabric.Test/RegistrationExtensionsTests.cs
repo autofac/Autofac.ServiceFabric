@@ -17,10 +17,10 @@ namespace Autofac.Integration.ServiceFabric.Test
 
             var container = builder.Build();
 
-            var actorInterceptors = container.Resolve<IEnumerable<AutofacActorInterceptor>>().ToArray();
+            var actorInterceptors = container.Resolve<IEnumerable<ActorInterceptor>>().ToArray();
             Assert.Equal(1, actorInterceptors.Length);
 
-            var serviceInterceptors = container.Resolve<IEnumerable<AutofacServiceInterceptor>>().ToArray();
+            var serviceInterceptors = container.Resolve<IEnumerable<ServiceInterceptor>>().ToArray();
             Assert.Equal(1, serviceInterceptors.Length);
         }
 

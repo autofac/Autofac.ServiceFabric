@@ -44,9 +44,8 @@
     <AssemblyOriginatorKeyFile>..\..\Autofac.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac, Version=4.3.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Autofac.4.3.0\lib\net45\Autofac.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Autofac, Version=4.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Autofac.4.5.0-develop-00406\lib\net45\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Autofac.Extras.DynamicProxy, Version=4.2.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Autofac.Extras.DynamicProxy.4.2.1\lib\net45\Autofac.Extras.DynamicProxy.dll</HintPath>
@@ -104,19 +103,29 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutofacActorExtensions.cs" />
-    <Compile Include="AutofacActorInterceptor.cs" />
+    <Compile Include="ActorFactoryRegistration.cs" />
+    <Compile Include="ActorInterceptor.cs" />
     <Compile Include="AutofacServiceExtensions.cs" />
-    <Compile Include="AutofacServiceFabricModule.cs" />
-    <Compile Include="AutofacServiceInterceptor.cs" />
+    <Compile Include="ServiceFabricModule.cs" />
+    <Compile Include="StatefulServiceFactoryRegistration.cs" />
+    <Compile Include="StatelessServiceFactoryRegistration.cs" />
+    <Compile Include="ServiceInterceptor.cs" />
+    <Compile Include="IActorFactoryRegistration.cs" />
+    <Compile Include="IStatefulServiceFactoryRegistration.cs" />
+    <Compile Include="IStatelessServiceFactoryRegistration.cs" />
     <Compile Include="RegistrationExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Autofac.Integration.ServiceFabric.nuspec">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\..\CodeAnalysisDictionary.xml">

@@ -25,10 +25,7 @@
 
 using System;
 using System.Globalization;
-using System.Linq;
-using System.Reflection;
 using Autofac.Extras.DynamicProxy;
-using Autofac.Util;
 using Microsoft.ServiceFabric.Actors.Runtime;
 
 namespace Autofac.Integration.ServiceFabric
@@ -60,6 +57,9 @@ namespace Autofac.Integration.ServiceFabric
         /// <remarks>The actor will be wrapped in a dynamic proxy and must be public and not sealed.</remarks>
         public static void RegisterActor(this ContainerBuilder builder, Type actorType)
         {
+            if (builder == null)
+                throw new ArgumentNullException(nameof(builder));
+
             if (actorType == null)
                 throw new ArgumentNullException(nameof(actorType));
 
@@ -67,44 +67,6 @@ namespace Autofac.Integration.ServiceFabric
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "The type {0} is not a valid actor type", actorType.FullName), nameof(actorType));
 
             builder.RegisterActorWithContainer(actorType);
-        }
-
-        /// <summary>
-        /// Registers all valid actor services found in the specified assemblies with the container.
-        /// </summary>
-        /// <param name="builder">The container builder.</param>
-        /// <param name="assemblies">The assemblies to search for actor services.</param>
-        /// <remarks>The actor will be wrapped in a dynamic proxy and must be public and not sealed.</remarks>
-        public static void RegisterActors(this ContainerBuilder builder, params Assembly[] assemblies)
-        {
-            var actorTypes = assemblies
-                .SelectMany(a => a.GetLoadableTypes())
-                .Where(t => t.IsActorType());
-
-            foreach (var actorType in actorTypes)
-            {
-                builder.RegisterActorWithContainer(actorType);
-            }
-        }
-
-        /// <summary>
-        /// Registers an actor service factory with Service Fabric for creating instances of <typeparamref name="TActor"/>.
-        /// </summary>
-        /// <param name="container">The container.</param>
-        /// <typeparam name="TActor">The type of the actor service.</typeparam>
-        public static void RegisterActorServiceFactory<TActor>(this IContainer container) where TActor : ActorBase
-        {
-            ActorRuntime.RegisterActorAsync<TActor>((context, actorTypeInfo) =>
-            {
-                return new ActorService(context, actorTypeInfo, (actorService, actorId) =>
-                {
-                    var lifetimeScope = container.BeginLifetimeScope();
-                    var actor = lifetimeScope.Resolve<TActor>(
-                        TypedParameter.From(actorService),
-                        TypedParameter.From(actorId));
-                    return actor;
-                });
-            }).GetAwaiter().GetResult();
         }
 
         private static bool IsActorType(this Type type)
@@ -121,7 +83,9 @@ namespace Autofac.Integration.ServiceFabric
             builder.RegisterType(actorType)
                 .InstancePerLifetimeScope()
                 .EnableClassInterceptors()
-                .InterceptedBy(typeof(AutofacActorInterceptor));
+                .InterceptedBy(typeof(ActorInterceptor));
+
+            builder.RegisterBuildCallback(c => c.Resolve<IActorFactoryRegistration>().RegisterActorFactory(actorType, c));
         }
     }
 }

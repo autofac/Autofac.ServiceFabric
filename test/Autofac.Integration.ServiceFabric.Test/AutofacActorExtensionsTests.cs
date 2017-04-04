@@ -5,6 +5,7 @@ using Autofac.Core;
 using Autofac.Core.Lifetime;
 using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Runtime;
+using Moq;
 using Xunit;
 
 namespace Autofac.Integration.ServiceFabric.Test
@@ -16,6 +17,7 @@ namespace Autofac.Integration.ServiceFabric.Test
         {
             var builder = new ContainerBuilder();
             builder.RegisterActor<Actor1>();
+            builder.RegisterInstance(new Mock<IActorFactoryRegistration>().Object);
 
             var container = builder.Build();
 
@@ -26,7 +28,8 @@ namespace Autofac.Integration.ServiceFabric.Test
         public void GenericRegisterActorAppliesInterceptor()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new AutofacServiceFabricModule());
+            builder.RegisterModule(new ServiceFabricModule());
+            builder.RegisterInstance(new Mock<IActorFactoryRegistration>().Object);
             builder.RegisterActor<Actor1>();
 
             var container = builder.Build();
@@ -34,7 +37,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var registration = container.RegistrationFor<Actor1>();
             const string metadataKey = "Autofac.Extras.DynamicProxy.RegistrationExtensions.InterceptorsPropertyName";
             var interceptorServices = (IEnumerable<Service>)registration.Metadata[metadataKey];
-            Assert.Contains(new TypedService(typeof(AutofacActorInterceptor)), interceptorServices);
+            Assert.Contains(new TypedService(typeof(ActorInterceptor)), interceptorServices);
         }
 
         [Fact]
@@ -42,6 +45,7 @@ namespace Autofac.Integration.ServiceFabric.Test
         {
             var builder = new ContainerBuilder();
             builder.RegisterActor<Actor1>();
+            builder.RegisterInstance(new Mock<IActorFactoryRegistration>().Object);
 
             var container = builder.Build();
 
@@ -55,10 +59,32 @@ namespace Autofac.Integration.ServiceFabric.Test
         {
             var builder = new ContainerBuilder();
             builder.RegisterActor(typeof(Actor1));
+            builder.RegisterInstance(new Mock<IActorFactoryRegistration>().Object);
 
             var container = builder.Build();
 
             container.AssertRegistered<Actor1>();
+        }
+
+        [Fact]
+        public void RegisterActorAddsFactoryCallback()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterActor(typeof(Actor1));
+            var factoryMock = new Mock<IActorFactoryRegistration>();
+            builder.RegisterInstance(factoryMock.Object);
+
+            var container = builder.Build();
+
+            factoryMock.Verify(x => x.RegisterActorFactory(typeof(Actor1), container), Times.Once);
+        }
+
+        [Fact]
+        public void RegisterActorThrowsIfProvidedBuilderIsNull()
+        {
+            var exception = Assert.Throws<ArgumentNullException>(() => AutofacActorExtensions.RegisterActor(null, typeof(Actor1)));
+
+            Assert.Equal("builder", exception.ParamName);
         }
 
         [Fact]
@@ -84,31 +110,11 @@ namespace Autofac.Integration.ServiceFabric.Test
 
             Assert.Equal("actorType", exception.ParamName);
         }
-
-        [Fact]
-        public void RegisterActorsRegistersAllActorTypesInAssembly()
-        {
-            var builder = new ContainerBuilder();
-            builder.RegisterActors(Assembly.GetExecutingAssembly());
-
-            var container = builder.Build();
-
-            container.AssertRegistered<Actor1>();
-            container.AssertRegistered<Actor2>();
-        }
     }
 
     public class Actor1 : Actor
     {
         public Actor1(ActorService actorService, ActorId actorId) : base(actorService, actorId)
-        {
-        }
-    }
-
-    // ReSharper disable once ClassNeverInstantiated.Global
-    public class Actor2 : Actor
-    {
-        public Actor2(ActorService actorService, ActorId actorId) : base(actorService, actorId)
         {
         }
     }
