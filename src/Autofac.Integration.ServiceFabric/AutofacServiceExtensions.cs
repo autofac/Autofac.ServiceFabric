@@ -44,18 +44,7 @@ namespace Autofac.Integration.ServiceFabric
         public static void RegisterStatefulService<TService>(this ContainerBuilder builder, string serviceTypeName)
             where TService : StatefulServiceBase
         {
-            if (builder == null)
-                throw new ArgumentNullException(nameof(builder));
-
-            if (string.IsNullOrEmpty(serviceTypeName))
-                throw new ArgumentException("The service type name must be provided", nameof(serviceTypeName));
-
-            var serviceType = typeof(TService);
-
-            if (!serviceType.CanBeProxied())
-                throw new ArgumentException(serviceType.GetInvalidForProxyErrorMessage());
-
-            builder.RegisterServiceWithInterception<TService, ServiceInterceptor>();
+            RegisterServiceWithContainer<TService>(builder, serviceTypeName);
 
             builder.RegisterBuildCallback(c =>
                 c.Resolve<IStatefulServiceFactoryRegistration>()
@@ -73,6 +62,16 @@ namespace Autofac.Integration.ServiceFabric
         public static void RegisterStatelessService<TService>(this ContainerBuilder builder, string serviceTypeName)
             where TService : StatelessService
         {
+            RegisterServiceWithContainer<TService>(builder, serviceTypeName);
+
+            builder.RegisterBuildCallback(c =>
+                c.Resolve<IStatelessServiceFactoryRegistration>()
+                    .RegisterStatelessServiceFactory<TService>(c, serviceTypeName));
+        }
+
+        private static void RegisterServiceWithContainer<TService>(ContainerBuilder builder, string serviceTypeName)
+            where TService : class
+        {
             if (builder == null)
                 throw new ArgumentNullException(nameof(builder));
 
@@ -85,10 +84,6 @@ namespace Autofac.Integration.ServiceFabric
                 throw new ArgumentException(serviceType.GetInvalidForProxyErrorMessage());
 
             builder.RegisterServiceWithInterception<TService, ServiceInterceptor>();
-
-            builder.RegisterBuildCallback(c =>
-                c.Resolve<IStatelessServiceFactoryRegistration>()
-                    .RegisterStatelessServiceFactory<TService>(c, serviceTypeName));
         }
     }
 }
