@@ -24,7 +24,6 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using Autofac.Extras.DynamicProxy;
 using Microsoft.ServiceFabric.Actors.Runtime;
 
 namespace Autofac.Integration.ServiceFabric
@@ -51,10 +50,7 @@ namespace Autofac.Integration.ServiceFabric
             if (!actorType.CanBeProxied())
                 throw new ArgumentException(actorType.GetInvalidForProxyErrorMessage());
 
-            builder.RegisterType<TActor>()
-                .InstancePerLifetimeScope()
-                .EnableClassInterceptors()
-                .InterceptedBy(typeof(ActorInterceptor));
+            builder.RegisterServiceWithInterception<TActor, ActorInterceptor>();
 
             builder.RegisterBuildCallback(c => c.Resolve<IActorFactoryRegistration>().RegisterActorFactory<TActor>(c));
         }

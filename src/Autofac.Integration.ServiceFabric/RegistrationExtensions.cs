@@ -24,6 +24,8 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using Autofac.Extras.DynamicProxy;
+using Castle.DynamicProxy;
 
 namespace Autofac.Integration.ServiceFabric
 {
@@ -47,6 +49,16 @@ namespace Autofac.Integration.ServiceFabric
             builder.RegisterModule(new ServiceFabricModule());
 
             builder.Properties.Add(MetadataKey, true);
+        }
+
+        internal static void RegisterServiceWithInterception<TService, TInterceptor>(this ContainerBuilder builder)
+            where TService : class
+            where TInterceptor : IInterceptor
+        {
+            builder.RegisterType(typeof(TService))
+                .InstancePerLifetimeScope()
+                .EnableClassInterceptors()
+                .InterceptedBy(typeof(TInterceptor));
         }
     }
 }

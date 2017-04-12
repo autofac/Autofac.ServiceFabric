@@ -24,7 +24,6 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using Autofac.Extras.DynamicProxy;
 using Microsoft.ServiceFabric.Services.Runtime;
 
 namespace Autofac.Integration.ServiceFabric
@@ -56,7 +55,7 @@ namespace Autofac.Integration.ServiceFabric
             if (!serviceType.CanBeProxied())
                 throw new ArgumentException(serviceType.GetInvalidForProxyErrorMessage());
 
-            builder.RegisterServiceWithContainer(serviceType);
+            builder.RegisterServiceWithInterception<TService, ServiceInterceptor>();
 
             builder.RegisterBuildCallback(c =>
                 c.Resolve<IStatefulServiceFactoryRegistration>()
@@ -85,19 +84,11 @@ namespace Autofac.Integration.ServiceFabric
             if (!serviceType.CanBeProxied())
                 throw new ArgumentException(serviceType.GetInvalidForProxyErrorMessage());
 
-            builder.RegisterServiceWithContainer(serviceType);
+            builder.RegisterServiceWithInterception<TService, ServiceInterceptor>();
 
             builder.RegisterBuildCallback(c =>
                 c.Resolve<IStatelessServiceFactoryRegistration>()
                     .RegisterStatelessServiceFactory<TService>(c, serviceTypeName));
-        }
-
-        private static void RegisterServiceWithContainer(this ContainerBuilder builder, Type serviceType)
-        {
-            builder.RegisterType(serviceType)
-                .InstancePerLifetimeScope()
-                .EnableClassInterceptors()
-                .InterceptedBy(typeof(ServiceInterceptor));
         }
     }
 }
