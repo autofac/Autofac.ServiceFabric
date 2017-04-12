@@ -25,6 +25,7 @@
             <Word>startable</Word>
             <Word>Owin</Word>
             <Word>Stateful</Word>
+            <Word>proxied</Word>
         </Recognized>
         <!--
         <Deprecated>

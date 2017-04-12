@@ -5,6 +5,7 @@ using Autofac.Core.Lifetime;
 using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Runtime;
 using Moq;
+using Test.Scenario.InternalsVisible;
 using Xunit;
 
 namespace Autofac.Integration.ServiceFabric.Test
@@ -67,6 +68,18 @@ namespace Autofac.Integration.ServiceFabric.Test
         }
 
         [Fact]
+        public void RegisterActorSupportsInternalsVisibleToDynamicProxyGenAssembly2()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterActor<InternalsVisibleActor>();
+            builder.RegisterInstance(new Mock<IActorFactoryRegistration>().Object);
+
+            var container = builder.Build();
+
+            container.AssertRegistered<InternalsVisibleActor>();
+        }
+
+        [Fact]
         public void RegisterActorThrowsIfProvidedBuilderIsNull()
         {
             var exception = Assert.Throws<ArgumentNullException>(() => AutofacActorExtensions.RegisterActor<Actor1>(null));
@@ -81,7 +94,7 @@ namespace Autofac.Integration.ServiceFabric.Test
 
             var exception = Assert.Throws<ArgumentException>(() => builder.RegisterActor<SealedActor>());
 
-            Assert.Equal(typeof(SealedActor).GetInvalidForProxyErrorMessage(), exception.Message);
+            Assert.Equal(typeof(SealedActor).GetInvalidProxyTypeErrorMessage(), exception.Message);
         }
 
         [Fact]
@@ -91,7 +104,7 @@ namespace Autofac.Integration.ServiceFabric.Test
 
             var exception = Assert.Throws<ArgumentException>(() => builder.RegisterActor<InternalActor>());
 
-            Assert.Equal(typeof(InternalActor).GetInvalidForProxyErrorMessage(), exception.Message);
+            Assert.Equal(typeof(InternalActor).GetInvalidProxyTypeErrorMessage(), exception.Message);
         }
     }
 

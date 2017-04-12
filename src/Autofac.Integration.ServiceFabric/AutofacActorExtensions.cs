@@ -48,7 +48,7 @@ namespace Autofac.Integration.ServiceFabric
             var actorType = typeof(TActor);
 
             if (!actorType.CanBeProxied())
-                throw new ArgumentException(actorType.GetInvalidForProxyErrorMessage());
+                throw new ArgumentException(actorType.GetInvalidProxyTypeErrorMessage());
 
             builder.RegisterServiceWithInterception<TActor, ActorInterceptor>();
 

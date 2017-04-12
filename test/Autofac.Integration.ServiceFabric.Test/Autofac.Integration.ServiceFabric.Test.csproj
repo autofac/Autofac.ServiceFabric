@@ -128,6 +128,10 @@
       <Project>{6956f17d-a87b-4fab-8ca8-0a6ab8a14537}</Project>
       <Name>Autofac.Integration.ServiceFabric</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Test.Scenario.InternalsVisible\Test.Scenario.InternalsVisible.csproj">
+      <Project>{1707f51b-7e92-4905-ba3a-afe26a12b706}</Project>
+      <Name>Test.Scenario.InternalsVisible</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

@@ -6,6 +6,7 @@ using Autofac.Core.Lifetime;
 using Microsoft.ServiceFabric.Data;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Moq;
+using Test.Scenario.InternalsVisible;
 using Xunit;
 
 namespace Autofac.Integration.ServiceFabric.Test
@@ -123,6 +124,30 @@ namespace Autofac.Integration.ServiceFabric.Test
         }
 
         [Fact]
+        public void RegisterStatefulServiceSupportsInternalsVisibleToDynamicProxyGenAssembly2()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterStatefulService<InternalsVisibleStatefulService>("ServiceType");
+            builder.RegisterInstance(new Mock<IStatefulServiceFactoryRegistration>().Object);
+
+            var container = builder.Build();
+
+            container.AssertRegistered<InternalsVisibleStatefulService>();
+        }
+
+        [Fact]
+        public void RegisterStatelessServiceSupportsInternalsVisibleToDynamicProxyGenAssembly2()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterStatelessService<InternalsVisibleStatelessService>("ServiceType");
+            builder.RegisterInstance(new Mock<IStatelessServiceFactoryRegistration>().Object);
+
+            var container = builder.Build();
+
+            container.AssertRegistered<InternalsVisibleStatelessService>();
+        }
+
+        [Fact]
         public void RegisterStatefulServiceThrowsIfProvidedTypeIsNotPublic()
         {
             var builder = new ContainerBuilder();
@@ -130,7 +155,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var exception = Assert.Throws<ArgumentException>(
                 () => builder.RegisterStatefulService<InternalStatefulService>("ServiceType"));
 
-            Assert.Equal(typeof(InternalStatefulService).GetInvalidForProxyErrorMessage(), exception.Message);
+            Assert.Equal(typeof(InternalStatefulService).GetInvalidProxyTypeErrorMessage(), exception.Message);
         }
 
         [Fact]
@@ -141,7 +166,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var exception = Assert.Throws<ArgumentException>(
                 () => builder.RegisterStatelessService<InternalStatelessService>("ServiceType"));
 
-            Assert.Equal(typeof(InternalStatelessService).GetInvalidForProxyErrorMessage(), exception.Message);
+            Assert.Equal(typeof(InternalStatelessService).GetInvalidProxyTypeErrorMessage(), exception.Message);
         }
 
         [Fact]
@@ -152,7 +177,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var exception = Assert.Throws<ArgumentException>(
                 () => builder.RegisterStatefulService<SealedStatefulService>("ServiceType"));
 
-            Assert.Equal(typeof(SealedStatefulService).GetInvalidForProxyErrorMessage(), exception.Message);
+            Assert.Equal(typeof(SealedStatefulService).GetInvalidProxyTypeErrorMessage(), exception.Message);
         }
 
         [Fact]
@@ -163,7 +188,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var exception = Assert.Throws<ArgumentException>(
                 () => builder.RegisterStatelessService<SealedStatelessService>("ServiceType"));
 
-            Assert.Equal(typeof(SealedStatelessService).GetInvalidForProxyErrorMessage(), exception.Message);
+            Assert.Equal(typeof(SealedStatelessService).GetInvalidProxyTypeErrorMessage(), exception.Message);
         }
 
         [Fact]

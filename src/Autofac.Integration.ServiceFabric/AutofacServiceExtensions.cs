@@ -81,7 +81,7 @@ namespace Autofac.Integration.ServiceFabric
             var serviceType = typeof(TService);
 
             if (!serviceType.CanBeProxied())
-                throw new ArgumentException(serviceType.GetInvalidForProxyErrorMessage());
+                throw new ArgumentException(serviceType.GetInvalidProxyTypeErrorMessage());
 
             builder.RegisterServiceWithInterception<TService, ServiceInterceptor>();
         }

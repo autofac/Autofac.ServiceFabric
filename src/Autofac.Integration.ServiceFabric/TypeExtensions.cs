@@ -25,6 +25,7 @@
 
 using System;
 using System.Globalization;
+using Castle.DynamicProxy.Internal;
 
 namespace Autofac.Integration.ServiceFabric
 {
@@ -32,15 +33,14 @@ namespace Autofac.Integration.ServiceFabric
     {
         internal static bool CanBeProxied(this Type type)
         {
-            return type.IsClass && type.IsPublic && !type.IsSealed && !type.IsAbstract;
+            var open = type.IsClass && !type.IsSealed && !type.IsAbstract;
+            var visible = type.IsPublic || type.Assembly.IsInternalToDynamicProxy();
+            return open && visible;
         }
 
-        internal static string GetInvalidForProxyErrorMessage(this Type type)
+        internal static string GetInvalidProxyTypeErrorMessage(this Type type)
         {
-            return string.Format(
-                CultureInfo.CurrentCulture,
-                "The type {0} cannot be dynamically proxied. Please ensure the class is public and not sealed.",
-                type.FullName);
+            return string.Format(CultureInfo.CurrentCulture, TypeExtensionsResources.InvalidProxyTypeErrorMessage, type.FullName);
         }
     }
 }
