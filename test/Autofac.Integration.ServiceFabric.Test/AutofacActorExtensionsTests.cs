@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using Autofac.Core;
 using Autofac.Core.Lifetime;
 using Microsoft.ServiceFabric.Actors;
@@ -13,7 +12,7 @@ namespace Autofac.Integration.ServiceFabric.Test
     public sealed class AutofacActorExtensionsTests
     {
         [Fact]
-        public void GenericRegisterActorRegistersProvidedType()
+        public void RegisterActorRegistersProvidedType()
         {
             var builder = new ContainerBuilder();
             builder.RegisterActor<Actor1>();
@@ -25,7 +24,7 @@ namespace Autofac.Integration.ServiceFabric.Test
         }
 
         [Fact]
-        public void GenericRegisterActorAppliesInterceptor()
+        public void RegisterActorAppliesInterceptor()
         {
             var builder = new ContainerBuilder();
             builder.RegisterModule(new ServiceFabricModule());
@@ -41,7 +40,7 @@ namespace Autofac.Integration.ServiceFabric.Test
         }
 
         [Fact]
-        public void GenericRegisterActorRegistersInstancePerLifetimeScope()
+        public void RegisterActorRegistersInstancePerLifetimeScope()
         {
             var builder = new ContainerBuilder();
             builder.RegisterActor<Actor1>();
@@ -55,60 +54,44 @@ namespace Autofac.Integration.ServiceFabric.Test
         }
 
         [Fact]
-        public void RegisterActorRegistersProvidedType()
-        {
-            var builder = new ContainerBuilder();
-            builder.RegisterActor(typeof(Actor1));
-            builder.RegisterInstance(new Mock<IActorFactoryRegistration>().Object);
-
-            var container = builder.Build();
-
-            container.AssertRegistered<Actor1>();
-        }
-
-        [Fact]
         public void RegisterActorAddsFactoryCallback()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterActor(typeof(Actor1));
+            builder.RegisterActor<Actor1>();
             var factoryMock = new Mock<IActorFactoryRegistration>();
             builder.RegisterInstance(factoryMock.Object);
 
             var container = builder.Build();
 
-            factoryMock.Verify(x => x.RegisterActorFactory(typeof(Actor1), container), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container), Times.Once);
         }
 
         [Fact]
         public void RegisterActorThrowsIfProvidedBuilderIsNull()
         {
-            var exception = Assert.Throws<ArgumentNullException>(() => AutofacActorExtensions.RegisterActor(null, typeof(Actor1)));
+            var exception = Assert.Throws<ArgumentNullException>(() => AutofacActorExtensions.RegisterActor<Actor1>(null));
 
             Assert.Equal("builder", exception.ParamName);
         }
 
         [Fact]
-        public void RegisterActorThrowsIfProvidedTypeIsNull()
+        public void RegisterActorThrowsIfProvidedTypeIsSealed()
         {
             var builder = new ContainerBuilder();
 
-            var exception = Assert.Throws<ArgumentNullException>(() => builder.RegisterActor(null));
+            var exception = Assert.Throws<ArgumentException>(() => builder.RegisterActor<SealedActor>());
 
-            Assert.Equal("actorType", exception.ParamName);
+            Assert.Equal(typeof(SealedActor).GetInvalidForProxyErrorMessage(), exception.Message);
         }
 
-        [Theory]
-        [InlineData(typeof(NonDerivedActor))]
-        [InlineData(typeof(SealedActor))]
-        [InlineData(typeof(InternalActor))]
-        [InlineData(typeof(IInterfaceOnlyActor))]
-        public void RegisterActorThrowsIfProvidedTypeIsNotActor(Type actorType)
+        [Fact]
+        public void RegisterActorThrowsIfProvidedTypeIsNotPublic()
         {
             var builder = new ContainerBuilder();
 
-            var exception = Assert.Throws<ArgumentException>(() => builder.RegisterActor(actorType));
+            var exception = Assert.Throws<ArgumentException>(() => builder.RegisterActor<InternalActor>());
 
-            Assert.Equal("actorType", exception.ParamName);
+            Assert.Equal(typeof(InternalActor).GetInvalidForProxyErrorMessage(), exception.Message);
         }
     }
 
@@ -131,13 +114,5 @@ namespace Autofac.Integration.ServiceFabric.Test
         public InternalActor(ActorService actorService, ActorId actorId) : base(actorService, actorId)
         {
         }
-    }
-
-    public class NonDerivedActor
-    {
-    }
-
-    public interface IInterfaceOnlyActor
-    {
     }
 }

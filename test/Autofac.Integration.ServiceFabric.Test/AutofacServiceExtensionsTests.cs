@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Fabric;
-using System.Reflection;
 using Autofac.Core;
 using Autofac.Core.Lifetime;
 using Microsoft.ServiceFabric.Data;
@@ -14,7 +13,7 @@ namespace Autofac.Integration.ServiceFabric.Test
     public sealed class AutofacServiceExtensionsTests
     {
         [Fact]
-        public void GenericRegisterStatefulServiceRegistersProvidedType()
+        public void RegisterStatefulServiceRegistersProvidedType()
         {
             var builder = new ContainerBuilder();
             builder.RegisterStatefulService<StatefulService1>("ServiceType");
@@ -26,7 +25,7 @@ namespace Autofac.Integration.ServiceFabric.Test
         }
 
         [Fact]
-        public void GenericRegisterStatelessServiceRegistersProvidedType()
+        public void RegisterStatelessServiceRegistersProvidedType()
         {
             var builder = new ContainerBuilder();
             builder.RegisterStatelessService<StatelessService1>("ServiceType");
@@ -38,7 +37,7 @@ namespace Autofac.Integration.ServiceFabric.Test
         }
 
         [Fact]
-        public void GenericRegisterStatefulServiceAppliesInterceptor()
+        public void RegisterStatefulServiceAppliesInterceptor()
         {
             var builder = new ContainerBuilder();
             builder.RegisterStatefulService<StatefulService1>("ServiceType");
@@ -54,7 +53,7 @@ namespace Autofac.Integration.ServiceFabric.Test
         }
 
         [Fact]
-        public void GenericRegisterStatelessServiceAppliesInterceptor()
+        public void RegisterStatelessServiceAppliesInterceptor()
         {
             var builder = new ContainerBuilder();
             builder.RegisterStatelessService<StatelessService1>("ServiceType");
@@ -70,7 +69,7 @@ namespace Autofac.Integration.ServiceFabric.Test
         }
 
         [Fact]
-        public void GenericRegisterStatefulServiceRegistersInstancePerLifetimeScope()
+        public void RegisterStatefulServiceRegistersInstancePerLifetimeScope()
         {
             var builder = new ContainerBuilder();
             builder.RegisterStatefulService<StatefulService1>("ServiceType");
@@ -84,7 +83,7 @@ namespace Autofac.Integration.ServiceFabric.Test
         }
 
         [Fact]
-        public void GenericRegisterStatelessServiceRegistersInstancePerLifetimeScope()
+        public void RegisterStatelessServiceRegistersInstancePerLifetimeScope()
         {
             var builder = new ContainerBuilder();
             builder.RegisterStatelessService<StatelessService1>("ServiceType");
@@ -98,87 +97,80 @@ namespace Autofac.Integration.ServiceFabric.Test
         }
 
         [Fact]
-        public void RegisterStatefulServiceRegistersProvidedType()
-        {
-            var builder = new ContainerBuilder();
-            builder.RegisterStatefulService(typeof(StatefulService1), "ServiceType");
-            builder.RegisterInstance(new Mock<IStatefulServiceFactoryRegistration>().Object);
-
-            var container = builder.Build();
-
-            container.AssertRegistered<StatefulService1>();
-        }
-
-        [Fact]
-        public void RegisterStatelessServiceRegistersProvidedType()
-        {
-            var builder = new ContainerBuilder();
-            builder.RegisterStatelessService(typeof(StatelessService1), "ServiceType");
-            builder.RegisterInstance(new Mock<IStatelessServiceFactoryRegistration>().Object);
-
-            var container = builder.Build();
-
-            container.AssertRegistered<StatelessService1>();
-        }
-
-        [Fact]
         public void RegisterStatefulServiceAddsFactoryCallback()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterStatefulService(typeof(StatefulService1), "ServiceType");
+            builder.RegisterStatefulService<StatefulService1>("ServiceType");
             var factoryMock = new Mock<IStatefulServiceFactoryRegistration>();
             builder.RegisterInstance(factoryMock.Object);
 
             var container = builder.Build();
 
-            factoryMock.Verify(x => x.RegisterStatefulServiceFactory(container, typeof(StatefulService1), "ServiceType"), Times.Once);
+            factoryMock.Verify(x => x.RegisterStatefulServiceFactory<StatefulService1>(container, "ServiceType"), Times.Once);
         }
 
         [Fact]
         public void RegisterStatelessServiceAddsFactoryCallback()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterStatelessService(typeof(StatelessService1), "ServiceType");
+            builder.RegisterStatelessService<StatelessService1>("ServiceType");
             var factoryMock = new Mock<IStatelessServiceFactoryRegistration>();
             builder.RegisterInstance(factoryMock.Object);
 
             var container = builder.Build();
 
-            factoryMock.Verify(x => x.RegisterStatelessServiceFactory(container, typeof(StatelessService1), "ServiceType"), Times.Once);
+            factoryMock.Verify(x => x.RegisterStatelessServiceFactory<StatelessService1>(container, "ServiceType"), Times.Once);
         }
 
-        [Theory]
-        [InlineData(typeof(NonDerivedService))]
-        [InlineData(typeof(SealedStatefulService))]
-        [InlineData(typeof(InternalStatefulService))]
-        [InlineData(typeof(IInterfaceOnlyService))]
-        public void RegisterStatefulServiceThrowsIfProvidedTypeIsNotStatefulService(Type serviceType)
+        [Fact]
+        public void RegisterStatefulServiceThrowsIfProvidedTypeIsNotPublic()
         {
             var builder = new ContainerBuilder();
 
-            var exception = Assert.Throws<ArgumentException>(() => builder.RegisterStatefulService(serviceType, "ServiceType"));
+            var exception = Assert.Throws<ArgumentException>(
+                () => builder.RegisterStatefulService<InternalStatefulService>("ServiceType"));
 
-            Assert.Equal("serviceType", exception.ParamName);
+            Assert.Equal(typeof(InternalStatefulService).GetInvalidForProxyErrorMessage(), exception.Message);
         }
 
-        [Theory]
-        [InlineData(typeof(NonDerivedService))]
-        [InlineData(typeof(SealedStatelessService))]
-        [InlineData(typeof(InternalStatelessService))]
-        [InlineData(typeof(IInterfaceOnlyService))]
-        public void RegisterStatelessServiceThrowsIfProvidedTypeIsNotStatelessService(Type serviceType)
+        [Fact]
+        public void RegisterStatelessServiceThrowsIfProvidedTypeIsNotPublic()
         {
             var builder = new ContainerBuilder();
 
-            var exception = Assert.Throws<ArgumentException>(() => builder.RegisterStatelessService(serviceType, "ServiceType"));
+            var exception = Assert.Throws<ArgumentException>(
+                () => builder.RegisterStatelessService<InternalStatelessService>("ServiceType"));
 
-            Assert.Equal("serviceType", exception.ParamName);
+            Assert.Equal(typeof(InternalStatelessService).GetInvalidForProxyErrorMessage(), exception.Message);
+        }
+
+        [Fact]
+        public void RegisterStatefulServiceThrowsIfProvidedTypeIsSealed()
+        {
+            var builder = new ContainerBuilder();
+
+            var exception = Assert.Throws<ArgumentException>(
+                () => builder.RegisterStatefulService<SealedStatefulService>("ServiceType"));
+
+            Assert.Equal(typeof(SealedStatefulService).GetInvalidForProxyErrorMessage(), exception.Message);
+        }
+
+        [Fact]
+        public void RegisterStatelessServiceThrowsIfProvidedTypeIsSealed()
+        {
+            var builder = new ContainerBuilder();
+
+            var exception = Assert.Throws<ArgumentException>(
+                () => builder.RegisterStatelessService<SealedStatelessService>("ServiceType"));
+
+            Assert.Equal(typeof(SealedStatelessService).GetInvalidForProxyErrorMessage(), exception.Message);
         }
 
         [Fact]
         public void RegisterStatefulServiceThrowsIfProvidedBuilderIsNull()
         {
-            var exception = Assert.Throws<ArgumentNullException>(() => AutofacServiceExtensions.RegisterStatefulService(null, typeof(StatefulService1), "ServiceType"));
+            var exception = Assert.Throws<ArgumentNullException>(
+                    () => AutofacServiceExtensions.RegisterStatefulService<StatefulService1>(null, "ServiceType"));
 
             Assert.Equal("builder", exception.ParamName);
         }
@@ -186,29 +178,10 @@ namespace Autofac.Integration.ServiceFabric.Test
         [Fact]
         public void RegisterStatelessServiceThrowsIfProvidedBuilderIsNull()
         {
-            var exception = Assert.Throws<ArgumentNullException>(() => AutofacServiceExtensions.RegisterStatelessService(null, typeof(StatelessService1), "ServiceType"));
+            var exception = Assert.Throws<ArgumentNullException>(
+                () => AutofacServiceExtensions.RegisterStatelessService<StatelessService1>(null, "ServiceType"));
 
             Assert.Equal("builder", exception.ParamName);
-        }
-
-        [Fact]
-        public void RegisterStatefulServiceThrowsIfProvidedTypeIsNull()
-        {
-            var builder = new ContainerBuilder();
-
-            var exception = Assert.Throws<ArgumentNullException>(() => builder.RegisterStatefulService(null, "ServiceType"));
-
-            Assert.Equal("serviceType", exception.ParamName);
-        }
-
-        [Fact]
-        public void RegisterStatelessServiceThrowsIfProvidedTypeIsNull()
-        {
-            var builder = new ContainerBuilder();
-
-            var exception = Assert.Throws<ArgumentNullException>(() => builder.RegisterStatelessService(null, "ServiceType"));
-
-            Assert.Equal("serviceType", exception.ParamName);
         }
 
         [Fact]
@@ -216,7 +189,8 @@ namespace Autofac.Integration.ServiceFabric.Test
         {
             var builder = new ContainerBuilder();
 
-            var exception = Assert.Throws<ArgumentException>(() => builder.RegisterStatefulService(typeof(StatefulService1), null));
+            var exception = Assert.Throws<ArgumentException>(
+                () => builder.RegisterStatefulService<StatefulService1>(null));
 
             Assert.Equal("serviceTypeName", exception.ParamName);
         }
@@ -226,7 +200,8 @@ namespace Autofac.Integration.ServiceFabric.Test
         {
             var builder = new ContainerBuilder();
 
-            var exception = Assert.Throws<ArgumentException>(() => builder.RegisterStatelessService(typeof(StatelessService1), null));
+            var exception = Assert.Throws<ArgumentException>(
+                () => builder.RegisterStatelessService<StatelessService1>(null));
 
             Assert.Equal("serviceTypeName", exception.ParamName);
         }
@@ -236,7 +211,8 @@ namespace Autofac.Integration.ServiceFabric.Test
         {
             var builder = new ContainerBuilder();
 
-            var exception = Assert.Throws<ArgumentException>(() => builder.RegisterStatefulService(typeof(StatefulService1), string.Empty));
+            var exception = Assert.Throws<ArgumentException>(
+                () => builder.RegisterStatefulService<StatefulService1>(string.Empty));
 
             Assert.Equal("serviceTypeName", exception.ParamName);
         }
@@ -246,7 +222,8 @@ namespace Autofac.Integration.ServiceFabric.Test
         {
             var builder = new ContainerBuilder();
 
-            var exception = Assert.Throws<ArgumentException>(() => builder.RegisterStatelessService(typeof(StatelessService1), string.Empty));
+            var exception = Assert.Throws<ArgumentException>(
+                () => builder.RegisterStatelessService<StatelessService1>(string.Empty));
 
             Assert.Equal("serviceTypeName", exception.ParamName);
         }
@@ -292,13 +269,5 @@ namespace Autofac.Integration.ServiceFabric.Test
         public InternalStatelessService(StatelessServiceContext serviceContext) : base(serviceContext)
         {
         }
-    }
-
-    public class NonDerivedService
-    {
-    }
-
-    public interface IInterfaceOnlyService
-    {
     }
 }

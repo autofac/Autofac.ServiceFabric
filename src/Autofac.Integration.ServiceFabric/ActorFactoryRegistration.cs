@@ -23,25 +23,14 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-using System.Reflection;
 using Microsoft.ServiceFabric.Actors.Runtime;
 
 namespace Autofac.Integration.ServiceFabric
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
     internal sealed class ActorFactoryRegistration : IActorFactoryRegistration
     {
-        public void RegisterActorFactory(Type actorType, ILifetimeScope lifetimeScope)
-        {
-            var factoryMethod = typeof(ActorFactoryRegistration)
-                .GetMethod(nameof(RegisterFactoryWithActorRuntime), BindingFlags.NonPublic | BindingFlags.Static);
-
-            var genericFactoryMethod = factoryMethod.MakeGenericMethod(actorType);
-
-            genericFactoryMethod.Invoke(null, new object[] {lifetimeScope});
-        }
-
-        private static void RegisterFactoryWithActorRuntime<TActor>(ILifetimeScope container) where TActor : ActorBase
+        public void RegisterActorFactory<TActor>(ILifetimeScope container) where TActor : ActorBase
         {
             ActorRuntime.RegisterActorAsync<TActor>((context, actorTypeInfo) =>
             {

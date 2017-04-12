@@ -24,7 +24,6 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Globalization;
 using Autofac.Extras.DynamicProxy;
 using Microsoft.ServiceFabric.Services.Runtime;
 
@@ -46,35 +45,22 @@ namespace Autofac.Integration.ServiceFabric
         public static void RegisterStatefulService<TService>(this ContainerBuilder builder, string serviceTypeName)
             where TService : StatefulServiceBase
         {
-            builder.RegisterStatefulService(typeof(TService), serviceTypeName);
-        }
-
-        /// <summary>
-        /// Registers a stateful service with the container.
-        /// </summary>
-        /// <param name="builder">The container builder.</param>
-        /// <param name="serviceType">The type of the stateful service to register.</param>
-        /// <param name="serviceTypeName">ServiceTypeName as provied in service manifest.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="serviceType"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentException">Thrown when <paramref name="serviceType"/> is not a valid service type.</exception>
-        /// <remarks>The service will be wrapped in a dynamic proxy and must be public and not sealed.</remarks>
-        public static void RegisterStatefulService(this ContainerBuilder builder, Type serviceType, string serviceTypeName)
-        {
             if (builder == null)
                 throw new ArgumentNullException(nameof(builder));
-
-            if (serviceType == null)
-                throw new ArgumentNullException(nameof(serviceType));
 
             if (string.IsNullOrEmpty(serviceTypeName))
                 throw new ArgumentException("The service type name must be provided", nameof(serviceTypeName));
 
-            if (!serviceType.IsServiceType<StatefulServiceBase>())
-                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "The type {0} is not a valid stateful service type", serviceType.FullName), nameof(serviceType));
+            var serviceType = typeof(TService);
+
+            if (!serviceType.CanBeProxied())
+                throw new ArgumentException(serviceType.GetInvalidForProxyErrorMessage());
 
             builder.RegisterServiceWithContainer(serviceType);
 
-            builder.RegisterBuildCallback(c => c.Resolve<IStatefulServiceFactoryRegistration>().RegisterStatefulServiceFactory(c, serviceType, serviceTypeName));
+            builder.RegisterBuildCallback(c =>
+                c.Resolve<IStatefulServiceFactoryRegistration>()
+                    .RegisterStatefulServiceFactory<TService>(c, serviceTypeName));
         }
 
         /// <summary>
@@ -88,44 +74,22 @@ namespace Autofac.Integration.ServiceFabric
         public static void RegisterStatelessService<TService>(this ContainerBuilder builder, string serviceTypeName)
             where TService : StatelessService
         {
-            builder.RegisterStatelessService(typeof(TService), serviceTypeName);
-        }
-
-        /// <summary>
-        /// Registers a stateless service with the container.
-        /// </summary>
-        /// <param name="builder">The container builder.</param>
-        /// <param name="serviceType">The type of the stateless service to register.</param>
-        /// <param name="serviceTypeName">ServiceTypeName as provied in service manifest.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="serviceType"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentException">Thrown when <paramref name="serviceType"/> is not a valid service type.</exception>
-        /// <remarks>The service will be wrapped in a dynamic proxy and must be public and not sealed.</remarks>
-        public static void RegisterStatelessService(this ContainerBuilder builder, Type serviceType, string serviceTypeName)
-        {
             if (builder == null)
                 throw new ArgumentNullException(nameof(builder));
-
-            if (serviceType == null)
-                throw new ArgumentNullException(nameof(serviceType));
 
             if (string.IsNullOrEmpty(serviceTypeName))
                 throw new ArgumentException("The service type name must be provided", nameof(serviceTypeName));
 
-            if (!serviceType.IsServiceType<StatelessService>())
-                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "The type {0} is not a valid stateless service type", serviceType.FullName), nameof(serviceType));
+            var serviceType = typeof(TService);
+
+            if (!serviceType.CanBeProxied())
+                throw new ArgumentException(serviceType.GetInvalidForProxyErrorMessage());
 
             builder.RegisterServiceWithContainer(serviceType);
 
-            builder.RegisterBuildCallback(c => c.Resolve<IStatelessServiceFactoryRegistration>().RegisterStatelessServiceFactory(c, serviceType, serviceTypeName));
-        }
-
-        private static bool IsServiceType<TServiceBase>(this Type type)
-        {
-            return type.IsAssignableTo<TServiceBase>()
-                && type.IsClass
-                && type.IsPublic
-                && !type.IsSealed
-                && !type.IsAbstract;
+            builder.RegisterBuildCallback(c =>
+                c.Resolve<IStatelessServiceFactoryRegistration>()
+                    .RegisterStatelessServiceFactory<TService>(c, serviceTypeName));
         }
 
         private static void RegisterServiceWithContainer(this ContainerBuilder builder, Type serviceType)

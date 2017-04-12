@@ -23,12 +23,24 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-using Microsoft.ServiceFabric.Actors.Runtime;
+using System;
+using System.Globalization;
 
 namespace Autofac.Integration.ServiceFabric
 {
-    internal interface IActorFactoryRegistration
+    internal static class TypeExtensions
     {
-        void RegisterActorFactory<TActor>(ILifetimeScope lifetimeScope) where TActor : ActorBase;
+        internal static bool CanBeProxied(this Type type)
+        {
+            return type.IsClass && type.IsPublic && !type.IsSealed && !type.IsAbstract;
+        }
+
+        internal static string GetInvalidForProxyErrorMessage(this Type type)
+        {
+            return string.Format(
+                CultureInfo.CurrentCulture,
+                "The type {0} cannot be dynamically proxied. Please ensure the class is public and not sealed.",
+                type.FullName);
+        }
     }
 }

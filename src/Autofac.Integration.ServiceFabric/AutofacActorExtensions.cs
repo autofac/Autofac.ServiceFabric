@@ -24,7 +24,6 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Globalization;
 using Autofac.Extras.DynamicProxy;
 using Microsoft.ServiceFabric.Actors.Runtime;
 
@@ -44,48 +43,20 @@ namespace Autofac.Integration.ServiceFabric
         /// <remarks>The actor will be wrapped in a dynamic proxy and must be public and not sealed.</remarks>
         public static void RegisterActor<TActor>(this ContainerBuilder builder) where TActor : ActorBase
         {
-            builder.RegisterActor(typeof(TActor));
-        }
-
-        /// <summary>
-        /// Registers an actor service with the container.
-        /// </summary>
-        /// <param name="builder">The container builder.</param>
-        /// <param name="actorType">The type of the actor to register.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="actorType"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentException">Thrown when <paramref name="actorType"/> is not a valid actor type.</exception>
-        /// <remarks>The actor will be wrapped in a dynamic proxy and must be public and not sealed.</remarks>
-        public static void RegisterActor(this ContainerBuilder builder, Type actorType)
-        {
             if (builder == null)
                 throw new ArgumentNullException(nameof(builder));
 
-            if (actorType == null)
-                throw new ArgumentNullException(nameof(actorType));
+            var actorType = typeof(TActor);
 
-            if (!actorType.IsActorType())
-                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "The type {0} is not a valid actor type", actorType.FullName), nameof(actorType));
+            if (!actorType.CanBeProxied())
+                throw new ArgumentException(actorType.GetInvalidForProxyErrorMessage());
 
-            builder.RegisterActorWithContainer(actorType);
-        }
-
-        private static bool IsActorType(this Type type)
-        {
-            return type.IsAssignableTo<ActorBase>()
-                && type.IsClass
-                && type.IsPublic
-                && !type.IsSealed
-                && !type.IsAbstract;
-        }
-
-        private static void RegisterActorWithContainer(this ContainerBuilder builder, Type actorType)
-        {
-            builder.RegisterType(actorType)
+            builder.RegisterType<TActor>()
                 .InstancePerLifetimeScope()
                 .EnableClassInterceptors()
                 .InterceptedBy(typeof(ActorInterceptor));
 
-            builder.RegisterBuildCallback(c => c.Resolve<IActorFactoryRegistration>().RegisterActorFactory(actorType, c));
+            builder.RegisterBuildCallback(c => c.Resolve<IActorFactoryRegistration>().RegisterActorFactory<TActor>(c));
         }
     }
 }

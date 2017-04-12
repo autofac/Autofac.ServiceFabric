@@ -23,12 +23,12 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
+using Microsoft.ServiceFabric.Services.Runtime;
 
 namespace Autofac.Integration.ServiceFabric
 {
     internal interface IStatefulServiceFactoryRegistration
     {
-        void RegisterStatefulServiceFactory(ILifetimeScope lifetimeScope, Type serviceType, string serviceTypeName);
+        void RegisterStatefulServiceFactory<TService>(ILifetimeScope lifetimeScope, string serviceTypeName) where TService : StatefulServiceBase;
     }
 }

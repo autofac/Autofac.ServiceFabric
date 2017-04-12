@@ -23,25 +23,14 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-using System.Reflection;
 using Microsoft.ServiceFabric.Services.Runtime;
 
 namespace Autofac.Integration.ServiceFabric
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
     internal sealed class StatefulServiceFactoryRegistration : IStatefulServiceFactoryRegistration
     {
-        public void RegisterStatefulServiceFactory(ILifetimeScope lifetimeScope, Type serviceType, string serviceTypeName)
-        {
-            var factoryMethod = typeof(StatefulServiceFactoryRegistration)
-                .GetMethod(nameof(RegisterFactoryWithServiceRuntime), BindingFlags.NonPublic | BindingFlags.Static);
-
-            var genericFactoryMethod = factoryMethod.MakeGenericMethod(serviceType);
-
-            genericFactoryMethod.Invoke(null, new object[] {lifetimeScope, serviceTypeName});
-        }
-
-        private static void RegisterFactoryWithServiceRuntime<TService>(ILifetimeScope container, string serviceTypeName)
+        public void RegisterStatefulServiceFactory<TService>(ILifetimeScope container, string serviceTypeName)
             where TService : StatefulServiceBase
         {
             ServiceRuntime.RegisterServiceAsync(serviceTypeName, context =>
