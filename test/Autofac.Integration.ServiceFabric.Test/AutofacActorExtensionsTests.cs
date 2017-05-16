@@ -80,6 +80,20 @@ namespace Autofac.Integration.ServiceFabric.Test
         }
 
         [Fact]
+        public void RegisterActorCanBeCalledFromModuleLoad()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterModule(new ActorModule());
+            var factoryMock = new Mock<IActorFactoryRegistration>();
+            builder.RegisterInstance(factoryMock.Object);
+
+            var container = builder.Build();
+
+            container.AssertRegistered<Actor1>();
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container), Times.Once);
+        }
+
+        [Fact]
         public void RegisterActorThrowsIfProvidedBuilderIsNull()
         {
             var exception = Assert.Throws<ArgumentNullException>(() => AutofacActorExtensions.RegisterActor<Actor1>(null));
@@ -105,6 +119,14 @@ namespace Autofac.Integration.ServiceFabric.Test
             var exception = Assert.Throws<ArgumentException>(() => builder.RegisterActor<InternalActor>());
 
             Assert.Equal(typeof(InternalActor).GetInvalidProxyTypeErrorMessage(), exception.Message);
+        }
+    }
+
+    public class ActorModule : Module
+    {
+        protected override void Load(ContainerBuilder builder)
+        {
+            builder.RegisterActor<Actor1>();
         }
     }
 

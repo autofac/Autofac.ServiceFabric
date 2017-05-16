@@ -148,6 +148,34 @@ namespace Autofac.Integration.ServiceFabric.Test
         }
 
         [Fact]
+        public void RegisterStatefulServiceCanBeCalledFromModuleLoad()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterModule(new StatefulServiceModule());
+            var factoryMock = new Mock<IStatefulServiceFactoryRegistration>();
+            builder.RegisterInstance(factoryMock.Object);
+
+            var container = builder.Build();
+
+            container.AssertRegistered<StatefulService1>();
+            factoryMock.Verify(x => x.RegisterStatefulServiceFactory<StatefulService1>(container, "serviceTypeName"), Times.Once);
+        }
+
+        [Fact]
+        public void RegisterStatelessServiceCanBeCalledFromModuleLoad()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterModule(new StatelessServiceModule());
+            var factoryMock = new Mock<IStatelessServiceFactoryRegistration>();
+            builder.RegisterInstance(factoryMock.Object);
+
+            var container = builder.Build();
+
+            container.AssertRegistered<StatelessService1>();
+            factoryMock.Verify(x => x.RegisterStatelessServiceFactory<StatelessService1>(container, "serviceTypeName"), Times.Once);
+        }
+
+        [Fact]
         public void RegisterStatefulServiceThrowsIfProvidedTypeIsNotPublic()
         {
             var builder = new ContainerBuilder();
@@ -251,6 +279,22 @@ namespace Autofac.Integration.ServiceFabric.Test
                 () => builder.RegisterStatelessService<StatelessService1>(string.Empty));
 
             Assert.Equal("serviceTypeName", exception.ParamName);
+        }
+    }
+
+    public class StatefulServiceModule : Module
+    {
+        protected override void Load(ContainerBuilder builder)
+        {
+            builder.RegisterStatefulService<StatefulService1>("serviceTypeName");
+        }
+    }
+
+    public class StatelessServiceModule : Module
+    {
+        protected override void Load(ContainerBuilder builder)
+        {
+            builder.RegisterStatelessService<StatelessService1>("serviceTypeName");
         }
     }
 
