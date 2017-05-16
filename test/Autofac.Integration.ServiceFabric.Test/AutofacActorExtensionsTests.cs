@@ -64,7 +64,7 @@ namespace Autofac.Integration.ServiceFabric.Test
 
             var container = builder.Build();
 
-            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, null, null), Times.Once);
         }
 
         [Fact]
@@ -90,7 +90,53 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertRegistered<Actor1>();
-            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, null, null), Times.Once);
+        }
+
+        [Fact]
+        public void RegisterActorCanBeCalledWithStateManagerFactory()
+        {
+            var builder = new ContainerBuilder();
+            // ReSharper disable once ConvertToLocalFunction
+            Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = (actor, provider) => null;
+            builder.RegisterActor<Actor1>(stateManagerFactory: stateManagerFactory);
+            var factoryMock = new Mock<IActorFactoryRegistration>();
+            builder.RegisterInstance(factoryMock.Object);
+
+            var container = builder.Build();
+
+            container.AssertRegistered<Actor1>();
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, stateManagerFactory, null, null), Times.Once);
+        }
+
+        [Fact]
+        public void RegisterActorCanBeCalledWithStateProvider()
+        {
+            var builder = new ContainerBuilder();
+            var stateProvider = new Mock<IActorStateProvider>().Object;
+            builder.RegisterActor<Actor1>(stateProvider: stateProvider);
+            var factoryMock = new Mock<IActorFactoryRegistration>();
+            builder.RegisterInstance(factoryMock.Object);
+
+            var container = builder.Build();
+
+            container.AssertRegistered<Actor1>();
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, stateProvider, null), Times.Once);
+        }
+
+        [Fact]
+        public void RegisterActorCanBeCalledWithSettings()
+        {
+            var builder = new ContainerBuilder();
+            var settings = new ActorServiceSettings();
+            builder.RegisterActor<Actor1>(settings: settings);
+            var factoryMock = new Mock<IActorFactoryRegistration>();
+            builder.RegisterInstance(factoryMock.Object);
+
+            var container = builder.Build();
+
+            container.AssertRegistered<Actor1>();
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, null, settings), Times.Once);
         }
 
         [Fact]

@@ -23,6 +23,7 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
 using Microsoft.ServiceFabric.Actors.Runtime;
 
 namespace Autofac.Integration.ServiceFabric
@@ -30,7 +31,11 @@ namespace Autofac.Integration.ServiceFabric
     // ReSharper disable once ClassNeverInstantiated.Global
     internal sealed class ActorFactoryRegistration : IActorFactoryRegistration
     {
-        public void RegisterActorFactory<TActor>(ILifetimeScope container) where TActor : ActorBase
+        public void RegisterActorFactory<TActor>(
+            ILifetimeScope container,
+            Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = null,
+            IActorStateProvider stateProvider = null,
+            ActorServiceSettings settings = null) where TActor : ActorBase
         {
             ActorRuntime.RegisterActorAsync<TActor>((context, actorTypeInfo) =>
             {
@@ -41,7 +46,7 @@ namespace Autofac.Integration.ServiceFabric
                         TypedParameter.From(actorService),
                         TypedParameter.From(actorId));
                     return actor;
-                });
+                }, stateManagerFactory, stateProvider, settings);
             }).GetAwaiter().GetResult();
         }
     }

@@ -23,12 +23,17 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
 using Microsoft.ServiceFabric.Actors.Runtime;
 
 namespace Autofac.Integration.ServiceFabric
 {
     internal interface IActorFactoryRegistration
     {
-        void RegisterActorFactory<TActor>(ILifetimeScope lifetimeScope) where TActor : ActorBase;
+        void RegisterActorFactory<TActor>(
+            ILifetimeScope lifetimeScope,
+            Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = null,
+            IActorStateProvider stateProvider = null,
+            ActorServiceSettings settings = null) where TActor : ActorBase;
     }
 }

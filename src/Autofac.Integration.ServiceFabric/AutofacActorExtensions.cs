@@ -37,10 +37,17 @@ namespace Autofac.Integration.ServiceFabric
         /// Registers an actor service with the container.
         /// </summary>
         /// <param name="builder">The container builder.</param>
+        /// <param name="stateManagerFactory">A factory method to create <see cref="T:Microsoft.ServiceFabric.Actors.Runtime.IActorStateManager" /></param>
+        /// <param name="stateProvider">State provider to store the state for actor objects.</param>
+        /// <param name="settings">/// Settings to configures behavior of Actor Service.</param>
         /// <typeparam name="TActor">The type of the actor to register.</typeparam>
         /// <exception cref="ArgumentException">Thrown when <typeparamref name="TActor"/> is not a valid actor type.</exception>
         /// <remarks>The actor will be wrapped in a dynamic proxy and must be public and not sealed.</remarks>
-        public static void RegisterActor<TActor>(this ContainerBuilder builder) where TActor : ActorBase
+        public static void RegisterActor<TActor>(
+            this ContainerBuilder builder,
+            Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = null,
+            IActorStateProvider stateProvider = null,
+            ActorServiceSettings settings = null) where TActor : ActorBase
         {
             if (builder == null)
                 throw new ArgumentNullException(nameof(builder));
@@ -52,7 +59,9 @@ namespace Autofac.Integration.ServiceFabric
 
             builder.RegisterServiceWithInterception<TActor, ActorInterceptor>();
 
-            builder.RegisterBuildCallback(c => c.Resolve<IActorFactoryRegistration>().RegisterActorFactory<TActor>(c));
+            builder.RegisterBuildCallback(
+                c => c.Resolve<IActorFactoryRegistration>().RegisterActorFactory<TActor>(
+                    c, stateManagerFactory, stateProvider, settings));
         }
     }
 }
