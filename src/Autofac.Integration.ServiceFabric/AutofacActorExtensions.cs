@@ -37,7 +37,7 @@ namespace Autofac.Integration.ServiceFabric
         /// Registers an actor service with the container.
         /// </summary>
         /// <param name="builder">The container builder.</param>
-        /// <param name="stateManagerFactory">A factory method to create <see cref="T:Microsoft.ServiceFabric.Actors.Runtime.IActorStateManager" /></param>
+        /// <param name="stateManagerFactory">A factory method to create <see cref="IActorStateManager"/>.</param>
         /// <param name="stateProvider">State provider to store the state for actor objects.</param>
         /// <param name="settings">/// Settings to configures behavior of Actor Service.</param>
         /// <typeparam name="TActor">The type of the actor to register.</typeparam>
