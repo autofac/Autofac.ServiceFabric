@@ -23,6 +23,7 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
+using System.Fabric;
 using Microsoft.ServiceFabric.Services.Runtime;
 
 namespace Autofac.Integration.ServiceFabric
@@ -35,8 +36,13 @@ namespace Autofac.Integration.ServiceFabric
         {
             ServiceRuntime.RegisterServiceAsync(serviceTypeName, context =>
             {
-                var lifetimeScope = container.BeginLifetimeScope();
-                var service = lifetimeScope.Resolve<TService>(TypedParameter.From(context));
+                var lifetimeScope = container.BeginLifetimeScope(builder =>
+                {
+                    builder.RegisterInstance(context)
+                        .As<StatefulServiceContext>()
+                        .As<ServiceContext>();
+                });
+                var service = lifetimeScope.Resolve<TService>();
                 return service;
             }).GetAwaiter().GetResult();
         }
