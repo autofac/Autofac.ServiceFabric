@@ -24,6 +24,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using Autofac.Builder;
 using Autofac.Extras.DynamicProxy;
 using Castle.DynamicProxy;
 
@@ -60,5 +61,12 @@ namespace Autofac.Integration.ServiceFabric
                 .EnableClassInterceptors()
                 .InterceptedBy(typeof(TInterceptor));
         }
+
+        public static IRegistrationBuilder<TLimit, TActivatorData, TStyle> InstancePerService<TLimit, TActivatorData, TStyle>(this IRegistrationBuilder<TLimit, TActivatorData, TStyle> registration)
+        {
+            return registration.InstancePerMatchingLifetimeScope(ServiceScopeTag);
+        }
+
+        internal static readonly object ServiceScopeTag = new object();
     }
 }

@@ -43,15 +43,15 @@ namespace Autofac.Integration.ServiceFabric
             {
                 return new ActorService(context, actorTypeInfo, (actorService, actorId) =>
                 {
-                    var lifetimeScope = container.BeginLifetimeScope(builder =>
+                    var lifetimeScope = container.BeginLifetimeScope(RegistrationExtensions.ServiceScopeTag, builder =>
                     {
                         builder.RegisterInstance(context)
-                            .As<StatelessServiceContext>()
-                            .As<ServiceContext>();
+                               .As<StatelessServiceContext>()
+                               .As<ServiceContext>();
                         builder.RegisterInstance(actorService)
-                            .As<ActorService>();
+                               .As<ActorService>();
                         builder.RegisterInstance(actorId)
-                            .As<ActorId>();
+                               .As<ActorId>();
                     });
                     var actor = lifetimeScope.Resolve<TActor>();
                     return actor;
