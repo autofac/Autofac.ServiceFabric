@@ -35,7 +35,7 @@ namespace Autofac.Integration.ServiceFabric
         {
             ServiceRuntime.RegisterServiceAsync(serviceTypeName, context =>
             {
-                var lifetimeScope = container.BeginLifetimeScope(builder =>
+                var lifetimeScope = container.BeginLifetimeScope(RegistrationExtensions.ServiceScopeTag, builder =>
                 {
                     builder.RegisterInstance(context)
                         .As<StatelessServiceContext>()
