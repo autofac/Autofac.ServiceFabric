@@ -24,6 +24,8 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Fabric;
+using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Runtime;
 
 namespace Autofac.Integration.ServiceFabric
@@ -41,10 +43,17 @@ namespace Autofac.Integration.ServiceFabric
             {
                 return new ActorService(context, actorTypeInfo, (actorService, actorId) =>
                 {
-                    var lifetimeScope = container.BeginLifetimeScope();
-                    var actor = lifetimeScope.Resolve<TActor>(
-                        TypedParameter.From(actorService),
-                        TypedParameter.From(actorId));
+                    var lifetimeScope = container.BeginLifetimeScope(builder =>
+                    {
+                        builder.RegisterInstance(context)
+                            .As<StatelessServiceContext>()
+                            .As<ServiceContext>();
+                        builder.RegisterInstance(actorService)
+                            .As<ActorService>();
+                        builder.RegisterInstance(actorId)
+                            .As<ActorId>();
+                    });
+                    var actor = lifetimeScope.Resolve<TActor>();
                     return actor;
                 }, stateManagerFactory, stateProvider, settings);
             }).GetAwaiter().GetResult();
