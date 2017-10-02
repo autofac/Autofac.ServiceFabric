@@ -46,7 +46,7 @@ namespace Autofac.Integration.ServiceFabric
                     var lifetimeScope = container.BeginLifetimeScope(builder =>
                     {
                         builder.RegisterInstance(context)
-                            .As<StatelessServiceContext>()
+                            .As<StatefulServiceContext>()
                             .As<ServiceContext>();
                         builder.RegisterInstance(actorService)
                             .As<ActorService>();
