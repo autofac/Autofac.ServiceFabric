@@ -23,9 +23,12 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
+using Autofac.Builder;
 using System;
 using Autofac.Extras.DynamicProxy;
 using Castle.DynamicProxy;
+using Autofac.Core;
+using Autofac.Core.Lifetime;
 
 namespace Autofac.Integration.ServiceFabric
 {
@@ -51,14 +54,34 @@ namespace Autofac.Integration.ServiceFabric
             builder.Properties.Add(MetadataKey, true);
         }
 
-        internal static void RegisterServiceWithInterception<TService, TInterceptor>(this ContainerBuilder builder)
+        internal static IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle>
+            RegisterServiceWithInterception<TService, TInterceptor>(
+                this ContainerBuilder builder)
             where TService : class
             where TInterceptor : IInterceptor
         {
-            builder.RegisterType(typeof(TService))
+            return builder.RegisterType<TService>()
                 .InstancePerLifetimeScope()
                 .EnableClassInterceptors()
                 .InterceptedBy(typeof(TInterceptor));
+        }
+
+        internal static IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle>
+            EnsureRegistrationIsInstancePerLifetimeScope<TService>(
+                this IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle> builder)
+            where TService : class
+        {
+            return builder.OnRegistered(args =>
+            {
+                var registration = args.ComponentRegistration;
+
+                if (registration.Lifetime.GetType() == typeof(CurrentScopeLifetime) &&
+                    registration.Sharing == InstanceSharing.Shared &&
+                    registration.Ownership == InstanceOwnership.OwnedByLifetimeScope) return;
+
+                var message = typeof(TService).GetServiceNotRegisteredAsInstancePerLifetimeScopeMessage();
+                throw new InvalidOperationException(message);
+            });
         }
     }
 }

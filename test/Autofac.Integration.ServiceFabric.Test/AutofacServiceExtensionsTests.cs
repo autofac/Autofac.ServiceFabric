@@ -280,6 +280,84 @@ namespace Autofac.Integration.ServiceFabric.Test
 
             Assert.Equal("serviceTypeName", exception.ParamName);
         }
+
+        [Fact]
+        public void ContainerBuildThrowsIfRegisterStatefulServiceLifetimeScopeChangedToInstancePerDependency()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterStatefulService<StatefulService1>("serviceTypeName").InstancePerDependency();
+            var factoryMock = new Mock<IStatefulServiceFactoryRegistration>();
+            builder.RegisterInstance(factoryMock.Object);
+
+            var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+            Assert.Equal(typeof(StatefulService1).GetServiceNotRegisteredAsInstancePerLifetimeScopeMessage(), exception.Message);
+        }
+
+        [Fact]
+        public void ContainerBuildThrowsIfRegisterStatelessServiceLifetimeScopeChangedToInstancePerDependency()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterStatelessService<StatelessService1>("serviceTypeName").InstancePerDependency();
+            var factoryMock = new Mock<IStatelessServiceFactoryRegistration>();
+            builder.RegisterInstance(factoryMock.Object);
+
+            var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+            Assert.Equal(typeof(StatelessService1).GetServiceNotRegisteredAsInstancePerLifetimeScopeMessage(), exception.Message);
+        }
+
+        [Fact]
+        public void ContainerBuildThrowsIfRegisterStatefulServiceLifetimeScopeChangedToSingleInstance()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterStatefulService<StatefulService1>("serviceTypeName").SingleInstance();
+            var factoryMock = new Mock<IStatefulServiceFactoryRegistration>();
+            builder.RegisterInstance(factoryMock.Object);
+
+            var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+            Assert.Equal(typeof(StatefulService1).GetServiceNotRegisteredAsInstancePerLifetimeScopeMessage(), exception.Message);
+        }
+
+        [Fact]
+        public void ContainerBuildThrowsIfRegisterStatelessServiceLifetimeScopeChangedToSingleInstance()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterStatelessService<StatelessService1>("serviceTypeName").SingleInstance();
+            var factoryMock = new Mock<IStatelessServiceFactoryRegistration>();
+            builder.RegisterInstance(factoryMock.Object);
+
+            var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+            Assert.Equal(typeof(StatelessService1).GetServiceNotRegisteredAsInstancePerLifetimeScopeMessage(), exception.Message);
+        }
+
+        [Fact]
+        public void ContainerBuildThrowsIfRegisterStatefulServiceLifetimeScopeChangedToExternallyOwned()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterStatefulService<StatefulService1>("serviceTypeName").ExternallyOwned();
+            var factoryMock = new Mock<IStatefulServiceFactoryRegistration>();
+            builder.RegisterInstance(factoryMock.Object);
+
+            var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+            Assert.Equal(typeof(StatefulService1).GetServiceNotRegisteredAsInstancePerLifetimeScopeMessage(), exception.Message);
+        }
+
+        [Fact]
+        public void ContainerBuildThrowsIfRegisterStatelessServiceLifetimeScopeChangedToExternallyOwned()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterStatelessService<StatelessService1>("serviceTypeName").ExternallyOwned();
+            var factoryMock = new Mock<IStatelessServiceFactoryRegistration>();
+            builder.RegisterInstance(factoryMock.Object);
+
+            var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+            Assert.Equal(typeof(StatelessService1).GetServiceNotRegisteredAsInstancePerLifetimeScopeMessage(), exception.Message);
+        }
     }
 
     public class StatefulServiceModule : Module

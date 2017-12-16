@@ -42,5 +42,10 @@ namespace Autofac.Integration.ServiceFabric
         {
             return string.Format(CultureInfo.CurrentCulture, TypeExtensionsResources.InvalidProxyTypeErrorMessage, type.FullName);
         }
+
+        internal static string GetServiceNotRegisteredAsInstancePerLifetimeScopeMessage(this Type type)
+        {
+            return string.Format(CultureInfo.CurrentCulture, TypeExtensionsResources.ServiceNotRegisteredAsIntancePerLifetimeScope, type.FullName);
+        }
     }
 }

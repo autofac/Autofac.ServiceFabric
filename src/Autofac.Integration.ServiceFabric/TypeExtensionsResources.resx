@@ -120,4 +120,7 @@
   <data name="InvalidProxyTypeErrorMessage" xml:space="preserve">
     <value>The type {0} cannot be dynamically proxied. Service types must not be sealed and need to be visible to the DynamicProxyGenAssembly2 assembly. This can be achieved by making the type public or adding the InternalsVisibleToAttribute to the assembly containing the type. e.g. [assembly: InternalsVisibleTo(InternalsVisible.ToDynamicProxyGenAssembly2)]</value>
   </data>
+  <data name="ServiceNotRegisteredAsIntancePerLifetimeScope" xml:space="preserve">
+    <value>The service {0} must be registered as InstancePerLifetimeScope.</value>
+  </data>
 </root>

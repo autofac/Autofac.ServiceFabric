@@ -23,6 +23,7 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
+using Autofac.Builder;
 using System;
 using Microsoft.ServiceFabric.Actors.Runtime;
 
@@ -41,13 +42,16 @@ namespace Autofac.Integration.ServiceFabric
         /// <param name="stateProvider">State provider to store the state for actor objects.</param>
         /// <param name="settings">/// Settings to configures behavior of Actor Service.</param>
         /// <typeparam name="TActor">The type of the actor to register.</typeparam>
+        /// <returns>A registration builder allowing further configuration of the component.</returns>
         /// <exception cref="ArgumentException">Thrown when <typeparamref name="TActor"/> is not a valid actor type.</exception>
         /// <remarks>The actor will be wrapped in a dynamic proxy and must be public and not sealed.</remarks>
-        public static void RegisterActor<TActor>(
-            this ContainerBuilder builder,
-            Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = null,
-            IActorStateProvider stateProvider = null,
-            ActorServiceSettings settings = null) where TActor : ActorBase
+        public static IRegistrationBuilder<TActor, ConcreteReflectionActivatorData, SingleRegistrationStyle>
+            RegisterActor<TActor>(
+                this ContainerBuilder builder,
+                Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = null,
+                IActorStateProvider stateProvider = null,
+                ActorServiceSettings settings = null)
+            where TActor : ActorBase
         {
             if (builder == null)
                 throw new ArgumentNullException(nameof(builder));
@@ -57,11 +61,15 @@ namespace Autofac.Integration.ServiceFabric
             if (!actorType.CanBeProxied())
                 throw new ArgumentException(actorType.GetInvalidProxyTypeErrorMessage());
 
-            builder.RegisterServiceWithInterception<TActor, ActorInterceptor>();
+            var registration = builder.RegisterServiceWithInterception<TActor, ActorInterceptor>();
+
+            registration.EnsureRegistrationIsInstancePerLifetimeScope();
 
             builder.RegisterBuildCallback(
                 c => c.Resolve<IActorFactoryRegistration>().RegisterActorFactory<TActor>(
                     c, stateManagerFactory, stateProvider, settings));
+
+            return registration;
         }
     }
 }

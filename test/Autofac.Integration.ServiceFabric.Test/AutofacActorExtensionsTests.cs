@@ -166,6 +166,45 @@ namespace Autofac.Integration.ServiceFabric.Test
 
             Assert.Equal(typeof(InternalActor).GetInvalidProxyTypeErrorMessage(), exception.Message);
         }
+
+        [Fact]
+        public void ContainerBuildThrowsIfRegisterActorLifetimeScopeChangedToInstancePerDependency()
+        {
+            var builder = new ContainerBuilder();
+            var factoryMock = new Mock<IActorFactoryRegistration>();
+            builder.RegisterInstance(factoryMock.Object);
+            builder.RegisterActor<Actor1>().InstancePerDependency();
+
+            var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+            Assert.Equal(typeof(Actor1).GetServiceNotRegisteredAsInstancePerLifetimeScopeMessage(), exception.Message);
+        }
+
+        [Fact]
+        public void ContainerBuildThrowsIfRegisterActorLifetimeScopeChangedToSingleInstance()
+        {
+            var builder = new ContainerBuilder();
+            var factoryMock = new Mock<IActorFactoryRegistration>();
+            builder.RegisterInstance(factoryMock.Object);
+            builder.RegisterActor<Actor1>().SingleInstance();
+
+            var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+            Assert.Equal(typeof(Actor1).GetServiceNotRegisteredAsInstancePerLifetimeScopeMessage(), exception.Message);
+        }
+
+        [Fact]
+        public void ContainerBuildThrowsIfRegisterActorLifetimeScopeChangedToExternallyOwned()
+        {
+            var builder = new ContainerBuilder();
+            var factoryMock = new Mock<IActorFactoryRegistration>();
+            builder.RegisterInstance(factoryMock.Object);
+            builder.RegisterActor<Actor1>().ExternallyOwned();
+
+            var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+            Assert.Equal(typeof(Actor1).GetServiceNotRegisteredAsInstancePerLifetimeScopeMessage(), exception.Message);
+        }
     }
 
     public class ActorModule : Module
