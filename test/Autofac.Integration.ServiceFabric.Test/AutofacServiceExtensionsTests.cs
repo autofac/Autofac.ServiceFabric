@@ -378,21 +378,21 @@ namespace Autofac.Integration.ServiceFabric.Test
 
     public class StatefulService1 : StatefulServiceBase
     {
-        public StatefulService1(StatefulServiceContext serviceContext, IStateProviderReplica stateProviderReplica) : base(serviceContext, stateProviderReplica)
+        public StatefulService1(StatefulServiceContext serviceContext, IStateProviderReplica2 stateProviderReplica) : base(serviceContext, stateProviderReplica)
         {
         }
     }
 
     public sealed class SealedStatefulService : StatefulServiceBase
     {
-        public SealedStatefulService(StatefulServiceContext serviceContext, IStateProviderReplica stateProviderReplica) : base(serviceContext, stateProviderReplica)
+        public SealedStatefulService(StatefulServiceContext serviceContext, IStateProviderReplica2 stateProviderReplica) : base(serviceContext, stateProviderReplica)
         {
         }
     }
 
     internal class InternalStatefulService : StatefulServiceBase
     {
-        public InternalStatefulService(StatefulServiceContext serviceContext, IStateProviderReplica stateProviderReplica) : base(serviceContext, stateProviderReplica)
+        public InternalStatefulService(StatefulServiceContext serviceContext, IStateProviderReplica2 stateProviderReplica) : base(serviceContext, stateProviderReplica)
         {
         }
     }
