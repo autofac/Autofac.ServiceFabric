@@ -97,6 +97,7 @@ namespace Autofac.Integration.ServiceFabric.Test
         public void RegisterActorCanBeCalledWithStateManagerFactory()
         {
             var builder = new ContainerBuilder();
+
             // ReSharper disable once ConvertToLocalFunction
             Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = (actor, provider) => null;
             builder.RegisterActor<Actor1>(stateManagerFactory: stateManagerFactory);
@@ -217,21 +218,24 @@ namespace Autofac.Integration.ServiceFabric.Test
 
     public class Actor1 : Actor
     {
-        public Actor1(ActorService actorService, ActorId actorId) : base(actorService, actorId)
+        public Actor1(ActorService actorService, ActorId actorId)
+            : base(actorService, actorId)
         {
         }
     }
 
     public sealed class SealedActor : Actor
     {
-        public SealedActor(ActorService actorService, ActorId actorId) : base(actorService, actorId)
+        public SealedActor(ActorService actorService, ActorId actorId)
+            : base(actorService, actorId)
         {
         }
     }
 
     internal class InternalActor : Actor
     {
-        public InternalActor(ActorService actorService, ActorId actorId) : base(actorService, actorId)
+        public InternalActor(ActorService actorService, ActorId actorId)
+            : base(actorService, actorId)
         {
         }
     }

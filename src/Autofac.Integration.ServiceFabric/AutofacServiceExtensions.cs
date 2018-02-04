@@ -23,8 +23,8 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-using Autofac.Builder;
 using System;
+using Autofac.Builder;
 using Microsoft.ServiceFabric.Services.Runtime;
 
 namespace Autofac.Integration.ServiceFabric
@@ -57,6 +57,7 @@ namespace Autofac.Integration.ServiceFabric
 
             return registration;
         }
+
         /// <summary>
         /// Registers a stateless service with the container.
         /// </summary>
@@ -66,7 +67,6 @@ namespace Autofac.Integration.ServiceFabric
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         /// <exception cref="ArgumentException">Thrown when <typeparamref name="TService"/> is not a valid service type.</exception>
         /// <remarks>The service will be wrapped in a dynamic proxy and must be public and not sealed.</remarks>
-        /// <returns></returns>
         public static IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle>
             RegisterStatelessService<TService>(
                 this ContainerBuilder builder,

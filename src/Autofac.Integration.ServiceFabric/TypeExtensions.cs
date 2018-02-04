@@ -25,7 +25,7 @@
 
 using System;
 using System.Globalization;
-using Castle.DynamicProxy.Internal;
+using Castle.DynamicProxy;
 
 namespace Autofac.Integration.ServiceFabric
 {
@@ -34,7 +34,7 @@ namespace Autofac.Integration.ServiceFabric
         internal static bool CanBeProxied(this Type type)
         {
             var open = type.IsClass && !type.IsSealed && !type.IsAbstract;
-            var visible = type.IsPublic || type.Assembly.IsInternalToDynamicProxy();
+            var visible = type.IsPublic || ProxyUtil.IsAccessible(type);
             return open && visible;
         }
 

@@ -24,6 +24,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Fabric;
 using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Runtime;
@@ -31,31 +32,39 @@ using Microsoft.ServiceFabric.Actors.Runtime;
 namespace Autofac.Integration.ServiceFabric
 {
     // ReSharper disable once ClassNeverInstantiated.Global
+    [SuppressMessage("Microsoft.Performance", "CA1812", Justification = "Instantiated at runtime via dependency injection")]
     internal sealed class ActorFactoryRegistration : IActorFactoryRegistration
     {
         public void RegisterActorFactory<TActor>(
             ILifetimeScope container,
             Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = null,
             IActorStateProvider stateProvider = null,
-            ActorServiceSettings settings = null) where TActor : ActorBase
+            ActorServiceSettings settings = null)
+            where TActor : ActorBase
         {
             ActorRuntime.RegisterActorAsync<TActor>((context, actorTypeInfo) =>
             {
-                return new ActorService(context, actorTypeInfo, (actorService, actorId) =>
-                {
-                    var lifetimeScope = container.BeginLifetimeScope(builder =>
+                return new ActorService(
+                    context,
+                    actorTypeInfo,
+                    (actorService, actorId) =>
                     {
-                        builder.RegisterInstance(context)
-                            .As<StatefulServiceContext>()
-                            .As<ServiceContext>();
-                        builder.RegisterInstance(actorService)
-                            .As<ActorService>();
-                        builder.RegisterInstance(actorId)
-                            .As<ActorId>();
-                    });
-                    var actor = lifetimeScope.Resolve<TActor>();
-                    return actor;
-                }, stateManagerFactory, stateProvider, settings);
+                        var lifetimeScope = container.BeginLifetimeScope(builder =>
+                        {
+                            builder.RegisterInstance(context)
+                                .As<StatefulServiceContext>()
+                                .As<ServiceContext>();
+                            builder.RegisterInstance(actorService)
+                                .As<ActorService>();
+                            builder.RegisterInstance(actorId)
+                                .As<ActorId>();
+                        });
+                        var actor = lifetimeScope.Resolve<TActor>();
+                        return actor;
+                    },
+                    stateManagerFactory,
+                    stateProvider,
+                    settings);
             }).GetAwaiter().GetResult();
         }
     }

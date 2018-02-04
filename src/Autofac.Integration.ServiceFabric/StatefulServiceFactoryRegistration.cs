@@ -23,12 +23,14 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Fabric;
 using Microsoft.ServiceFabric.Services.Runtime;
 
 namespace Autofac.Integration.ServiceFabric
 {
     // ReSharper disable once ClassNeverInstantiated.Global
+    [SuppressMessage("Microsoft.Performance", "CA1812", Justification = "Instantiated at runtime via dependency injection")]
     internal sealed class StatefulServiceFactoryRegistration : IStatefulServiceFactoryRegistration
     {
         public void RegisterStatefulServiceFactory<TService>(ILifetimeScope container, string serviceTypeName)

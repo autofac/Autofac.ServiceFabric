@@ -378,42 +378,48 @@ namespace Autofac.Integration.ServiceFabric.Test
 
     public class StatefulService1 : StatefulServiceBase
     {
-        public StatefulService1(StatefulServiceContext serviceContext, IStateProviderReplica stateProviderReplica) : base(serviceContext, stateProviderReplica)
+        public StatefulService1(StatefulServiceContext serviceContext, IStateProviderReplica2 stateProviderReplica)
+            : base(serviceContext, stateProviderReplica)
         {
         }
     }
 
     public sealed class SealedStatefulService : StatefulServiceBase
     {
-        public SealedStatefulService(StatefulServiceContext serviceContext, IStateProviderReplica stateProviderReplica) : base(serviceContext, stateProviderReplica)
+        public SealedStatefulService(StatefulServiceContext serviceContext, IStateProviderReplica2 stateProviderReplica)
+            : base(serviceContext, stateProviderReplica)
         {
         }
     }
 
     internal class InternalStatefulService : StatefulServiceBase
     {
-        public InternalStatefulService(StatefulServiceContext serviceContext, IStateProviderReplica stateProviderReplica) : base(serviceContext, stateProviderReplica)
+        public InternalStatefulService(StatefulServiceContext serviceContext, IStateProviderReplica2 stateProviderReplica)
+            : base(serviceContext, stateProviderReplica)
         {
         }
     }
 
     public class StatelessService1 : StatelessService
     {
-        public StatelessService1(StatelessServiceContext serviceContext) : base(serviceContext)
+        public StatelessService1(StatelessServiceContext serviceContext)
+            : base(serviceContext)
         {
         }
     }
 
     public sealed class SealedStatelessService : StatelessService
     {
-        public SealedStatelessService(StatelessServiceContext serviceContext) : base(serviceContext)
+        public SealedStatelessService(StatelessServiceContext serviceContext)
+            : base(serviceContext)
         {
         }
     }
 
     internal class InternalStatelessService : StatelessService
     {
-        public InternalStatelessService(StatelessServiceContext serviceContext) : base(serviceContext)
+        public InternalStatelessService(StatelessServiceContext serviceContext)
+            : base(serviceContext)
         {
         }
     }

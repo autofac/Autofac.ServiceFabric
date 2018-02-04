@@ -30,8 +30,6 @@ namespace Autofac.Integration.ServiceFabric
     /// </summary>
     internal sealed class ServiceFabricModule : Module
     {
-        /// <summary>Adds registrations to the container.</summary>
-        /// <param name="builder">The builder through which components can be registered.</param>
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<ActorInterceptor>()

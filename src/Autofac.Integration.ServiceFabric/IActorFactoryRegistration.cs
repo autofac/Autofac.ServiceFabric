@@ -34,6 +34,7 @@ namespace Autofac.Integration.ServiceFabric
             ILifetimeScope lifetimeScope,
             Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = null,
             IActorStateProvider stateProvider = null,
-            ActorServiceSettings settings = null) where TActor : ActorBase;
+            ActorServiceSettings settings = null)
+            where TActor : ActorBase;
     }
 }

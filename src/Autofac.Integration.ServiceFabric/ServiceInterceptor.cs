@@ -28,6 +28,7 @@ using Castle.DynamicProxy;
 
 namespace Autofac.Integration.ServiceFabric
 {
+    [SuppressMessage("Microsoft.Performance", "CA1812", Justification = "Instantiated at runtime via dependency injection")]
     internal sealed class ServiceInterceptor : IInterceptor
     {
         private readonly ILifetimeScope _lifetimeScope;

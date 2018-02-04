@@ -23,12 +23,12 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-using Autofac.Builder;
 using System;
-using Autofac.Extras.DynamicProxy;
-using Castle.DynamicProxy;
+using Autofac.Builder;
 using Autofac.Core;
 using Autofac.Core.Lifetime;
+using Autofac.Extras.DynamicProxy;
+using Castle.DynamicProxy;
 
 namespace Autofac.Integration.ServiceFabric
 {
