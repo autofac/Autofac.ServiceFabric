@@ -4,7 +4,7 @@
     <Description>Autofac integration for Azure Service Fabric. Provides service factory implementations for Actors, Stateful Services and Stateless Services.</Description>
     <VersionPrefix>2.0.0</VersionPrefix>
     <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
-    <PlatformTarget Condition=" '$(TargetFramework)' == 'net452' ">x64</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -31,8 +31,7 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.6.2" />
-    <PackageReference Include="Autofac.Extras.DynamicProxy" Version="4.2.1" />
-    <PackageReference Include="Castle.Core" Version="4.2.1" />
+    <PackageReference Include="Autofac.Extras.DynamicProxy" Version="4.4.0" />
     <PackageReference Include="Microsoft.ServiceFabric" Version="6.1.456" />
     <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="3.0.456" />
     <PackageReference Include="Microsoft.ServiceFabric.Data" Version="3.0.456" />
