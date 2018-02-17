@@ -41,7 +41,7 @@ namespace Autofac.Integration.ServiceFabric
         /// <param name="stateManagerFactory">A factory method to create <see cref="IActorStateManager"/>.</param>
         /// <param name="stateProvider">State provider to store the state for actor objects.</param>
         /// <param name="settings">/// Settings to configures behavior of Actor Service.</param>
-        /// <param name="tag"></param>
+        /// <param name="tag">The tag applied to the <see cref="ILifetimeScope"/> in which the Actor service is hosted.</param>
         /// <typeparam name="TActor">The type of the actor to register.</typeparam>
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         /// <exception cref="ArgumentException">Thrown when <typeparamref name="TActor"/> is not a valid actor type.</exception>

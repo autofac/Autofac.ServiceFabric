@@ -39,6 +39,7 @@ namespace Autofac.Integration.ServiceFabric
         /// </summary>
         /// <param name="builder">The container builder.</param>
         /// <param name="serviceTypeName">ServiceTypeName as provided in service manifest.</param>
+        /// <param name="tag">The tag applied to the <see cref="ILifetimeScope"/> in which the service is hosted.</param>
         /// <typeparam name="TService">The type of the stateful service to register.</typeparam>
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         /// <exception cref="ArgumentException">Thrown when <typeparamref name="TService"/> is not a valid service type.</exception>
@@ -50,7 +51,7 @@ namespace Autofac.Integration.ServiceFabric
                 object tag = null)
             where TService : StatefulServiceBase
         {
-            var registration = RegisterServiceWithContainer<TService>(builder, serviceTypeName);
+            var registration = RegisterServiceWithContainer<TService>(builder, serviceTypeName, tag);
 
             builder.RegisterBuildCallback(c =>
                 c.Resolve<IStatefulServiceFactoryRegistration>()
@@ -59,6 +60,15 @@ namespace Autofac.Integration.ServiceFabric
             return registration;
         }
 
+        /// <summary>
+        /// Registers a stateful service with the container.
+        /// </summary>
+        /// <param name="builder">The container builder.</param>
+        /// <param name="serviceTypeName">ServiceTypeName as provided in service manifest.</param>
+        /// <typeparam name="TService">The type of the stateful service to register.</typeparam>
+        /// <returns>A registration builder allowing further configuration of the component.</returns>
+        /// <exception cref="ArgumentException">Thrown when <typeparamref name="TService"/> is not a valid service type.</exception>
+        /// <remarks>The service will be wrapped in a dynamic proxy and must be public and not sealed.</remarks>
         public static IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle>
             RegisterStatefulService<TService>(
                 this ContainerBuilder builder,
@@ -73,7 +83,7 @@ namespace Autofac.Integration.ServiceFabric
         /// </summary>
         /// <param name="builder">The container builder.</param>
         /// <param name="serviceTypeName">ServiceTypeName as provided in service manifest.</param>
-        /// <param name="tag"></param>
+        /// <param name="tag">The tag applied to the <see cref="ILifetimeScope"/> in which the service is hosted.</param>
         /// <typeparam name="TService">The type of the stateless service to register.</typeparam>
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         /// <exception cref="ArgumentException">Thrown when <typeparamref name="TService"/> is not a valid service type.</exception>
@@ -94,6 +104,15 @@ namespace Autofac.Integration.ServiceFabric
             return registration;
         }
 
+        /// <summary>
+        /// Registers a stateless service with the container.
+        /// </summary>
+        /// <param name="builder">The container builder.</param>
+        /// <param name="serviceTypeName">ServiceTypeName as provided in service manifest.</param>
+        /// <typeparam name="TService">The type of the stateless service to register.</typeparam>
+        /// <returns>A registration builder allowing further configuration of the component.</returns>
+        /// <exception cref="ArgumentException">Thrown when <typeparamref name="TService"/> is not a valid service type.</exception>
+        /// <remarks>The service will be wrapped in a dynamic proxy and must be public and not sealed.</remarks>
         public static IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle>
             RegisterStatelessService<TService>(
                 this ContainerBuilder builder,
