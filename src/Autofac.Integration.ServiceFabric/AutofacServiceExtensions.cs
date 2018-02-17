@@ -46,16 +46,26 @@ namespace Autofac.Integration.ServiceFabric
         public static IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle>
             RegisterStatefulService<TService>(
                 this ContainerBuilder builder,
-                string serviceTypeName)
+                string serviceTypeName,
+                object tag = null)
             where TService : StatefulServiceBase
         {
             var registration = RegisterServiceWithContainer<TService>(builder, serviceTypeName);
 
             builder.RegisterBuildCallback(c =>
                 c.Resolve<IStatefulServiceFactoryRegistration>()
-                    .RegisterStatefulServiceFactory<TService>(c, serviceTypeName));
+                    .RegisterStatefulServiceFactory<TService>(c, serviceTypeName, tag));
 
             return registration;
+        }
+
+        public static IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle>
+            RegisterStatefulService<TService>(
+                this ContainerBuilder builder,
+                string serviceTypeName)
+            where TService : StatefulServiceBase
+        {
+            return RegisterStatefulService<TService>(builder, serviceTypeName, null);
         }
 
         /// <summary>
@@ -63,6 +73,7 @@ namespace Autofac.Integration.ServiceFabric
         /// </summary>
         /// <param name="builder">The container builder.</param>
         /// <param name="serviceTypeName">ServiceTypeName as provided in service manifest.</param>
+        /// <param name="tag"></param>
         /// <typeparam name="TService">The type of the stateless service to register.</typeparam>
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         /// <exception cref="ArgumentException">Thrown when <typeparamref name="TService"/> is not a valid service type.</exception>
@@ -70,22 +81,33 @@ namespace Autofac.Integration.ServiceFabric
         public static IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle>
             RegisterStatelessService<TService>(
                 this ContainerBuilder builder,
-                string serviceTypeName)
+                string serviceTypeName,
+                object tag = null)
             where TService : StatelessService
         {
-            var registration = RegisterServiceWithContainer<TService>(builder, serviceTypeName);
+            var registration = RegisterServiceWithContainer<TService>(builder, serviceTypeName, tag);
 
             builder.RegisterBuildCallback(c =>
                 c.Resolve<IStatelessServiceFactoryRegistration>()
-                    .RegisterStatelessServiceFactory<TService>(c, serviceTypeName));
+                    .RegisterStatelessServiceFactory<TService>(c, serviceTypeName, tag));
 
             return registration;
+        }
+
+        public static IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle>
+            RegisterStatelessService<TService>(
+                this ContainerBuilder builder,
+                string serviceTypeName)
+            where TService : StatelessService
+        {
+            return RegisterStatelessService<TService>(builder, serviceTypeName, null);
         }
 
         private static IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle>
             RegisterServiceWithContainer<TService>(
                 ContainerBuilder builder,
-                string serviceTypeName)
+                string serviceTypeName,
+                object tag)
             where TService : class
         {
             if (builder == null)
@@ -99,7 +121,7 @@ namespace Autofac.Integration.ServiceFabric
             if (!serviceType.CanBeProxied())
                 throw new ArgumentException(serviceType.GetInvalidProxyTypeErrorMessage());
 
-            var registration = builder.RegisterServiceWithInterception<TService, ServiceInterceptor>();
+            var registration = builder.RegisterServiceWithInterception<TService, ServiceInterceptor>(tag);
 
             registration.EnsureRegistrationIsInstancePerLifetimeScope();
 

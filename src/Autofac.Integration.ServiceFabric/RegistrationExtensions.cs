@@ -56,12 +56,13 @@ namespace Autofac.Integration.ServiceFabric
 
         internal static IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle>
             RegisterServiceWithInterception<TService, TInterceptor>(
-                this ContainerBuilder builder)
+                this ContainerBuilder builder,
+                object tag)
             where TService : class
             where TInterceptor : IInterceptor
         {
             return builder.RegisterType<TService>()
-                .InstancePerLifetimeScope()
+                .InstancePerMatchingLifetimeScope(tag ?? "ServiceFabric")
                 .EnableClassInterceptors()
                 .InterceptedBy(typeof(TInterceptor));
         }
