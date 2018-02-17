@@ -76,7 +76,7 @@ namespace Autofac.Integration.ServiceFabric
             {
                 var registration = args.ComponentRegistration;
 
-                if (registration.Lifetime.GetType() == typeof(CurrentScopeLifetime) &&
+                if (registration.Lifetime.GetType() == typeof(MatchingScopeLifetime) &&
                     registration.Sharing == InstanceSharing.Shared &&
                     registration.Ownership == InstanceOwnership.OwnedByLifetimeScope) return;
 

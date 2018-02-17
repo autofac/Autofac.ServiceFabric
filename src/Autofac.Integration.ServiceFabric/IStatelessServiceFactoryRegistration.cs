@@ -29,9 +29,6 @@ namespace Autofac.Integration.ServiceFabric
 {
     internal interface IStatelessServiceFactoryRegistration
     {
-        void RegisterStatelessServiceFactory<TService>(ILifetimeScope lifetimeScope, string serviceTypeName)
-            where TService : StatelessService;
-
         void RegisterStatelessServiceFactory<TService>(ILifetimeScope lifetimeScope, string serviceTypeName, object tag = null)
             where TService : StatelessService;
     }

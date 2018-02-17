@@ -50,7 +50,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertSharing<Actor1>(InstanceSharing.Shared);
-            container.AssertLifetime<Actor1, CurrentScopeLifetime>();
+            container.AssertLifetime<Actor1, MatchingScopeLifetime>();
             container.AssertOwnership<Actor1>(InstanceOwnership.OwnedByLifetimeScope);
         }
 
@@ -64,7 +64,7 @@ namespace Autofac.Integration.ServiceFabric.Test
 
             var container = builder.Build();
 
-            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, null, null), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, null, null, null), Times.Once);
         }
 
         [Fact]
@@ -90,7 +90,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertRegistered<Actor1>();
-            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, null, null), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, null, null, null), Times.Once);
         }
 
         [Fact]
@@ -107,7 +107,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertRegistered<Actor1>();
-            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, stateManagerFactory, null, null), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, stateManagerFactory, null, null, null), Times.Once);
         }
 
         [Fact]
@@ -122,7 +122,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertRegistered<Actor1>();
-            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, stateProvider, null), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, stateProvider, null, null), Times.Once);
         }
 
         [Fact]
@@ -137,7 +137,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertRegistered<Actor1>();
-            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, null, settings), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, null, settings, null), Times.Once);
         }
 
         [Fact]
