@@ -23,6 +23,7 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Fabric;
 using Microsoft.ServiceFabric.Services.Runtime;
@@ -33,7 +34,7 @@ namespace Autofac.Integration.ServiceFabric
     [SuppressMessage("Microsoft.Performance", "CA1812", Justification = "Instantiated at runtime via dependency injection")]
     internal sealed class StatefulServiceFactoryRegistration : IStatefulServiceFactoryRegistration
     {
-        public void RegisterStatefulServiceFactory<TService>(ILifetimeScope container, string serviceTypeName)
+        public void RegisterStatefulServiceFactory<TService>(ILifetimeScope container, string serviceTypeName, Action<Exception> exceptionCallback)
             where TService : StatefulServiceBase
         {
             ServiceRuntime.RegisterServiceAsync(serviceTypeName, context =>
@@ -44,8 +45,16 @@ namespace Autofac.Integration.ServiceFabric
                         .As<StatefulServiceContext>()
                         .As<ServiceContext>();
                 });
-                var service = lifetimeScope.Resolve<TService>();
-                return service;
+                try
+                {
+                    var service = lifetimeScope.Resolve<TService>();
+                    return service;
+                }
+                catch (Exception e)
+                {
+                    exceptionCallback?.Invoke(e);
+                    throw;
+                }
             }).GetAwaiter().GetResult();
         }
     }
