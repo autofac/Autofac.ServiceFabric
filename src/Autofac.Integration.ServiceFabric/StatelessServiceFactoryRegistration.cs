@@ -34,7 +34,7 @@ namespace Autofac.Integration.ServiceFabric
     [SuppressMessage("Microsoft.Performance", "CA1812", Justification = "Instantiated at runtime via dependency injection")]
     internal sealed class StatelessServiceFactoryRegistration : IStatelessServiceFactoryRegistration
     {
-        public void RegisterStatelessServiceFactory<TService>(ILifetimeScope container, string serviceTypeName, Action<Exception> exceptionCallback)
+        public void RegisterStatelessServiceFactory<TService>(ILifetimeScope container, string serviceTypeName, Action<Exception> constructorExceptionCallback)
             where TService : StatelessService
         {
             ServiceRuntime.RegisterServiceAsync(serviceTypeName, context =>
@@ -52,7 +52,7 @@ namespace Autofac.Integration.ServiceFabric
                 }
                 catch (Exception e)
                 {
-                    exceptionCallback?.Invoke(e);
+                    constructorExceptionCallback?.Invoke(e);
                     throw;
                 }
             }).GetAwaiter().GetResult();

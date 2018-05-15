@@ -83,7 +83,7 @@ namespace Autofac.Integration.ServiceFabric
         /// </summary>
         /// <param name="builder">The container builder.</param>
         /// <param name="serviceTypeName">ServiceTypeName as provided in service manifest.</param>
-        /// <param name="exceptionCallback">Callback will be invoked if there are an exception thrown during resolving.</param>
+        /// <param name="constructorExceptionCallback">Callback will be invoked if there are an exception thrown during resolving.</param>
         /// <typeparam name="TService">The type of the stateless service to register.</typeparam>
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         /// <exception cref="ArgumentException">Thrown when <typeparamref name="TService"/> is not a valid service type.</exception>
@@ -92,14 +92,14 @@ namespace Autofac.Integration.ServiceFabric
             RegisterStatelessService<TService>(
                 this ContainerBuilder builder,
                 string serviceTypeName,
-                Action<Exception> exceptionCallback)
+                Action<Exception> constructorExceptionCallback)
             where TService : StatelessService
         {
             var registration = RegisterServiceWithContainer<TService>(builder, serviceTypeName);
 
             builder.RegisterBuildCallback(c =>
                 c.Resolve<IStatelessServiceFactoryRegistration>()
-                    .RegisterStatelessServiceFactory<TService>(c, serviceTypeName, exceptionCallback));
+                    .RegisterStatelessServiceFactory<TService>(c, serviceTypeName, constructorExceptionCallback));
 
             return registration;
         }
