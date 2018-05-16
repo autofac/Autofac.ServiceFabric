@@ -32,10 +32,6 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.6.2" />
     <PackageReference Include="Autofac.Extras.DynamicProxy" Version="4.4.0" />
-    <PackageReference Include="Microsoft.ServiceFabric" Version="6.1.456" />
-    <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="3.0.456" />
-    <PackageReference Include="Microsoft.ServiceFabric.Data" Version="3.0.456" />
-    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="3.0.456" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.6.0-beta2">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
@@ -45,6 +41,10 @@
     <PackageReference Include="Microsoft.Net.RoslynDiagnostics" Version="2.6.0-beta2">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.ServiceFabric" Version="6.2.274" />
+    <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="3.1.274" />
+    <PackageReference Include="Microsoft.ServiceFabric.Data" Version="3.1.274" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="3.1.274" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta004">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
