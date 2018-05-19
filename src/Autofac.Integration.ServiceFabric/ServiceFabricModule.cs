@@ -34,7 +34,7 @@ namespace Autofac.Integration.ServiceFabric
     {
         private readonly Action<Exception> _constructorExceptionCallback;
 
-        public ServiceFabricModule(Action<Exception> constructorExceptionCallback = null)
+        internal ServiceFabricModule(Action<Exception> constructorExceptionCallback = null)
         {
             _constructorExceptionCallback = constructorExceptionCallback ?? (ex => { });
         }
