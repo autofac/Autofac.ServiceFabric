@@ -107,7 +107,21 @@ namespace Autofac.Integration.ServiceFabric.Test
 
             var container = builder.Build();
 
-            factoryMock.Verify(x => x.RegisterStatefulServiceFactory<StatefulService1>(container, "ServiceType"), Times.Once);
+            factoryMock.Verify(x => x.RegisterStatefulServiceFactory<StatefulService1>(container, "ServiceType", null), Times.Once);
+        }
+
+        [Fact]
+        public void RegisterStatefulServiceAddsFactoryCallbackWithExceptionCallback()
+        {
+            Action<Exception> callback = (e) => { };
+            var builder = new ContainerBuilder();
+            builder.RegisterStatefulService<StatefulService1>("ServiceType", callback);
+            var factoryMock = new Mock<IStatefulServiceFactoryRegistration>();
+            builder.RegisterInstance(factoryMock.Object);
+
+            var container = builder.Build();
+
+            factoryMock.Verify(x => x.RegisterStatefulServiceFactory<StatefulService1>(container, "ServiceType", callback), Times.Once);
         }
 
         [Fact]
@@ -120,7 +134,21 @@ namespace Autofac.Integration.ServiceFabric.Test
 
             var container = builder.Build();
 
-            factoryMock.Verify(x => x.RegisterStatelessServiceFactory<StatelessService1>(container, "ServiceType"), Times.Once);
+            factoryMock.Verify(x => x.RegisterStatelessServiceFactory<StatelessService1>(container, "ServiceType", null), Times.Once);
+        }
+
+        [Fact]
+        public void RegisterStatelessServiceAddsFactoryCallbackWithExceptionCallback()
+        {
+            Action<Exception> callback = (e) => { };
+            var builder = new ContainerBuilder();
+            builder.RegisterStatelessService<StatelessService1>("ServiceType", callback);
+            var factoryMock = new Mock<IStatelessServiceFactoryRegistration>();
+            builder.RegisterInstance(factoryMock.Object);
+
+            var container = builder.Build();
+
+            factoryMock.Verify(x => x.RegisterStatelessServiceFactory<StatelessService1>(container, "ServiceType", callback), Times.Once);
         }
 
         [Fact]
@@ -158,7 +186,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertRegistered<StatefulService1>();
-            factoryMock.Verify(x => x.RegisterStatefulServiceFactory<StatefulService1>(container, "serviceTypeName"), Times.Once);
+            factoryMock.Verify(x => x.RegisterStatefulServiceFactory<StatefulService1>(container, "serviceTypeName", null), Times.Once);
         }
 
         [Fact]
@@ -172,7 +200,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertRegistered<StatelessService1>();
-            factoryMock.Verify(x => x.RegisterStatelessServiceFactory<StatelessService1>(container, "serviceTypeName"), Times.Once);
+            factoryMock.Verify(x => x.RegisterStatelessServiceFactory<StatelessService1>(container, "serviceTypeName", null), Times.Once);
         }
 
         [Fact]
