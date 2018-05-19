@@ -45,9 +45,15 @@ namespace Autofac.Integration.ServiceFabric
         public void RegisterStatefulServiceFactory<TService>(ILifetimeScope container, string serviceTypeName)
             where TService : StatefulServiceBase
         {
+            RegisterStatefulServiceFactory<TService>(container, serviceTypeName, null);
+        }
+
+        public void RegisterStatefulServiceFactory<TService>(ILifetimeScope container, string serviceTypeName, object tag = null)
+            where TService : StatefulServiceBase
+        {
             ServiceRuntime.RegisterServiceAsync(serviceTypeName, context =>
             {
-                var lifetimeScope = container.BeginLifetimeScope(builder =>
+                var lifetimeScope = container.BeginLifetimeScope(tag ?? "ServiceFabric", builder =>
                 {
                     builder.RegisterInstance(context)
                         .As<StatefulServiceContext>()

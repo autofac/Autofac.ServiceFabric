@@ -79,7 +79,21 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertSharing<StatefulService1>(InstanceSharing.Shared);
-            container.AssertLifetime<StatefulService1, CurrentScopeLifetime>();
+            container.AssertLifetime<StatefulService1, MatchingScopeLifetime>();
+            container.AssertOwnership<StatefulService1>(InstanceOwnership.OwnedByLifetimeScope);
+        }
+
+        [Fact]
+        public void RegisterStatefulServiceRegistersInstancePerMatchingLifetimeScope()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterStatefulService<StatefulService1>("ServiceType", "Tag");
+            builder.RegisterInstance(new Mock<IStatefulServiceFactoryRegistration>().Object);
+
+            var container = builder.Build();
+
+            container.AssertSharing<StatefulService1>(InstanceSharing.Shared);
+            container.AssertLifetime<StatefulService1, MatchingScopeLifetime>();
             container.AssertOwnership<StatefulService1>(InstanceOwnership.OwnedByLifetimeScope);
         }
 
@@ -93,7 +107,21 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertSharing<StatelessService1>(InstanceSharing.Shared);
-            container.AssertLifetime<StatelessService1, CurrentScopeLifetime>();
+            container.AssertLifetime<StatelessService1, MatchingScopeLifetime>();
+            container.AssertOwnership<StatelessService1>(InstanceOwnership.OwnedByLifetimeScope);
+        }
+
+        [Fact]
+        public void RegisterStatelessServiceRegistersInstancePerMatchingLifetimeScope()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterStatelessService<StatelessService1>("ServiceType", "Tag");
+            builder.RegisterInstance(new Mock<IStatelessServiceFactoryRegistration>().Object);
+
+            var container = builder.Build();
+
+            container.AssertSharing<StatelessService1>(InstanceSharing.Shared);
+            container.AssertLifetime<StatelessService1, MatchingScopeLifetime>();
             container.AssertOwnership<StatelessService1>(InstanceOwnership.OwnedByLifetimeScope);
         }
 
@@ -107,7 +135,7 @@ namespace Autofac.Integration.ServiceFabric.Test
 
             var container = builder.Build();
 
-            factoryMock.Verify(x => x.RegisterStatefulServiceFactory<StatefulService1>(container, "ServiceType"), Times.Once);
+            factoryMock.Verify(x => x.RegisterStatefulServiceFactory<StatefulService1>(container, "ServiceType", null), Times.Once);
         }
 
         [Fact]
@@ -120,7 +148,7 @@ namespace Autofac.Integration.ServiceFabric.Test
 
             var container = builder.Build();
 
-            factoryMock.Verify(x => x.RegisterStatelessServiceFactory<StatelessService1>(container, "ServiceType"), Times.Once);
+            factoryMock.Verify(x => x.RegisterStatelessServiceFactory<StatelessService1>(container, "ServiceType", null), Times.Once);
         }
 
         [Fact]
@@ -158,7 +186,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertRegistered<StatefulService1>();
-            factoryMock.Verify(x => x.RegisterStatefulServiceFactory<StatefulService1>(container, "serviceTypeName"), Times.Once);
+            factoryMock.Verify(x => x.RegisterStatefulServiceFactory<StatefulService1>(container, "serviceTypeName", null), Times.Once);
         }
 
         [Fact]
@@ -172,7 +200,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertRegistered<StatelessService1>();
-            factoryMock.Verify(x => x.RegisterStatelessServiceFactory<StatelessService1>(container, "serviceTypeName"), Times.Once);
+            factoryMock.Verify(x => x.RegisterStatelessServiceFactory<StatelessService1>(container, "serviceTypeName", null), Times.Once);
         }
 
         [Fact]

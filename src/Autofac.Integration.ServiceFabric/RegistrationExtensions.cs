@@ -57,12 +57,13 @@ namespace Autofac.Integration.ServiceFabric
 
         internal static IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle>
             RegisterServiceWithInterception<TService, TInterceptor>(
-                this ContainerBuilder builder)
+                this ContainerBuilder builder,
+                object tag)
             where TService : class
             where TInterceptor : IInterceptor
         {
             return builder.RegisterType<TService>()
-                .InstancePerLifetimeScope()
+                .InstancePerMatchingLifetimeScope(tag ?? "ServiceFabric")
                 .EnableClassInterceptors()
                 .InterceptedBy(typeof(TInterceptor));
         }
@@ -76,7 +77,7 @@ namespace Autofac.Integration.ServiceFabric
             {
                 var registration = args.ComponentRegistration;
 
-                if (registration.Lifetime.GetType() == typeof(CurrentScopeLifetime) &&
+                if (registration.Lifetime.GetType() == typeof(MatchingScopeLifetime) &&
                     registration.Sharing == InstanceSharing.Shared &&
                     registration.Ownership == InstanceOwnership.OwnedByLifetimeScope) return;
 
