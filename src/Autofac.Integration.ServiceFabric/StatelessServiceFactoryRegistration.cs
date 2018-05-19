@@ -34,7 +34,15 @@ namespace Autofac.Integration.ServiceFabric
     [SuppressMessage("Microsoft.Performance", "CA1812", Justification = "Instantiated at runtime via dependency injection")]
     internal sealed class StatelessServiceFactoryRegistration : IStatelessServiceFactoryRegistration
     {
-        public void RegisterStatelessServiceFactory<TService>(ILifetimeScope container, string serviceTypeName, Action<Exception> constructorExceptionCallback)
+        public Action<Exception> ConstructorExceptionCallback { get; }
+
+        // ReSharper disable once UnusedMember.Global
+        public StatelessServiceFactoryRegistration(Action<Exception> constructorExceptionCallback)
+        {
+            ConstructorExceptionCallback = constructorExceptionCallback;
+        }
+
+        public void RegisterStatelessServiceFactory<TService>(ILifetimeScope container, string serviceTypeName)
             where TService : StatelessService
         {
             ServiceRuntime.RegisterServiceAsync(serviceTypeName, context =>
@@ -50,9 +58,12 @@ namespace Autofac.Integration.ServiceFabric
                     var service = lifetimeScope.Resolve<TService>();
                     return service;
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    constructorExceptionCallback?.Invoke(e);
+                    // Proactively dispose lifetime scope as interceptor will not be called.
+                    lifetimeScope.Dispose();
+
+                    ConstructorExceptionCallback(ex);
                     throw;
                 }
             }).GetAwaiter().GetResult();

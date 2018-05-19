@@ -35,6 +35,14 @@ namespace Autofac.Integration.ServiceFabric
     [SuppressMessage("Microsoft.Performance", "CA1812", Justification = "Instantiated at runtime via dependency injection")]
     internal sealed class ActorFactoryRegistration : IActorFactoryRegistration
     {
+        internal Action<Exception> ConstructorExceptionCallback { get; }
+
+        // ReSharper disable once UnusedMember.Global
+        public ActorFactoryRegistration(Action<Exception> constructorExceptionCallback)
+        {
+            ConstructorExceptionCallback = constructorExceptionCallback;
+        }
+
         public void RegisterActorFactory<TActor>(
             ILifetimeScope container,
             Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = null,
@@ -59,8 +67,19 @@ namespace Autofac.Integration.ServiceFabric
                             builder.RegisterInstance(actorId)
                                 .As<ActorId>();
                         });
-                        var actor = lifetimeScope.Resolve<TActor>();
-                        return actor;
+                        try
+                        {
+                            var actor = lifetimeScope.Resolve<TActor>();
+                            return actor;
+                        }
+                        catch (Exception ex)
+                        {
+                            // Proactively dispose lifetime scope as interceptor will not be called.
+                            lifetimeScope.Dispose();
+
+                            ConstructorExceptionCallback(ex);
+                            throw;
+                        }
                     },
                     stateManagerFactory,
                     stateProvider,

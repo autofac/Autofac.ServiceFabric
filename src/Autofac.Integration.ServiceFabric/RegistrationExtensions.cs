@@ -43,13 +43,14 @@ namespace Autofac.Integration.ServiceFabric
         /// Adds the core services required by the Service Fabric integration.
         /// </summary>
         /// <param name="builder">The container builder to register the services with.</param>
-        public static void RegisterServiceFabricSupport(this ContainerBuilder builder)
+        /// <param name="constructorExceptionCallback">Callback will be invoked if there are an exception thrown during resolving.</param>
+        public static void RegisterServiceFabricSupport(this ContainerBuilder builder, Action<Exception> constructorExceptionCallback = null)
         {
             if (builder == null) throw new ArgumentNullException(nameof(builder));
 
             if (builder.Properties.ContainsKey(MetadataKey)) return;
 
-            builder.RegisterModule(new ServiceFabricModule());
+            builder.RegisterModule(new ServiceFabricModule(constructorExceptionCallback));
 
             builder.Properties.Add(MetadataKey, true);
         }

@@ -23,6 +23,8 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
+
 namespace Autofac.Integration.ServiceFabric
 {
     /// <summary>
@@ -30,6 +32,13 @@ namespace Autofac.Integration.ServiceFabric
     /// </summary>
     internal sealed class ServiceFabricModule : Module
     {
+        private readonly Action<Exception> _constructorExceptionCallback;
+
+        public ServiceFabricModule(Action<Exception> constructorExceptionCallback = null)
+        {
+            _constructorExceptionCallback = constructorExceptionCallback ?? (ex => { });
+        }
+
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<ActorInterceptor>()
@@ -40,14 +49,17 @@ namespace Autofac.Integration.ServiceFabric
 
             builder.RegisterType<ActorFactoryRegistration>()
                 .As<IActorFactoryRegistration>()
+                .WithParameter(TypedParameter.From(_constructorExceptionCallback))
                 .SingleInstance();
 
             builder.RegisterType<StatelessServiceFactoryRegistration>()
                 .As<IStatelessServiceFactoryRegistration>()
+                .WithParameter(TypedParameter.From(_constructorExceptionCallback))
                 .SingleInstance();
 
             builder.RegisterType<StatefulServiceFactoryRegistration>()
                 .As<IStatefulServiceFactoryRegistration>()
+                .WithParameter(TypedParameter.From(_constructorExceptionCallback))
                 .SingleInstance();
         }
     }
