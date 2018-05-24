@@ -41,6 +41,7 @@ namespace Autofac.Integration.ServiceFabric
         /// <param name="stateManagerFactory">A factory method to create <see cref="IActorStateManager"/>.</param>
         /// <param name="stateProvider">State provider to store the state for actor objects.</param>
         /// <param name="settings">/// Settings to configures behavior of Actor Service.</param>
+        /// <param name="actorServiceType">/// Custom actor service</param>
         /// <typeparam name="TActor">The type of the actor to register.</typeparam>
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         /// <exception cref="ArgumentException">Thrown when <typeparamref name="TActor"/> is not a valid actor type.</exception>
@@ -50,7 +51,8 @@ namespace Autofac.Integration.ServiceFabric
                 this ContainerBuilder builder,
                 Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = null,
                 IActorStateProvider stateProvider = null,
-                ActorServiceSettings settings = null)
+                ActorServiceSettings settings = null,
+                Type actorServiceType = null)
             where TActor : ActorBase
         {
             if (builder == null)
@@ -61,13 +63,16 @@ namespace Autofac.Integration.ServiceFabric
             if (!actorType.CanBeProxied())
                 throw new ArgumentException(actorType.GetInvalidProxyTypeErrorMessage());
 
+            if (actorServiceType != null && !typeof(ActorService).IsAssignableFrom(actorServiceType))
+                throw new ArgumentException(actorServiceType.GetInvalidActorServiceTypeErrorMessage());
+
             var registration = builder.RegisterServiceWithInterception<TActor, ActorInterceptor>();
 
             registration.EnsureRegistrationIsInstancePerLifetimeScope();
 
             builder.RegisterBuildCallback(
                 c => c.Resolve<IActorFactoryRegistration>().RegisterActorFactory<TActor>(
-                    c, stateManagerFactory, stateProvider, settings));
+                    c, stateManagerFactory, stateProvider, settings, actorServiceType));
 
             return registration;
         }

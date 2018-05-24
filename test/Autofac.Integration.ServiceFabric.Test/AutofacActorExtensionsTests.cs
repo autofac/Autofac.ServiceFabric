@@ -64,7 +64,7 @@ namespace Autofac.Integration.ServiceFabric.Test
 
             var container = builder.Build();
 
-            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, null, null), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, null, null, null), Times.Once);
         }
 
         [Fact]
@@ -90,7 +90,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertRegistered<Actor1>();
-            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, null, null), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, null, null, null), Times.Once);
         }
 
         [Fact]
@@ -107,7 +107,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertRegistered<Actor1>();
-            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, stateManagerFactory, null, null), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, stateManagerFactory, null, null, null), Times.Once);
         }
 
         [Fact]
@@ -122,7 +122,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertRegistered<Actor1>();
-            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, stateProvider, null), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, stateProvider, null, null), Times.Once);
         }
 
         [Fact]
@@ -137,7 +137,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertRegistered<Actor1>();
-            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, null, settings), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, null, settings, null), Times.Once);
         }
 
         [Fact]
@@ -206,6 +206,20 @@ namespace Autofac.Integration.ServiceFabric.Test
 
             Assert.Equal(typeof(Actor1).GetServiceNotRegisteredAsInstancePerLifetimeScopeMessage(), exception.Message);
         }
+
+        [Fact]
+        public void RegisterActorThrowsIfProvidedActorServiceIsNotInheritsFromActorService()
+        {
+            var builder = new ContainerBuilder();
+
+            var exception = Assert.Throws<ArgumentException>(() => builder.RegisterActor<Actor1>(actorServiceType: typeof(WrongActorService)));
+
+            Assert.Equal(typeof(WrongActorService).GetInvalidActorServiceTypeErrorMessage(), exception.Message);
+        }
+    }
+
+    public class WrongActorService
+    {
     }
 
     public class ActorModule : Module
