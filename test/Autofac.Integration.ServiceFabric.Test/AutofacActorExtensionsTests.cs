@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Fabric;
 using Autofac.Core;
 using Autofac.Core.Lifetime;
 using Microsoft.ServiceFabric.Actors;
@@ -64,7 +65,7 @@ namespace Autofac.Integration.ServiceFabric.Test
 
             var container = builder.Build();
 
-            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, null, null, null), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, null, null), Times.Once);
         }
 
         [Fact]
@@ -90,7 +91,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertRegistered<Actor1>();
-            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, null, null, null), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, null, null), Times.Once);
         }
 
         [Fact]
@@ -107,7 +108,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertRegistered<Actor1>();
-            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, stateManagerFactory, null, null, null), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, stateManagerFactory, null, null), Times.Once);
         }
 
         [Fact]
@@ -122,7 +123,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertRegistered<Actor1>();
-            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, stateProvider, null, null), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, stateProvider, null), Times.Once);
         }
 
         [Fact]
@@ -137,7 +138,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertRegistered<Actor1>();
-            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, null, settings, null), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, null, null, settings), Times.Once);
         }
 
         [Fact]
@@ -208,18 +209,32 @@ namespace Autofac.Integration.ServiceFabric.Test
         }
 
         [Fact]
-        public void RegisterActorThrowsIfProvidedActorServiceIsNotInheritsFromActorService()
+        public void ContainerShouldRegisterActorServiceIfRegisterActorServiceMethodWasInvoked()
         {
             var builder = new ContainerBuilder();
+            var factoryMock = new Mock<IActorFactoryRegistration>();
+            builder.RegisterInstance(factoryMock.Object);
+            builder.RegisterActorService<CustomActorService>();
+            builder.RegisterActor<Actor1>();
 
-            var exception = Assert.Throws<ArgumentException>(() => builder.RegisterActor<Actor1>(actorServiceType: typeof(WrongActorService)));
+            var container = builder.Build();
 
-            Assert.Equal(typeof(WrongActorService).GetInvalidActorServiceTypeErrorMessage(), exception.Message);
+            container.AssertRegistered<ActorService>();
         }
     }
 
-    public class WrongActorService
+    internal class CustomActorService : ActorService
     {
+        public CustomActorService(
+            StatefulServiceContext context,
+            ActorTypeInformation actorTypeInfo,
+            Func<ActorService, ActorId, ActorBase> actorFactory = null,
+            Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = null,
+            IActorStateProvider stateProvider = null,
+            ActorServiceSettings settings = null)
+            : base(context, actorTypeInfo, actorFactory, stateManagerFactory, stateProvider, settings)
+        {
+        }
     }
 
     public class ActorModule : Module
