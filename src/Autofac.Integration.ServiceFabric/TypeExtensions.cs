@@ -47,10 +47,5 @@ namespace Autofac.Integration.ServiceFabric
         {
             return string.Format(CultureInfo.CurrentCulture, TypeExtensionsResources.ServiceNotRegisteredAsIntancePerLifetimeScope, type.FullName);
         }
-
-        internal static string GetInvalidActorServiceTypeErrorMessage(this Type type)
-        {
-            return string.Format(CultureInfo.CurrentCulture, TypeExtensionsResources.InvalidActorServiceTypeErrorMessage, type.FullName);
-        }
     }
 }

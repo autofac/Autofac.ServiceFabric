@@ -77,16 +77,5 @@ namespace Autofac.Integration.ServiceFabric {
                 return ResourceManager.GetString("ServiceNotRegisteredAsIntancePerLifetimeScope", resourceCulture);
             }
         }
-
-        /// <summary>
-        ///   Looks up a localized string similar to The type {0} should be inherits from ActorService abstract class.
-        /// </summary>
-        internal static string InvalidActorServiceTypeErrorMessage
-        {
-            get
-            {
-                return ResourceManager.GetString("InvalidActorServiceTypeErrorMessage", resourceCulture);
-            }
-        }
     }
 }
