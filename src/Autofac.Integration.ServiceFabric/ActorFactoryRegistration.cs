@@ -26,7 +26,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Fabric;
-using Autofac.Core;
 using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Runtime;
 
@@ -46,6 +45,7 @@ namespace Autofac.Integration.ServiceFabric
 
         public void RegisterActorFactory<TActor>(
             ILifetimeScope container,
+            Type actorServiceType,
             Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = null,
             IActorStateProvider stateProvider = null,
             ActorServiceSettings settings = null)
@@ -80,7 +80,8 @@ namespace Autofac.Integration.ServiceFabric
                     }
                 };
 
-                return container.Resolve<ActorService>(
+                return (ActorService)container.Resolve(
+                    actorServiceType,
                     new TypedParameter(typeof(StatefulServiceContext), context),
                     new TypedParameter(typeof(ActorTypeInformation), actorTypeInfo),
                     new TypedParameter(typeof(Func<ActorService, ActorId, ActorBase>), actorFactory),

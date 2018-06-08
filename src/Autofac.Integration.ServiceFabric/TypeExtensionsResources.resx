@@ -123,4 +123,7 @@
   <data name="ServiceNotRegisteredAsIntancePerLifetimeScope" xml:space="preserve">
     <value>The service {0} must be registered as InstancePerLifetimeScope.</value>
   </data>
+  <data name="InvalidActorServiceTypeErrorMessage" xml:space="preserve">
+    <value>The type {0} need to be inherited from ActorService.</value>
+  </data>
 </root>
