@@ -32,6 +32,7 @@ namespace Autofac.Integration.ServiceFabric
     {
         void RegisterActorFactory<TActor>(
             ILifetimeScope lifetimeScope,
+            Type actorServiceType,
             Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = null,
             IActorStateProvider stateProvider = null,
             ActorServiceSettings settings = null)

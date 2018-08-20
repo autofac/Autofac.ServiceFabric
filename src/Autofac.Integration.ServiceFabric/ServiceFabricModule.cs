@@ -24,6 +24,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using Microsoft.ServiceFabric.Actors.Runtime;
 
 namespace Autofac.Integration.ServiceFabric
 {
@@ -61,6 +62,9 @@ namespace Autofac.Integration.ServiceFabric
                 .As<IStatefulServiceFactoryRegistration>()
                 .WithParameter(TypedParameter.From(_constructorExceptionCallback))
                 .SingleInstance();
+
+            builder.RegisterType<ActorService>()
+                .AsSelf();
         }
     }
 }

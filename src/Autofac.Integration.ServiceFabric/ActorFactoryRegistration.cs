@@ -45,6 +45,7 @@ namespace Autofac.Integration.ServiceFabric
 
         public void RegisterActorFactory<TActor>(
             ILifetimeScope container,
+            Type actorServiceType,
             Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = null,
             IActorStateProvider stateProvider = null,
             ActorServiceSettings settings = null)
@@ -52,38 +53,41 @@ namespace Autofac.Integration.ServiceFabric
         {
             ActorRuntime.RegisterActorAsync<TActor>((context, actorTypeInfo) =>
             {
-                return new ActorService(
-                    context,
-                    actorTypeInfo,
-                    (actorService, actorId) =>
+                Func<ActorService, ActorId, ActorBase> actorFactory = (actorService, actorId) =>
+                {
+                    var lifetimeScope = container.BeginLifetimeScope(builder =>
                     {
-                        var lifetimeScope = container.BeginLifetimeScope(builder =>
-                        {
-                            builder.RegisterInstance(context)
-                                .As<StatefulServiceContext>()
-                                .As<ServiceContext>();
-                            builder.RegisterInstance(actorService)
-                                .As<ActorService>();
-                            builder.RegisterInstance(actorId)
-                                .As<ActorId>();
-                        });
-                        try
-                        {
-                            var actor = lifetimeScope.Resolve<TActor>();
-                            return actor;
-                        }
-                        catch (Exception ex)
-                        {
-                            // Proactively dispose lifetime scope as interceptor will not be called.
-                            lifetimeScope.Dispose();
+                        builder.RegisterInstance(context)
+                            .As<StatefulServiceContext>()
+                            .As<ServiceContext>();
+                        builder.RegisterInstance(actorService)
+                            .As<ActorService>();
+                        builder.RegisterInstance(actorId)
+                            .As<ActorId>();
+                    });
+                    try
+                    {
+                        var actor = lifetimeScope.Resolve<TActor>();
+                        return actor;
+                    }
+                    catch (Exception ex)
+                    {
+                        // Proactively dispose lifetime scope as interceptor will not be called.
+                        lifetimeScope.Dispose();
 
-                            ConstructorExceptionCallback(ex);
-                            throw;
-                        }
-                    },
-                    stateManagerFactory,
-                    stateProvider,
-                    settings);
+                        ConstructorExceptionCallback(ex);
+                        throw;
+                    }
+                };
+
+                return (ActorService)container.Resolve(
+                    actorServiceType,
+                    new TypedParameter(typeof(StatefulServiceContext), context),
+                    new TypedParameter(typeof(ActorTypeInformation), actorTypeInfo),
+                    new TypedParameter(typeof(Func<ActorService, ActorId, ActorBase>), actorFactory),
+                    new TypedParameter(typeof(Func<ActorBase, IActorStateProvider, IActorStateManager>), stateManagerFactory),
+                    new TypedParameter(typeof(IStateProvider), stateProvider),
+                    new TypedParameter(typeof(ActorServiceSettings), settings));
             }).GetAwaiter().GetResult();
         }
     }

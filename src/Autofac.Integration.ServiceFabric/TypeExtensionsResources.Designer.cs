@@ -77,5 +77,12 @@ namespace Autofac.Integration.ServiceFabric {
                 return ResourceManager.GetString("ServiceNotRegisteredAsIntancePerLifetimeScope", resourceCulture);
             }
         }
+
+        internal static string InvalidActorServiceTypeErrorMessage {
+            get
+            {
+                return ResourceManager.GetString("InvalidActorServiceTypeErrorMessage", resourceCulture);
+            }
+        }
     }
 }
