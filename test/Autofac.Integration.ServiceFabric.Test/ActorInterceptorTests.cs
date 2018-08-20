@@ -1,6 +1,6 @@
-﻿using Castle.DynamicProxy;
-using Moq;
+﻿using Moq;
 using Xunit;
+using IInvocation = Castle.DynamicProxy.IInvocation;
 
 namespace Autofac.Integration.ServiceFabric.Test
 {
