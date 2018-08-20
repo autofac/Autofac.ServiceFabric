@@ -53,7 +53,7 @@ namespace Autofac.Integration.ServiceFabric
         {
             ActorRuntime.RegisterActorAsync<TActor>((context, actorTypeInfo) =>
             {
-                Func<ActorService, ActorId, ActorBase> actorFactory = (actorService, actorId) =>
+                ActorBase ActorFactory(ActorService actorService, ActorId actorId)
                 {
                     var lifetimeScope = container.BeginLifetimeScope(builder =>
                     {
@@ -78,13 +78,13 @@ namespace Autofac.Integration.ServiceFabric
                         ConstructorExceptionCallback(ex);
                         throw;
                     }
-                };
+                }
 
                 return (ActorService)container.Resolve(
                     actorServiceType,
                     new TypedParameter(typeof(StatefulServiceContext), context),
                     new TypedParameter(typeof(ActorTypeInformation), actorTypeInfo),
-                    new TypedParameter(typeof(Func<ActorService, ActorId, ActorBase>), actorFactory),
+                    new TypedParameter(typeof(Func<ActorService, ActorId, ActorBase>), (Func<ActorService, ActorId, ActorBase>)ActorFactory),
                     new TypedParameter(typeof(Func<ActorBase, IActorStateProvider, IActorStateManager>), stateManagerFactory),
                     new TypedParameter(typeof(IStateProvider), stateProvider),
                     new TypedParameter(typeof(ActorServiceSettings), settings));

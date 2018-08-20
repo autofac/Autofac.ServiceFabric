@@ -64,7 +64,8 @@ namespace Autofac.Integration.ServiceFabric
                 .SingleInstance();
 
             builder.RegisterType<ActorService>()
-                .AsSelf();
+                .AsSelf()
+                .InstancePerDependency();
         }
     }
 }

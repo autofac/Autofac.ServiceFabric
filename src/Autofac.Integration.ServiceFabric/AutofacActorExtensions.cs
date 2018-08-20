@@ -38,7 +38,7 @@ namespace Autofac.Integration.ServiceFabric
         /// Registers an actor service with the container.
         /// </summary>
         /// <param name="builder">The container builder.</param>
-        /// <param name="actorServiceType">Actor Service Type used for the registered actor</param>
+        /// <param name="actorServiceType"><see cref="Type"/> of the actor service to create (defaults to <see cref="ActorService"/>).</param>
         /// <param name="stateManagerFactory">A factory method to create <see cref="IActorStateManager"/>.</param>
         /// <param name="stateProvider">State provider to store the state for actor objects.</param>
         /// <param name="settings">/// Settings to configures behavior of Actor Service.</param>
@@ -65,11 +65,11 @@ namespace Autofac.Integration.ServiceFabric
 
             if (actorServiceType == null)
                 actorServiceType = typeof(ActorService);
+            else
+                builder.RegisterType(actorServiceType).AsSelf().IfNotRegistered(actorServiceType);
 
             if (!typeof(ActorService).IsAssignableFrom(actorServiceType))
                 throw new ArgumentException(actorServiceType.GetInvalidActorServiceTypeErrorMessage());
-
-            builder.RegisterType(actorServiceType).AsSelf();
 
             var registration = builder.RegisterServiceWithInterception<TActor, ActorInterceptor>();
 
