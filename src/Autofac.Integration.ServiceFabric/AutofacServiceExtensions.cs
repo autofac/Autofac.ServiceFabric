@@ -39,6 +39,7 @@ namespace Autofac.Integration.ServiceFabric
         /// </summary>
         /// <param name="builder">The container builder.</param>
         /// <param name="serviceTypeName">ServiceTypeName as provided in service manifest.</param>
+        /// <param name="lifetimeScopeTag">The tag applied to the <see cref="ILifetimeScope"/> in which the stateful service is hosted.</param>
         /// <typeparam name="TService">The type of the stateful service to register.</typeparam>
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         /// <exception cref="ArgumentException">Thrown when <typeparamref name="TService"/> is not a valid service type.</exception>
@@ -46,14 +47,15 @@ namespace Autofac.Integration.ServiceFabric
         public static IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle>
             RegisterStatefulService<TService>(
                 this ContainerBuilder builder,
-                string serviceTypeName)
+                string serviceTypeName,
+                object lifetimeScopeTag = null)
             where TService : StatefulServiceBase
         {
-            var registration = RegisterServiceWithContainer<TService>(builder, serviceTypeName);
+            var registration = RegisterServiceWithContainer<TService>(builder, serviceTypeName, lifetimeScopeTag);
 
             builder.RegisterBuildCallback(c =>
                 c.Resolve<IStatefulServiceFactoryRegistration>()
-                    .RegisterStatefulServiceFactory<TService>(c, serviceTypeName));
+                    .RegisterStatefulServiceFactory<TService>(c, serviceTypeName, lifetimeScopeTag));
 
             return registration;
         }
@@ -63,6 +65,7 @@ namespace Autofac.Integration.ServiceFabric
         /// </summary>
         /// <param name="builder">The container builder.</param>
         /// <param name="serviceTypeName">ServiceTypeName as provided in service manifest.</param>
+        /// <param name="lifetimeScopeTag">The tag applied to the <see cref="ILifetimeScope"/> in which the stateless service is hosted.</param>
         /// <typeparam name="TService">The type of the stateless service to register.</typeparam>
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         /// <exception cref="ArgumentException">Thrown when <typeparamref name="TService"/> is not a valid service type.</exception>
@@ -70,14 +73,15 @@ namespace Autofac.Integration.ServiceFabric
         public static IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle>
             RegisterStatelessService<TService>(
                 this ContainerBuilder builder,
-                string serviceTypeName)
+                string serviceTypeName,
+                object lifetimeScopeTag = null)
             where TService : StatelessService
         {
-            var registration = RegisterServiceWithContainer<TService>(builder, serviceTypeName);
+            var registration = RegisterServiceWithContainer<TService>(builder, serviceTypeName, lifetimeScopeTag);
 
             builder.RegisterBuildCallback(c =>
                 c.Resolve<IStatelessServiceFactoryRegistration>()
-                    .RegisterStatelessServiceFactory<TService>(c, serviceTypeName));
+                    .RegisterStatelessServiceFactory<TService>(c, serviceTypeName, lifetimeScopeTag));
 
             return registration;
         }
@@ -85,7 +89,8 @@ namespace Autofac.Integration.ServiceFabric
         private static IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle>
             RegisterServiceWithContainer<TService>(
                 ContainerBuilder builder,
-                string serviceTypeName)
+                string serviceTypeName,
+                object lifetimeScopeTag = null)
             where TService : class
         {
             if (builder == null)
@@ -99,7 +104,7 @@ namespace Autofac.Integration.ServiceFabric
             if (!serviceType.CanBeProxied())
                 throw new ArgumentException(serviceType.GetInvalidProxyTypeErrorMessage());
 
-            var registration = builder.RegisterServiceWithInterception<TService, ServiceInterceptor>();
+            var registration = builder.RegisterServiceWithInterception<TService, ServiceInterceptor>(lifetimeScopeTag);
 
             registration.EnsureRegistrationIsInstancePerLifetimeScope();
 

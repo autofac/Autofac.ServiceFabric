@@ -42,12 +42,14 @@ namespace Autofac.Integration.ServiceFabric
             ConstructorExceptionCallback = constructorExceptionCallback;
         }
 
-        public void RegisterStatefulServiceFactory<TService>(ILifetimeScope container, string serviceTypeName)
+        public void RegisterStatefulServiceFactory<TService>(
+            ILifetimeScope container, string serviceTypeName, object lifetimeScopeTag = null)
             where TService : StatefulServiceBase
         {
             ServiceRuntime.RegisterServiceAsync(serviceTypeName, context =>
             {
-                var lifetimeScope = container.BeginLifetimeScope(builder =>
+                var tag = lifetimeScopeTag ?? Constants.DefaultLifetimeScopeTag;
+                var lifetimeScope = container.BeginLifetimeScope(tag, builder =>
                 {
                     builder.RegisterInstance(context)
                         .As<StatefulServiceContext>()

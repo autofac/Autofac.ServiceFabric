@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Fabric;
 using Autofac.Core;
 using Autofac.Core.Lifetime;
 using Microsoft.ServiceFabric.Actors;
@@ -42,7 +41,7 @@ namespace Autofac.Integration.ServiceFabric.Test
         }
 
         [Fact]
-        public void RegisterActorRegistersInstancePerLifetimeScope()
+        public void RegisterActorWithoutTagRegistersInstancePerMatchingLifetimeScope()
         {
             var builder = new ContainerBuilder();
             builder.RegisterActor<Actor1>();
@@ -51,8 +50,29 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertSharing<Actor1>(InstanceSharing.Shared);
-            container.AssertLifetime<Actor1, CurrentScopeLifetime>();
+            container.AssertLifetime<Actor1, MatchingScopeLifetime>();
             container.AssertOwnership<Actor1>(InstanceOwnership.OwnedByLifetimeScope);
+
+            var lifetime = (MatchingScopeLifetime)container.RegistrationFor<Actor1>().Lifetime;
+            Assert.Contains(Constants.DefaultLifetimeScopeTag, lifetime.TagsToMatch);
+        }
+
+        [Fact]
+        public void RegisterActorWithTagRegistersInstancePerMatchingLifetimeScope()
+        {
+            var builder = new ContainerBuilder();
+            const string lifetimeScopeTag = "Tag";
+            builder.RegisterActor<Actor1>(lifetimeScopeTag: lifetimeScopeTag);
+            builder.RegisterInstance(new Mock<IActorFactoryRegistration>().Object);
+
+            var container = builder.Build();
+
+            container.AssertSharing<Actor1>(InstanceSharing.Shared);
+            container.AssertLifetime<Actor1, MatchingScopeLifetime>();
+            container.AssertOwnership<Actor1>(InstanceOwnership.OwnedByLifetimeScope);
+
+            var lifetime = (MatchingScopeLifetime)container.RegistrationFor<Actor1>().Lifetime;
+            Assert.Contains(lifetimeScopeTag, lifetime.TagsToMatch);
         }
 
         [Fact]
@@ -65,7 +85,7 @@ namespace Autofac.Integration.ServiceFabric.Test
 
             var container = builder.Build();
 
-            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, typeof(ActorService), null, null, null), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, typeof(ActorService), null, null, null, null), Times.Once);
         }
 
         [Fact]
@@ -91,7 +111,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertRegistered<Actor1>();
-            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, typeof(ActorService), null, null, null), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, typeof(ActorService), null, null, null, null), Times.Once);
         }
 
         [Fact]
@@ -108,7 +128,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertRegistered<Actor1>();
-            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, typeof(ActorService), stateManagerFactory, null, null), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, typeof(ActorService), stateManagerFactory, null, null, null), Times.Once);
         }
 
         [Fact]
@@ -123,7 +143,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertRegistered<Actor1>();
-            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, typeof(ActorService), null, stateProvider, null), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, typeof(ActorService), null, stateProvider, null, null), Times.Once);
         }
 
         [Fact]
@@ -138,7 +158,22 @@ namespace Autofac.Integration.ServiceFabric.Test
             var container = builder.Build();
 
             container.AssertRegistered<Actor1>();
-            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, typeof(ActorService), null, null, settings), Times.Once);
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, typeof(ActorService), null, null, settings, null), Times.Once);
+        }
+
+        [Fact]
+        public void RegisterActorCanBeCalledWithLifetimeScopeTag()
+        {
+            var builder = new ContainerBuilder();
+            const string lifetimeScopeTag = "Tag";
+            builder.RegisterActor<Actor1>(lifetimeScopeTag: lifetimeScopeTag);
+            var factoryMock = new Mock<IActorFactoryRegistration>();
+            builder.RegisterInstance(factoryMock.Object);
+
+            var container = builder.Build();
+
+            container.AssertRegistered<Actor1>();
+            factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, typeof(ActorService), null, null, null, lifetimeScopeTag), Times.Once);
         }
 
         [Fact]

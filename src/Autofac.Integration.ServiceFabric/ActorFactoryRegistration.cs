@@ -48,14 +48,16 @@ namespace Autofac.Integration.ServiceFabric
             Type actorServiceType,
             Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = null,
             IActorStateProvider stateProvider = null,
-            ActorServiceSettings settings = null)
+            ActorServiceSettings settings = null,
+            object lifetimeScopeTag = null)
             where TActor : ActorBase
         {
             ActorRuntime.RegisterActorAsync<TActor>((context, actorTypeInfo) =>
             {
                 ActorBase ActorFactory(ActorService actorService, ActorId actorId)
                 {
-                    var lifetimeScope = container.BeginLifetimeScope(builder =>
+                    var tag = lifetimeScopeTag ?? Constants.DefaultLifetimeScopeTag;
+                    var lifetimeScope = container.BeginLifetimeScope(tag, builder =>
                     {
                         builder.RegisterInstance(context)
                             .As<StatefulServiceContext>()
