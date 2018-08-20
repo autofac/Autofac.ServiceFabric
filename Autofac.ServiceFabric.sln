@@ -5,14 +5,15 @@ VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Autofac.Integration.ServiceFabric", "src\Autofac.Integration.ServiceFabric\Autofac.Integration.ServiceFabric.csproj", "{6956F17D-A87B-4FAB-8CA8-0A6AB8A14537}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Autofac.Integration.ServiceFabric.Test", "test\Autofac.Integration.ServiceFabric.Test\Autofac.Integration.ServiceFabric.Test.csproj", "{A3183165-EEDC-4177-A72C-2B9E8D5BFFA0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Autofac.Integration.ServiceFabric.Test", "test\Autofac.Integration.ServiceFabric.Test\Autofac.Integration.ServiceFabric.Test.csproj", "{A3183165-EEDC-4177-A72C-2B9E8D5BFFA0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Scenario.InternalsVisible", "test\Test.Scenario.InternalsVisible\Test.Scenario.InternalsVisible.csproj", "{1707F51B-7E92-4905-BA3A-AFE26A12B706}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Scenario.InternalsVisible", "test\Test.Scenario.InternalsVisible\Test.Scenario.InternalsVisible.csproj", "{1707F51B-7E92-4905-BA3A-AFE26A12B706}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EFD7983F-DC17-4C4E-A006-0A64079985ED}"
 	ProjectSection(SolutionItems) = preProject
 		appveyor.yml = appveyor.yml
 		build.ps1 = build.ps1
+		global.json = global.json
 	EndProjectSection
 EndProject
 Global
