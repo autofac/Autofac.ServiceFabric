@@ -22,6 +22,9 @@
     <PackageLicenseUrl>http://www.opensource.org/licenses/mit-license.php</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/autofac/Autofac.ServiceFabric</RepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedAllSources>true</EmbedAllSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <CodeAnalysisRuleSet>../../build/Analyzers.ruleset</CodeAnalysisRuleSet>
     <Features>IOperation</Features>
     <Authors>Autofac Contributors</Authors>
@@ -46,6 +49,9 @@
     <PackageReference Include="Microsoft.ServiceFabric.Data" Version="3.2.176" />
     <PackageReference Include="Microsoft.ServiceFabric.Services" Version="3.2.176" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta004">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" Condition="Exists('$(MSBuildThisFileDirectory)../../.git')">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
   </ItemGroup>
