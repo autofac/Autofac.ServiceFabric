@@ -12,27 +12,26 @@ namespace Autofac.Integration.ServiceFabric.Test
 
         internal static void AssertSharing<TComponent>(this IComponentContext context, InstanceSharing sharing)
         {
-            var cr = context.RegistrationFor<TComponent>();
-            Assert.Equal(sharing, cr.Sharing);
+            var registration = context.RegistrationFor<TComponent>();
+            Assert.Equal(sharing, registration.Sharing);
         }
 
         internal static void AssertLifetime<TComponent, TLifetime>(this IComponentContext context)
         {
-            var cr = context.RegistrationFor<TComponent>();
-            Assert.IsType<TLifetime>(cr.Lifetime);
+            var registration = context.RegistrationFor<TComponent>();
+            Assert.IsType<TLifetime>(registration.Lifetime);
         }
 
         internal static void AssertOwnership<TComponent>(this IComponentContext context, InstanceOwnership ownership)
         {
-            var cr = context.RegistrationFor<TComponent>();
-            Assert.Equal(ownership, cr.Ownership);
+            var registration = context.RegistrationFor<TComponent>();
+            Assert.Equal(ownership, registration.Ownership);
         }
 
         internal static IComponentRegistration RegistrationFor<TComponent>(this IComponentContext context)
         {
-            IComponentRegistration r;
-            Assert.True(context.ComponentRegistry.TryGetRegistration(new TypedService(typeof(TComponent)), out r));
-            return r;
+            Assert.True(context.ComponentRegistry.TryGetRegistration(new TypedService(typeof(TComponent)), out var registration));
+            return registration;
         }
     }
 }
