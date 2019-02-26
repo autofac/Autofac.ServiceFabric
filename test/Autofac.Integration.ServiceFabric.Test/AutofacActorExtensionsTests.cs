@@ -28,7 +28,7 @@ namespace Autofac.Integration.ServiceFabric.Test
         public void RegisterActorAppliesInterceptor()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new ServiceFabricModule());
+            builder.RegisterServiceFabricSupport();
             builder.RegisterInstance(new Mock<IActorFactoryRegistration>().Object);
             builder.RegisterActor<Actor1>();
 

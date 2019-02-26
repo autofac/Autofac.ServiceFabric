@@ -42,7 +42,7 @@ namespace Autofac.Integration.ServiceFabric.Test
         {
             var builder = new ContainerBuilder();
             builder.RegisterStatefulService<StatefulService1>("ServiceType");
-            builder.RegisterModule(new ServiceFabricModule());
+            builder.RegisterServiceFabricSupport();
             builder.RegisterInstance(new Mock<IStatefulServiceFactoryRegistration>().Object);
 
             var container = builder.Build();
@@ -58,7 +58,7 @@ namespace Autofac.Integration.ServiceFabric.Test
         {
             var builder = new ContainerBuilder();
             builder.RegisterStatelessService<StatelessService1>("ServiceType");
-            builder.RegisterModule(new ServiceFabricModule());
+            builder.RegisterServiceFabricSupport();
             builder.RegisterInstance(new Mock<IStatelessServiceFactoryRegistration>().Object);
 
             var container = builder.Build();

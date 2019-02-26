@@ -29,6 +29,7 @@ using Autofac.Core;
 using Autofac.Core.Lifetime;
 using Autofac.Extras.DynamicProxy;
 using Castle.DynamicProxy;
+using Microsoft.ServiceFabric.Actors.Runtime;
 
 namespace Autofac.Integration.ServiceFabric
 {
@@ -50,7 +51,7 @@ namespace Autofac.Integration.ServiceFabric
 
             if (builder.Properties.ContainsKey(MetadataKey)) return;
 
-            builder.RegisterModule(new ServiceFabricModule(constructorExceptionCallback));
+            builder.AddInternalRegistrations(constructorExceptionCallback);
 
             builder.Properties.Add(MetadataKey, true);
         }
@@ -84,6 +85,36 @@ namespace Autofac.Integration.ServiceFabric
                 var message = typeof(TService).GetServiceNotRegisteredAsInstancePerLifetimeScopeMessage();
                 throw new InvalidOperationException(message);
             });
+        }
+
+        private static void AddInternalRegistrations(this ContainerBuilder builder, Action<Exception> constructorExceptionCallback = null)
+        {
+            var callback = constructorExceptionCallback ?? (ex => { });
+
+            builder.RegisterType<ActorInterceptor>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<ServiceInterceptor>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<ActorFactoryRegistration>()
+                .As<IActorFactoryRegistration>()
+                .WithParameter(TypedParameter.From(callback))
+                .SingleInstance();
+
+            builder.RegisterType<StatelessServiceFactoryRegistration>()
+                .As<IStatelessServiceFactoryRegistration>()
+                .WithParameter(TypedParameter.From(callback))
+                .SingleInstance();
+
+            builder.RegisterType<StatefulServiceFactoryRegistration>()
+                .As<IStatefulServiceFactoryRegistration>()
+                .WithParameter(TypedParameter.From(callback))
+                .SingleInstance();
+
+            builder.RegisterType<ActorService>()
+                .AsSelf()
+                .InstancePerDependency();
         }
     }
 }

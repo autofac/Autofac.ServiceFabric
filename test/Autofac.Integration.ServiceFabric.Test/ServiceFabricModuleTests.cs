@@ -14,7 +14,7 @@ namespace Autofac.Integration.ServiceFabric.Test
         public void RegistersRequiredSupportTypes(Type interceptorType)
         {
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new ServiceFabricModule());
+            builder.RegisterServiceFabricSupport();
             var container = builder.Build();
 
             Assert.True(container.IsRegistered(interceptorType));
@@ -26,7 +26,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var builder = new ContainerBuilder();
             Exception capturedException = null;
             void ConstructorExceptionCallback(Exception ex) => capturedException = ex;
-            builder.RegisterModule(new ServiceFabricModule(ConstructorExceptionCallback));
+            builder.RegisterServiceFabricSupport(ConstructorExceptionCallback);
             var container = builder.Build();
 
             var factoryRegistration = (ActorFactoryRegistration)container.Resolve<IActorFactoryRegistration>();
@@ -40,7 +40,7 @@ namespace Autofac.Integration.ServiceFabric.Test
         public void ActorFactoryRegistrationReceivesDefaultConstructorExceptionCallbackParameter()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new ServiceFabricModule());
+            builder.RegisterServiceFabricSupport();
             var container = builder.Build();
 
             var factoryRegistration = (ActorFactoryRegistration)container.Resolve<IActorFactoryRegistration>();
@@ -53,7 +53,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var builder = new ContainerBuilder();
             Exception capturedException = null;
             void ConstructorExceptionCallback(Exception ex) => capturedException = ex;
-            builder.RegisterModule(new ServiceFabricModule(ConstructorExceptionCallback));
+            builder.RegisterServiceFabricSupport(ConstructorExceptionCallback);
             var container = builder.Build();
 
             var factoryRegistration = (StatefulServiceFactoryRegistration)container.Resolve<IStatefulServiceFactoryRegistration>();
@@ -67,7 +67,7 @@ namespace Autofac.Integration.ServiceFabric.Test
         public void StatefulServiceFactoryRegistrationReceivesDefaultConstructorExceptionCallbackParameter()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new ServiceFabricModule());
+            builder.RegisterServiceFabricSupport();
             var container = builder.Build();
 
             var factoryRegistration = (StatefulServiceFactoryRegistration)container.Resolve<IStatefulServiceFactoryRegistration>();
@@ -80,7 +80,7 @@ namespace Autofac.Integration.ServiceFabric.Test
             var builder = new ContainerBuilder();
             Exception capturedException = null;
             void ConstructorExceptionCallback(Exception ex) => capturedException = ex;
-            builder.RegisterModule(new ServiceFabricModule(ConstructorExceptionCallback));
+            builder.RegisterServiceFabricSupport(ConstructorExceptionCallback);
             var container = builder.Build();
 
             var factoryRegistration = (StatelessServiceFactoryRegistration)container.Resolve<IStatelessServiceFactoryRegistration>();
@@ -94,7 +94,7 @@ namespace Autofac.Integration.ServiceFabric.Test
         public void StatelessServiceFactoryRegistrationReceivesDefaultConstructorExceptionCallbackParameter()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new ServiceFabricModule());
+            builder.RegisterServiceFabricSupport();
             var container = builder.Build();
 
             var factoryRegistration = (StatelessServiceFactoryRegistration)container.Resolve<IStatelessServiceFactoryRegistration>();
