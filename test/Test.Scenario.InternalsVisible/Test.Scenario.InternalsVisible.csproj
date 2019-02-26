@@ -10,10 +10,10 @@
 
   <ItemGroup>
     <PackageReference Include="Castle.Core" Version="4.3.1" />
-    <PackageReference Include="Microsoft.ServiceFabric" Version="6.3.187" />
-    <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="3.2.187" />
-    <PackageReference Include="Microsoft.ServiceFabric.Data" Version="3.2.187" />
-    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="3.2.187" />
+    <PackageReference Include="Microsoft.ServiceFabric" Version="6.4.638" />
+    <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="3.3.638" />
+    <PackageReference Include="Microsoft.ServiceFabric.Data" Version="3.3.638" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="3.3.638" />
   </ItemGroup>
 
 </Project>

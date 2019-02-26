@@ -44,10 +44,10 @@
     <PackageReference Include="Microsoft.Net.RoslynDiagnostics" Version="2.6.1">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.ServiceFabric" Version="6.3.187" />
-    <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="3.2.187" />
-    <PackageReference Include="Microsoft.ServiceFabric.Data" Version="3.2.187" />
-    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="3.2.187" />
+    <PackageReference Include="Microsoft.ServiceFabric" Version="6.4.638" />
+    <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="3.3.638" />
+    <PackageReference Include="Microsoft.ServiceFabric.Data" Version="3.3.638" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="3.3.638" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta004">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
