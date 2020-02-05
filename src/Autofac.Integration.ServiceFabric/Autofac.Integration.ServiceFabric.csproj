@@ -2,8 +2,9 @@
 
   <PropertyGroup>
     <Description>Autofac integration for Azure Service Fabric. Provides service factory implementations for Actors, Stateful Services and Stateless Services.</Description>
-    <VersionPrefix>2.2.0</VersionPrefix>
-    <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
+    <VersionPrefix>2.3.0</VersionPrefix>
+    <TargetFrameworks>netstandard2.1;netstandard2.0;net461</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
     <PlatformTarget>x64</PlatformTarget>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -17,9 +18,9 @@
     <PackageId>Autofac.ServiceFabric</PackageId>
     <PackageTags>autofac;di;ioc;dependencyinjection;servicefabric;azure</PackageTags>
     <PackageReleaseNotes>Release notes are at https://github.com/autofac/Autofac.ServiceFabric/releases</PackageReleaseNotes>
-    <PackageIconUrl>https://cloud.githubusercontent.com/assets/1156571/13684110/16b8f152-e6bf-11e5-84ae-22c66c6d351a.png</PackageIconUrl>
+    <PackageIcon>icon.png</PackageIcon>
     <PackageProjectUrl>https://autofac.org</PackageProjectUrl>
-    <PackageLicenseUrl>https://opensource.org/licenses/mit-license.php</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/autofac/Autofac.ServiceFabric</RepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -33,35 +34,52 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="4.6.2" />
+    <None Include="..\..\build\icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="5.0.0" />
     <PackageReference Include="Autofac.Extras.DynamicProxy" Version="4.5.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.6.1">
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.9.8">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.1">
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Net.RoslynDiagnostics" Version="2.6.1">
+    <PackageReference Include="Microsoft.ServiceFabric" Version="7.0.464" />
+    <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="4.0.464" />
+    <PackageReference Include="Microsoft.ServiceFabric.Data" Version="4.0.464" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.0.464" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.ServiceFabric" Version="6.4.644" />
-    <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="3.3.644" />
-    <PackageReference Include="Microsoft.ServiceFabric.Data" Version="3.3.644" />
-    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="3.3.644" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta004">
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" Condition="Exists('$(MSBuildThisFileDirectory)../../.git')">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" Condition="Exists('$(MSBuildThisFileDirectory)../../.git')">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="AutofacServiceExtensionsResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AutofacServiceExtensionsResources.resx</DependentUpon>
+    </Compile>
     <Compile Update="TypeExtensionsResources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>TypeExtensionsResources.resx</DependentUpon>
     </Compile>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Update="AutofacServiceExtensionsResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AutofacServiceExtensionsResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="TypeExtensionsResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>TypeExtensionsResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

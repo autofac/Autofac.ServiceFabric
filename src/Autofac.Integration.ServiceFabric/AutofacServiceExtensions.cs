@@ -53,9 +53,9 @@ namespace Autofac.Integration.ServiceFabric
         {
             var registration = RegisterServiceWithContainer<TService>(builder, serviceTypeName, lifetimeScopeTag);
 
-            builder.RegisterBuildCallback(c =>
-                c.Resolve<IStatefulServiceFactoryRegistration>()
-                    .RegisterStatefulServiceFactory<TService>(c, serviceTypeName, lifetimeScopeTag));
+            builder.RegisterBuildCallback(l =>
+                l.Resolve<IStatefulServiceFactoryRegistration>()
+                    .RegisterStatefulServiceFactory<TService>(l, serviceTypeName, lifetimeScopeTag));
 
             return registration;
         }
@@ -79,9 +79,9 @@ namespace Autofac.Integration.ServiceFabric
         {
             var registration = RegisterServiceWithContainer<TService>(builder, serviceTypeName, lifetimeScopeTag);
 
-            builder.RegisterBuildCallback(c =>
-                c.Resolve<IStatelessServiceFactoryRegistration>()
-                    .RegisterStatelessServiceFactory<TService>(c, serviceTypeName, lifetimeScopeTag));
+            builder.RegisterBuildCallback(l =>
+                l.Resolve<IStatelessServiceFactoryRegistration>()
+                    .RegisterStatelessServiceFactory<TService>(l, serviceTypeName, lifetimeScopeTag));
 
             return registration;
         }
@@ -97,7 +97,7 @@ namespace Autofac.Integration.ServiceFabric
                 throw new ArgumentNullException(nameof(builder));
 
             if (string.IsNullOrEmpty(serviceTypeName))
-                throw new ArgumentException("The service type name must be provided", nameof(serviceTypeName));
+                throw new ArgumentException(AutofacServiceExtensionsResources.MissingServiceTypeNameErrorMessage, nameof(serviceTypeName));
 
             var serviceType = typeof(TService);
 

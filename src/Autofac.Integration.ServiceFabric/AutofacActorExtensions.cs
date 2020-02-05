@@ -78,8 +78,8 @@ namespace Autofac.Integration.ServiceFabric
             registration.EnsureRegistrationIsInstancePerLifetimeScope();
 
             builder.RegisterBuildCallback(
-                c => c.Resolve<IActorFactoryRegistration>().RegisterActorFactory<TActor>(
-                    c, actorServiceType, stateManagerFactory, stateProvider, settings, lifetimeScopeTag));
+                l => l.Resolve<IActorFactoryRegistration>().RegisterActorFactory<TActor>(
+                    l, actorServiceType, stateManagerFactory, stateProvider, settings, lifetimeScopeTag));
 
             return registration;
         }
