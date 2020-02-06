@@ -59,10 +59,12 @@ namespace Autofac.Integration.ServiceFabric {
                 resourceCulture = value;
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The service type name must be provided.
+        /// </summary>
         internal static string MissingServiceTypeNameErrorMessage {
-            get
-            {
+            get {
                 return ResourceManager.GetString("MissingServiceTypeNameErrorMessage", resourceCulture);
             }
         }
