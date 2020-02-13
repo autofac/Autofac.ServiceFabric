@@ -38,18 +38,18 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="5.0.0" />
-    <PackageReference Include="Autofac.Extras.DynamicProxy" Version="4.5.0" />
+    <PackageReference Include="Autofac" Version="5.1.0" />
+    <PackageReference Include="Autofac.Extras.DynamicProxy" Version="5.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.9.8">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.ServiceFabric" Version="7.0.464" />
-    <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="4.0.464" />
-    <PackageReference Include="Microsoft.ServiceFabric.Data" Version="4.0.464" />
-    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.0.464" />
+    <PackageReference Include="Microsoft.ServiceFabric" Version="7.0.466" />
+    <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="4.0.466" />
+    <PackageReference Include="Microsoft.ServiceFabric.Data" Version="4.0.466" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.0.466" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
