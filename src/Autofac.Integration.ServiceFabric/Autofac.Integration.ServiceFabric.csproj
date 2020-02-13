@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>Autofac integration for Azure Service Fabric. Provides service factory implementations for Actors, Stateful Services and Stateless Services.</Description>
-    <VersionPrefix>2.3.0</VersionPrefix>
+    <VersionPrefix>3.0.0</VersionPrefix>
     <TargetFrameworks>netstandard2.1;netstandard2.0;net461</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <PlatformTarget>x64</PlatformTarget>
@@ -36,7 +36,7 @@
   <ItemGroup>
     <None Include="..\..\build\icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Autofac" Version="5.1.0" />
     <PackageReference Include="Autofac.Extras.DynamicProxy" Version="5.0.0" />
@@ -70,7 +70,7 @@
       <DependentUpon>TypeExtensionsResources.resx</DependentUpon>
     </Compile>
   </ItemGroup>
-  
+
   <ItemGroup>
     <EmbeddedResource Update="AutofacServiceExtensionsResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
