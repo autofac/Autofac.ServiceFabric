@@ -4,7 +4,7 @@
     <Description>Autofac integration for Azure Service Fabric. Provides service factory implementations for Actors, Stateful Services and Stateless Services.</Description>
     <!-- VersionPrefix patched by AppVeyor -->
     <VersionPrefix>0.0.1</VersionPrefix>
-    <TargetFrameworks>netstandard2.1;netstandard2.0;net472</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <PlatformTarget>x64</PlatformTarget>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
