@@ -48,6 +48,31 @@ namespace Autofac.Integration.ServiceFabric.Test
         }
 
         [Fact]
+        public void ActorFactoryRegistrationReceivesProvidedConfigurationActionParameter()
+        {
+            var builder = new ContainerBuilder();
+            var invoked = false;
+            builder.RegisterServiceFabricSupport(configurationAction: _ => invoked = true);
+            var container = builder.Build();
+
+            var factoryRegistration = (ActorFactoryRegistration)container.Resolve<IActorFactoryRegistration>();
+            factoryRegistration.ConfigurationAction(new ContainerBuilder());
+
+            Assert.True(invoked);
+        }
+
+        [Fact]
+        public void ActorFactoryRegistrationReceivesDefaultConfigurationActionParameter()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterServiceFabricSupport();
+            var container = builder.Build();
+
+            var factoryRegistration = (ActorFactoryRegistration)container.Resolve<IActorFactoryRegistration>();
+            Assert.NotNull(factoryRegistration.ConfigurationAction);
+        }
+
+        [Fact]
         public void StatefulServiceFactoryRegistrationReceivesProvidedConstructorExceptionCallbackParameter()
         {
             var builder = new ContainerBuilder();
@@ -75,6 +100,31 @@ namespace Autofac.Integration.ServiceFabric.Test
         }
 
         [Fact]
+        public void StatefulServiceFactoryRegistrationReceivesProvidedConfigurationActionParameter()
+        {
+            var builder = new ContainerBuilder();
+            var invoked = false;
+            builder.RegisterServiceFabricSupport(configurationAction: _ => invoked = true);
+            var container = builder.Build();
+
+            var factoryRegistration = (StatefulServiceFactoryRegistration)container.Resolve<IStatefulServiceFactoryRegistration>();
+            factoryRegistration.ConfigurationAction(new ContainerBuilder());
+
+            Assert.True(invoked);
+        }
+
+        [Fact]
+        public void StatefulServiceFactoryRegistrationReceivesDefaultConfigurationActionParameter()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterServiceFabricSupport();
+            var container = builder.Build();
+
+            var factoryRegistration = (StatefulServiceFactoryRegistration)container.Resolve<IStatefulServiceFactoryRegistration>();
+            Assert.NotNull(factoryRegistration.ConfigurationAction);
+        }
+
+        [Fact]
         public void StatelessServiceFactoryRegistrationReceivesProvidedConstructorExceptionCallbackParameter()
         {
             var builder = new ContainerBuilder();
@@ -99,6 +149,31 @@ namespace Autofac.Integration.ServiceFabric.Test
 
             var factoryRegistration = (StatelessServiceFactoryRegistration)container.Resolve<IStatelessServiceFactoryRegistration>();
             Assert.NotNull(factoryRegistration.ConstructorExceptionCallback);
+        }
+
+        [Fact]
+        public void StatelessServiceFactoryRegistrationReceivesProvidedConfigurationActionParameter()
+        {
+            var builder = new ContainerBuilder();
+            var invoked = false;
+            builder.RegisterServiceFabricSupport(configurationAction: _ => invoked = true);
+            var container = builder.Build();
+
+            var factoryRegistration = (StatelessServiceFactoryRegistration)container.Resolve<IStatelessServiceFactoryRegistration>();
+            factoryRegistration.ConfigurationAction(new ContainerBuilder());
+
+            Assert.True(invoked);
+        }
+
+        [Fact]
+        public void StatelessServiceFactoryRegistrationReceivesDefaultConfigurationActionParameter()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterServiceFabricSupport();
+            var container = builder.Build();
+
+            var factoryRegistration = (StatelessServiceFactoryRegistration)container.Resolve<IStatelessServiceFactoryRegistration>();
+            Assert.NotNull(factoryRegistration.ConfigurationAction);
         }
     }
 }

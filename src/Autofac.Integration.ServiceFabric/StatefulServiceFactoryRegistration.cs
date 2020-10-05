@@ -36,10 +36,15 @@ namespace Autofac.Integration.ServiceFabric
     {
         internal Action<Exception> ConstructorExceptionCallback { get; }
 
+        internal Action<ContainerBuilder> ConfigurationAction { get; }
+
         // ReSharper disable once UnusedMember.Global
-        public StatefulServiceFactoryRegistration(Action<Exception> constructorExceptionCallback)
+        public StatefulServiceFactoryRegistration(
+            Action<Exception> constructorExceptionCallback,
+            Action<ContainerBuilder> configurationAction)
         {
             ConstructorExceptionCallback = constructorExceptionCallback;
+            ConfigurationAction = configurationAction;
         }
 
         public void RegisterStatefulServiceFactory<TService>(
@@ -54,7 +59,10 @@ namespace Autofac.Integration.ServiceFabric
                     builder.RegisterInstance(context)
                         .As<StatefulServiceContext>()
                         .As<ServiceContext>();
+
+                    ConfigurationAction(builder);
                 });
+
                 try
                 {
                     var service = lifetimeScope.Resolve<TService>();

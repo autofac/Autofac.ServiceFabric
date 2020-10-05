@@ -44,14 +44,18 @@ namespace Autofac.Integration.ServiceFabric
         /// Adds the core services required by the Service Fabric integration.
         /// </summary>
         /// <param name="builder">The container builder to register the services with.</param>
-        /// <param name="constructorExceptionCallback">Callback will be invoked if there are an exception thrown during resolving.</param>
-        public static void RegisterServiceFabricSupport(this ContainerBuilder builder, Action<Exception> constructorExceptionCallback = null)
+        /// <param name="constructorExceptionCallback">Callback will be invoked if an exception is thrown during resolving.</param>
+        /// <param name="configurationAction">Callback will be invoked while configuring the lifetime scope for a service.</param>
+        public static void RegisterServiceFabricSupport(
+            this ContainerBuilder builder,
+            Action<Exception> constructorExceptionCallback = null,
+            Action<ContainerBuilder> configurationAction = null)
         {
             if (builder == null) throw new ArgumentNullException(nameof(builder));
 
             if (builder.Properties.ContainsKey(MetadataKey)) return;
 
-            builder.AddInternalRegistrations(constructorExceptionCallback);
+            builder.AddInternalRegistrations(constructorExceptionCallback, configurationAction);
 
             builder.Properties.Add(MetadataKey, true);
         }
@@ -87,9 +91,13 @@ namespace Autofac.Integration.ServiceFabric
             });
         }
 
-        private static void AddInternalRegistrations(this ContainerBuilder builder, Action<Exception> constructorExceptionCallback = null)
+        private static void AddInternalRegistrations(
+            this ContainerBuilder builder,
+            Action<Exception> constructorExceptionCallback = null,
+            Action<ContainerBuilder> configurationAction = null)
         {
-            var callback = constructorExceptionCallback ?? (ex => { });
+            var exceptionCallback = constructorExceptionCallback ?? (ex => { });
+            var configurationCallback = configurationAction ?? (_ => { });
 
             builder.RegisterType<ActorInterceptor>()
                 .InstancePerLifetimeScope();
@@ -99,17 +107,20 @@ namespace Autofac.Integration.ServiceFabric
 
             builder.RegisterType<ActorFactoryRegistration>()
                 .As<IActorFactoryRegistration>()
-                .WithParameter(TypedParameter.From(callback))
+                .WithParameter(TypedParameter.From(exceptionCallback))
+                .WithParameter(TypedParameter.From(configurationCallback))
                 .SingleInstance();
 
             builder.RegisterType<StatelessServiceFactoryRegistration>()
                 .As<IStatelessServiceFactoryRegistration>()
-                .WithParameter(TypedParameter.From(callback))
+                .WithParameter(TypedParameter.From(exceptionCallback))
+                .WithParameter(TypedParameter.From(configurationCallback))
                 .SingleInstance();
 
             builder.RegisterType<StatefulServiceFactoryRegistration>()
                 .As<IStatefulServiceFactoryRegistration>()
-                .WithParameter(TypedParameter.From(callback))
+                .WithParameter(TypedParameter.From(exceptionCallback))
+                .WithParameter(TypedParameter.From(configurationCallback))
                 .SingleInstance();
 
             builder.RegisterType<ActorService>()

@@ -37,10 +37,15 @@ namespace Autofac.Integration.ServiceFabric
     {
         internal Action<Exception> ConstructorExceptionCallback { get; }
 
+        internal Action<ContainerBuilder> ConfigurationAction { get; }
+
         // ReSharper disable once UnusedMember.Global
-        public ActorFactoryRegistration(Action<Exception> constructorExceptionCallback)
+        public ActorFactoryRegistration(
+            Action<Exception> constructorExceptionCallback,
+            Action<ContainerBuilder> configurationAction)
         {
             ConstructorExceptionCallback = constructorExceptionCallback;
+            ConfigurationAction = configurationAction;
         }
 
         public void RegisterActorFactory<TActor>(
@@ -66,7 +71,10 @@ namespace Autofac.Integration.ServiceFabric
                             .As<ActorService>();
                         builder.RegisterInstance(actorId)
                             .As<ActorId>();
+
+                        ConfigurationAction(builder);
                     });
+
                     try
                     {
                         var actor = lifetimeScope.Resolve<TActor>();
