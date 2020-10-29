@@ -13,7 +13,6 @@
     <AssemblyName>Autofac.Integration.ServiceFabric</AssemblyName>
     <AssemblyOriginatorKeyFile>../../Autofac.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
-    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <NeutralLanguage>en-US</NeutralLanguage>
     <GenerateNeutralResourcesLanguageAttribute>true</GenerateNeutralResourcesLanguageAttribute>
     <Copyright>Copyright © 2017 Autofac Contributors</Copyright>
