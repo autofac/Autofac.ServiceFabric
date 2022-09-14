@@ -20,15 +20,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Autofac.Integration.Service
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Autofac.Integration.ServiceFabric.Actors.Test", "test\Autofac.Integration.ServiceFabric.Actors.Test\Autofac.Integration.ServiceFabric.Actors.Test.csproj", "{1D2168A0-7D56-4A90-9C08-068571C54F23}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Autofac.Integration.ServiceFabric", "src\Autofac.Integration.ServiceFabric\Autofac.Integration.ServiceFabric.csproj", "{06F9228F-8871-4846-B3E8-966E9A410467}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4F3D8A91-2410-40B5-96E6-559360D39E6D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actors", "Actors", "{7180610C-3B07-45B6-BEE9-4999F24E9A3B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{0397F396-6F6A-45C7-806A-AADD6E35E579}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Scenario.InternalsVisible.Actors", "test\Test.Scenario.InternalsVisible.Actors\Test.Scenario.InternalsVisible.Actors.csproj", "{9BBA7AE1-92ED-4B55-ACA4-958E2E25A416}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Scenario.InternalsVisible.Actors", "Test.Scenario.InternalsVisible.Actors\Test.Scenario.InternalsVisible.Actors.csproj", "{9BBA7AE1-92ED-4B55-ACA4-958E2E25A416}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Scenario.InternalsVisible.Services", "test\Test.Scenario.InternalsVisible.Services\Test.Scenario.InternalsVisible.Services.csproj", "{E6DB1CA6-8189-4D37-B41C-219B73B7C3BA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Scenario.InternalsVisible.Services", "Test.Scenario.InternalsVisible.Services\Test.Scenario.InternalsVisible.Services.csproj", "{E6DB1CA6-8189-4D37-B41C-219B73B7C3BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,6 +72,14 @@ Global
 		{1D2168A0-7D56-4A90-9C08-068571C54F23}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1D2168A0-7D56-4A90-9C08-068571C54F23}.Release|x64.ActiveCfg = Release|Any CPU
 		{1D2168A0-7D56-4A90-9C08-068571C54F23}.Release|x64.Build.0 = Release|Any CPU
+		{06F9228F-8871-4846-B3E8-966E9A410467}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06F9228F-8871-4846-B3E8-966E9A410467}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06F9228F-8871-4846-B3E8-966E9A410467}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{06F9228F-8871-4846-B3E8-966E9A410467}.Debug|x64.Build.0 = Debug|Any CPU
+		{06F9228F-8871-4846-B3E8-966E9A410467}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06F9228F-8871-4846-B3E8-966E9A410467}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06F9228F-8871-4846-B3E8-966E9A410467}.Release|x64.ActiveCfg = Release|Any CPU
+		{06F9228F-8871-4846-B3E8-966E9A410467}.Release|x64.Build.0 = Release|Any CPU
 		{9BBA7AE1-92ED-4B55-ACA4-958E2E25A416}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9BBA7AE1-92ED-4B55-ACA4-958E2E25A416}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9BBA7AE1-92ED-4B55-ACA4-958E2E25A416}.Debug|x64.ActiveCfg = Debug|Any CPU

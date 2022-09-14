@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LanguageVersion>latest</LanguageVersion>
+    <Nullable>enable</Nullable>
+    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Castle.Core" Version="5.1.0" />
+    <PackageReference Include="Microsoft.ServiceFabric" Version="9.0.1048" />
+    <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="6.0.1048" />
+    <PackageReference Include="Microsoft.ServiceFabric.Data" Version="6.0.1048" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="6.0.1048" />
+  </ItemGroup>
+
+</Project>
