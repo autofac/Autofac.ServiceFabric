@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// Copyright (c) Autofac Project. All rights reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
 using System.Fabric;
 using Autofac.Core;
 using Autofac.Core.Lifetime;
 using Microsoft.ServiceFabric.Data;
 using Microsoft.ServiceFabric.Services.Runtime;
-using Moq;
 using Test.Scenario.InternalsVisible;
-using Xunit;
 
 namespace Autofac.Integration.ServiceFabric.Test
 {
