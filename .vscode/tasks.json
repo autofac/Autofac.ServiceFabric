@@ -24,9 +24,7 @@
         "test",
         "${workspaceFolder}/Autofac.ServiceFabric.sln",
         "/property:GenerateFullPaths=true",
-        "/consoleloggerparameters:NoSummary",
-        "--filter",
-        "FullyQualifiedName!~Benchmark"
+        "/consoleloggerparameters:NoSummary"
       ],
       "command": "dotnet",
       "group": {
