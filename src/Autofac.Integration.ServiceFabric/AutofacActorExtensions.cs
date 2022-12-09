@@ -35,20 +35,30 @@ namespace Autofac.Integration.ServiceFabric
             where TActor : ActorBase
         {
             if (builder == null)
+            {
                 throw new ArgumentNullException(nameof(builder));
+            }
 
             var actorType = typeof(TActor);
 
             if (!actorType.CanBeProxied())
+            {
                 throw new ArgumentException(actorType.GetInvalidProxyTypeErrorMessage());
+            }
 
             if (actorServiceType == null)
+            {
                 actorServiceType = typeof(ActorService);
+            }
             else
+            {
                 builder.RegisterType(actorServiceType).AsSelf().IfNotRegistered(actorServiceType);
+            }
 
             if (!typeof(ActorService).IsAssignableFrom(actorServiceType))
+            {
                 throw new ArgumentException(actorServiceType.GetInvalidActorServiceTypeErrorMessage());
+            }
 
             var registration = builder.RegisterServiceWithInterception<TActor, ActorInterceptor>(lifetimeScopeTag);
 

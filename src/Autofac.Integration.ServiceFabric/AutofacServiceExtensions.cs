@@ -71,15 +71,21 @@ namespace Autofac.Integration.ServiceFabric
             where TService : class
         {
             if (builder == null)
+            {
                 throw new ArgumentNullException(nameof(builder));
+            }
 
             if (string.IsNullOrEmpty(serviceTypeName))
+            {
                 throw new ArgumentException(AutofacServiceExtensionsResources.MissingServiceTypeNameErrorMessage, nameof(serviceTypeName));
+            }
 
             var serviceType = typeof(TService);
 
             if (!serviceType.CanBeProxied())
+            {
                 throw new ArgumentException(serviceType.GetInvalidProxyTypeErrorMessage());
+            }
 
             var registration = builder.RegisterServiceWithInterception<TService, ServiceInterceptor>(lifetimeScopeTag);
 

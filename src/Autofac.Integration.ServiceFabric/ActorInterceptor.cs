@@ -21,7 +21,9 @@ namespace Autofac.Integration.ServiceFabric
             invocation.Proceed();
 
             if (invocation.Method.Name == "OnDeactivateAsync")
+            {
                 _lifetimeScope.Dispose();
+            }
         }
     }
 }

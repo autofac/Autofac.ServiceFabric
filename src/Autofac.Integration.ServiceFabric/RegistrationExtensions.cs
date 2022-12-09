@@ -28,9 +28,15 @@ namespace Autofac.Integration.ServiceFabric
             Action<Exception>? constructorExceptionCallback = null,
             Action<ContainerBuilder>? configurationAction = null)
         {
-            if (builder == null) throw new ArgumentNullException(nameof(builder));
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
 
-            if (builder.Properties.ContainsKey(MetadataKey)) return;
+            if (builder.Properties.ContainsKey(MetadataKey))
+            {
+                return;
+            }
 
             builder.AddInternalRegistrations(constructorExceptionCallback, configurationAction);
 
@@ -61,7 +67,10 @@ namespace Autofac.Integration.ServiceFabric
 
                 if (registration.Lifetime.GetType() == typeof(MatchingScopeLifetime) &&
                     registration.Sharing == InstanceSharing.Shared &&
-                    registration.Ownership == InstanceOwnership.OwnedByLifetimeScope) return;
+                    registration.Ownership == InstanceOwnership.OwnedByLifetimeScope)
+                {
+                    return;
+                }
 
                 var message = typeof(TService).GetServiceNotRegisteredAsInstancePerLifetimeScopeMessage();
                 throw new InvalidOperationException(message);

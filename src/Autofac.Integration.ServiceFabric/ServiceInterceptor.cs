@@ -23,7 +23,9 @@ namespace Autofac.Integration.ServiceFabric
             var methodName = invocation.Method.Name;
 
             if (methodName == "OnCloseAsync" || methodName == "OnAbort")
+            {
                 _lifetimeScope.Dispose();
+            }
         }
     }
 }
