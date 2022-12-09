@@ -429,69 +429,69 @@ namespace Autofac.Integration.ServiceFabric.Test
 
             Assert.Equal(typeof(StatelessService1).GetServiceNotRegisteredAsInstancePerLifetimeScopeMessage(), exception.Message);
         }
-    }
 
-    public class StatefulServiceModule : Module
-    {
-        protected override void Load(ContainerBuilder builder)
+        public class StatefulServiceModule : Module
         {
-            builder.RegisterStatefulService<StatefulService1>("serviceTypeName");
+            protected override void Load(ContainerBuilder builder)
+            {
+                builder.RegisterStatefulService<StatefulService1>("serviceTypeName");
+            }
         }
-    }
 
-    public class StatelessServiceModule : Module
-    {
-        protected override void Load(ContainerBuilder builder)
+        public class StatelessServiceModule : Module
         {
-            builder.RegisterStatelessService<StatelessService1>("serviceTypeName");
+            protected override void Load(ContainerBuilder builder)
+            {
+                builder.RegisterStatelessService<StatelessService1>("serviceTypeName");
+            }
         }
-    }
 
-    public class StatefulService1 : StatefulServiceBase
-    {
-        public StatefulService1(StatefulServiceContext serviceContext, IStateProviderReplica2 stateProviderReplica)
-            : base(serviceContext, stateProviderReplica)
+        public class StatefulService1 : StatefulServiceBase
         {
+            public StatefulService1(StatefulServiceContext serviceContext, IStateProviderReplica2 stateProviderReplica)
+                : base(serviceContext, stateProviderReplica)
+            {
+            }
         }
-    }
 
-    public sealed class SealedStatefulService : StatefulServiceBase
-    {
-        public SealedStatefulService(StatefulServiceContext serviceContext, IStateProviderReplica2 stateProviderReplica)
-            : base(serviceContext, stateProviderReplica)
+        public sealed class SealedStatefulService : StatefulServiceBase
         {
+            public SealedStatefulService(StatefulServiceContext serviceContext, IStateProviderReplica2 stateProviderReplica)
+                : base(serviceContext, stateProviderReplica)
+            {
+            }
         }
-    }
 
-    internal class InternalStatefulService : StatefulServiceBase
-    {
-        public InternalStatefulService(StatefulServiceContext serviceContext, IStateProviderReplica2 stateProviderReplica)
-            : base(serviceContext, stateProviderReplica)
+        internal class InternalStatefulService : StatefulServiceBase
         {
+            public InternalStatefulService(StatefulServiceContext serviceContext, IStateProviderReplica2 stateProviderReplica)
+                : base(serviceContext, stateProviderReplica)
+            {
+            }
         }
-    }
 
-    public class StatelessService1 : StatelessService
-    {
-        public StatelessService1(StatelessServiceContext serviceContext)
-            : base(serviceContext)
+        public class StatelessService1 : StatelessService
         {
+            public StatelessService1(StatelessServiceContext serviceContext)
+                : base(serviceContext)
+            {
+            }
         }
-    }
 
-    public sealed class SealedStatelessService : StatelessService
-    {
-        public SealedStatelessService(StatelessServiceContext serviceContext)
-            : base(serviceContext)
+        public sealed class SealedStatelessService : StatelessService
         {
+            public SealedStatelessService(StatelessServiceContext serviceContext)
+                : base(serviceContext)
+            {
+            }
         }
-    }
 
-    internal class InternalStatelessService : StatelessService
-    {
-        public InternalStatelessService(StatelessServiceContext serviceContext)
-            : base(serviceContext)
+        internal class InternalStatelessService : StatelessService
         {
+            public InternalStatelessService(StatelessServiceContext serviceContext)
+                : base(serviceContext)
+            {
+            }
         }
     }
 }

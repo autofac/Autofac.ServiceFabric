@@ -251,41 +251,41 @@ namespace Autofac.Integration.ServiceFabric.Test
 
             Assert.Equal(typeof(Actor1).GetServiceNotRegisteredAsInstancePerLifetimeScopeMessage(), exception.Message);
         }
-    }
 
-    internal class BadActorService
-    {
-    }
-
-    public class ActorModule : Module
-    {
-        protected override void Load(ContainerBuilder builder)
-        {
-            builder.RegisterActor<Actor1>();
-        }
-    }
-
-    public class Actor1 : Actor
-    {
-        public Actor1(ActorService actorService, ActorId actorId)
-            : base(actorService, actorId)
+        internal class BadActorService
         {
         }
-    }
 
-    public sealed class SealedActor : Actor
-    {
-        public SealedActor(ActorService actorService, ActorId actorId)
-            : base(actorService, actorId)
+        public class ActorModule : Module
         {
+            protected override void Load(ContainerBuilder builder)
+            {
+                builder.RegisterActor<Actor1>();
+            }
         }
-    }
 
-    internal class InternalActor : Actor
-    {
-        public InternalActor(ActorService actorService, ActorId actorId)
-            : base(actorService, actorId)
+        public class Actor1 : Actor
         {
+            public Actor1(ActorService actorService, ActorId actorId)
+                : base(actorService, actorId)
+            {
+            }
+        }
+
+        public sealed class SealedActor : Actor
+        {
+            public SealedActor(ActorService actorService, ActorId actorId)
+                : base(actorService, actorId)
+            {
+            }
+        }
+
+        internal class InternalActor : Actor
+        {
+            public InternalActor(ActorService actorService, ActorId actorId)
+                : base(actorService, actorId)
+            {
+            }
         }
     }
 }
