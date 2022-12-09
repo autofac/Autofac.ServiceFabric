@@ -6,6 +6,7 @@
     "langword",
     "netstandard",
     "paramref",
+    "proxied",
     "typeparam",
     "xunit"
   ],

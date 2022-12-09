@@ -43,6 +43,14 @@ namespace Autofac.Integration.ServiceFabric
             builder.Properties.Add(MetadataKey, true);
         }
 
+        /// <summary>
+        /// Registers a service with class interception enabled, scoped to the service root lifetime.
+        /// </summary>
+        /// <param name="builder">The container builder to register the services with.</param>
+        /// <param name="lifetimeScopeTag">The tag applied to the <see cref="ILifetimeScope"/> in which the actor service is hosted.</param>
+        /// <typeparam name="TService">The type of service to register.</typeparam>
+        /// <typeparam name="TInterceptor">The type of interceptor to use on the service.</typeparam>
+        /// <returns>The registration for continued configuration.</returns>
         internal static IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle>
             RegisterServiceWithInterception<TService, TInterceptor>(
                 this ContainerBuilder builder,
@@ -56,6 +64,12 @@ namespace Autofac.Integration.ServiceFabric
                 .InterceptedBy(typeof(TInterceptor));
         }
 
+        /// <summary>
+        /// Adds a registration handler to ensure a registration is instance per matching lifetime scope.
+        /// </summary>
+        /// <param name="builder">The container builder to register the handler with.</param>
+        /// <typeparam name="TService">The type of service to check.</typeparam>
+        /// <returns>The registration for continued configuration.</returns>
         internal static IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle>
             EnsureRegistrationIsInstancePerLifetimeScope<TService>(
                 this IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle> builder)
