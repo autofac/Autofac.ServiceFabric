@@ -27,11 +27,11 @@ namespace Autofac.Integration.ServiceFabric
         public static IRegistrationBuilder<TActor, ConcreteReflectionActivatorData, SingleRegistrationStyle>
             RegisterActor<TActor>(
                 this ContainerBuilder builder,
-                Type actorServiceType = null,
-                Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = null,
-                IActorStateProvider stateProvider = null,
-                ActorServiceSettings settings = null,
-                object lifetimeScopeTag = null)
+                Type? actorServiceType = null,
+                Func<ActorBase, IActorStateProvider, IActorStateManager>? stateManagerFactory = null,
+                IActorStateProvider? stateProvider = null,
+                ActorServiceSettings? settings = null,
+                object? lifetimeScopeTag = null)
             where TActor : ActorBase
         {
             if (builder == null)

@@ -25,7 +25,7 @@ namespace Autofac.Integration.ServiceFabric
             RegisterStatefulService<TService>(
                 this ContainerBuilder builder,
                 string serviceTypeName,
-                object lifetimeScopeTag = null)
+                object? lifetimeScopeTag = null)
             where TService : StatefulServiceBase
         {
             var registration = RegisterServiceWithContainer<TService>(builder, serviceTypeName, lifetimeScopeTag);
@@ -51,7 +51,7 @@ namespace Autofac.Integration.ServiceFabric
             RegisterStatelessService<TService>(
                 this ContainerBuilder builder,
                 string serviceTypeName,
-                object lifetimeScopeTag = null)
+                object? lifetimeScopeTag = null)
             where TService : StatelessService
         {
             var registration = RegisterServiceWithContainer<TService>(builder, serviceTypeName, lifetimeScopeTag);
@@ -67,7 +67,7 @@ namespace Autofac.Integration.ServiceFabric
             RegisterServiceWithContainer<TService>(
                 ContainerBuilder builder,
                 string serviceTypeName,
-                object lifetimeScopeTag = null)
+                object? lifetimeScopeTag = null)
             where TService : class
         {
             if (builder == null)

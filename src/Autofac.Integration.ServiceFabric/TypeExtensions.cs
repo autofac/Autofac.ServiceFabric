@@ -22,7 +22,7 @@ namespace Autofac.Integration.ServiceFabric
 
         internal static string GetServiceNotRegisteredAsInstancePerLifetimeScopeMessage(this Type type)
         {
-            return string.Format(CultureInfo.CurrentCulture, TypeExtensionsResources.ServiceNotRegisteredAsIntancePerLifetimeScope, type.FullName);
+            return string.Format(CultureInfo.CurrentCulture, TypeExtensionsResources.ServiceNotRegisteredAsInstancePerLifetimeScope, type.FullName);
         }
 
         internal static string GetInvalidActorServiceTypeErrorMessage(this Type type)

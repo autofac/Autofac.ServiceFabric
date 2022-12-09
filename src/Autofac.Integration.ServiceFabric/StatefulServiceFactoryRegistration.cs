@@ -24,7 +24,7 @@ namespace Autofac.Integration.ServiceFabric
         }
 
         public void RegisterStatefulServiceFactory<TService>(
-            ILifetimeScope container, string serviceTypeName, object lifetimeScopeTag = null)
+            ILifetimeScope container, string serviceTypeName, object? lifetimeScopeTag = null)
             where TService : StatefulServiceBase
         {
             ServiceRuntime.RegisterServiceAsync(serviceTypeName, context =>

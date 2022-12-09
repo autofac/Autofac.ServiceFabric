@@ -25,8 +25,8 @@ namespace Autofac.Integration.ServiceFabric
         /// <param name="configurationAction">Callback will be invoked while configuring the lifetime scope for a service.</param>
         public static void RegisterServiceFabricSupport(
             this ContainerBuilder builder,
-            Action<Exception> constructorExceptionCallback = null,
-            Action<ContainerBuilder> configurationAction = null)
+            Action<Exception>? constructorExceptionCallback = null,
+            Action<ContainerBuilder>? configurationAction = null)
         {
             if (builder == null) throw new ArgumentNullException(nameof(builder));
 
@@ -40,7 +40,7 @@ namespace Autofac.Integration.ServiceFabric
         internal static IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle>
             RegisterServiceWithInterception<TService, TInterceptor>(
                 this ContainerBuilder builder,
-                object lifetimeScopeTag = null)
+                object? lifetimeScopeTag = null)
             where TService : class
             where TInterceptor : IInterceptor
         {
@@ -70,8 +70,8 @@ namespace Autofac.Integration.ServiceFabric
 
         private static void AddInternalRegistrations(
             this ContainerBuilder builder,
-            Action<Exception> constructorExceptionCallback = null,
-            Action<ContainerBuilder> configurationAction = null)
+            Action<Exception>? constructorExceptionCallback = null,
+            Action<ContainerBuilder>? configurationAction = null)
         {
             var exceptionCallback = constructorExceptionCallback ?? (ex => { });
             var configurationCallback = configurationAction ?? (_ => { });
