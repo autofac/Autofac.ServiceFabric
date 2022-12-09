@@ -8,124 +8,123 @@ using Autofac.Extras.DynamicProxy;
 using Castle.DynamicProxy;
 using Microsoft.ServiceFabric.Actors.Runtime;
 
-namespace Autofac.Integration.ServiceFabric
+namespace Autofac.Integration.ServiceFabric;
+
+/// <summary>
+/// Adds registration syntax to the <see cref="ContainerBuilder"/> type.
+/// </summary>
+public static class RegistrationExtensions
 {
+    private const string MetadataKey = "__ServiceFabricRegistered";
+
     /// <summary>
-    /// Adds registration syntax to the <see cref="ContainerBuilder"/> type.
+    /// Adds the core services required by the Service Fabric integration.
     /// </summary>
-    public static class RegistrationExtensions
+    /// <param name="builder">The container builder to register the services with.</param>
+    /// <param name="constructorExceptionCallback">Callback will be invoked if an exception is thrown during resolving.</param>
+    /// <param name="configurationAction">Callback will be invoked while configuring the lifetime scope for a service.</param>
+    public static void RegisterServiceFabricSupport(
+        this ContainerBuilder builder,
+        Action<Exception>? constructorExceptionCallback = null,
+        Action<ContainerBuilder>? configurationAction = null)
     {
-        private const string MetadataKey = "__ServiceFabricRegistered";
-
-        /// <summary>
-        /// Adds the core services required by the Service Fabric integration.
-        /// </summary>
-        /// <param name="builder">The container builder to register the services with.</param>
-        /// <param name="constructorExceptionCallback">Callback will be invoked if an exception is thrown during resolving.</param>
-        /// <param name="configurationAction">Callback will be invoked while configuring the lifetime scope for a service.</param>
-        public static void RegisterServiceFabricSupport(
-            this ContainerBuilder builder,
-            Action<Exception>? constructorExceptionCallback = null,
-            Action<ContainerBuilder>? configurationAction = null)
+        if (builder == null)
         {
-            if (builder == null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
+            throw new ArgumentNullException(nameof(builder));
+        }
 
-            if (builder.Properties.ContainsKey(MetadataKey))
+        if (builder.Properties.ContainsKey(MetadataKey))
+        {
+            return;
+        }
+
+        builder.AddInternalRegistrations(constructorExceptionCallback, configurationAction);
+
+        builder.Properties.Add(MetadataKey, true);
+    }
+
+    /// <summary>
+    /// Registers a service with class interception enabled, scoped to the service root lifetime.
+    /// </summary>
+    /// <param name="builder">The container builder to register the services with.</param>
+    /// <param name="lifetimeScopeTag">The tag applied to the <see cref="ILifetimeScope"/> in which the actor service is hosted.</param>
+    /// <typeparam name="TService">The type of service to register.</typeparam>
+    /// <typeparam name="TInterceptor">The type of interceptor to use on the service.</typeparam>
+    /// <returns>The registration for continued configuration.</returns>
+    internal static IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle>
+        RegisterServiceWithInterception<TService, TInterceptor>(
+            this ContainerBuilder builder,
+            object? lifetimeScopeTag = null)
+        where TService : class
+        where TInterceptor : IInterceptor
+    {
+        return builder.RegisterType<TService>()
+            .InstancePerMatchingLifetimeScope(lifetimeScopeTag ?? Constants.DefaultLifetimeScopeTag)
+            .EnableClassInterceptors()
+            .InterceptedBy(typeof(TInterceptor));
+    }
+
+    /// <summary>
+    /// Adds a registration handler to ensure a registration is instance per matching lifetime scope.
+    /// </summary>
+    /// <param name="builder">The container builder to register the handler with.</param>
+    /// <typeparam name="TService">The type of service to check.</typeparam>
+    /// <returns>The registration for continued configuration.</returns>
+    internal static IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle>
+        EnsureRegistrationIsInstancePerLifetimeScope<TService>(
+            this IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle> builder)
+        where TService : class
+    {
+        return builder.OnRegistered(args =>
+        {
+            var registration = args.ComponentRegistration;
+
+            if (registration.Lifetime.GetType() == typeof(MatchingScopeLifetime) &&
+                registration.Sharing == InstanceSharing.Shared &&
+                registration.Ownership == InstanceOwnership.OwnedByLifetimeScope)
             {
                 return;
             }
 
-            builder.AddInternalRegistrations(constructorExceptionCallback, configurationAction);
+            var message = typeof(TService).GetServiceNotRegisteredAsInstancePerLifetimeScopeMessage();
+            throw new InvalidOperationException(message);
+        });
+    }
 
-            builder.Properties.Add(MetadataKey, true);
-        }
+    private static void AddInternalRegistrations(
+        this ContainerBuilder builder,
+        Action<Exception>? constructorExceptionCallback = null,
+        Action<ContainerBuilder>? configurationAction = null)
+    {
+        var exceptionCallback = constructorExceptionCallback ?? (ex => { });
+        var configurationCallback = configurationAction ?? (_ => { });
 
-        /// <summary>
-        /// Registers a service with class interception enabled, scoped to the service root lifetime.
-        /// </summary>
-        /// <param name="builder">The container builder to register the services with.</param>
-        /// <param name="lifetimeScopeTag">The tag applied to the <see cref="ILifetimeScope"/> in which the actor service is hosted.</param>
-        /// <typeparam name="TService">The type of service to register.</typeparam>
-        /// <typeparam name="TInterceptor">The type of interceptor to use on the service.</typeparam>
-        /// <returns>The registration for continued configuration.</returns>
-        internal static IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle>
-            RegisterServiceWithInterception<TService, TInterceptor>(
-                this ContainerBuilder builder,
-                object? lifetimeScopeTag = null)
-            where TService : class
-            where TInterceptor : IInterceptor
-        {
-            return builder.RegisterType<TService>()
-                .InstancePerMatchingLifetimeScope(lifetimeScopeTag ?? Constants.DefaultLifetimeScopeTag)
-                .EnableClassInterceptors()
-                .InterceptedBy(typeof(TInterceptor));
-        }
+        builder.RegisterType<ActorInterceptor>()
+            .InstancePerLifetimeScope();
 
-        /// <summary>
-        /// Adds a registration handler to ensure a registration is instance per matching lifetime scope.
-        /// </summary>
-        /// <param name="builder">The container builder to register the handler with.</param>
-        /// <typeparam name="TService">The type of service to check.</typeparam>
-        /// <returns>The registration for continued configuration.</returns>
-        internal static IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle>
-            EnsureRegistrationIsInstancePerLifetimeScope<TService>(
-                this IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle> builder)
-            where TService : class
-        {
-            return builder.OnRegistered(args =>
-            {
-                var registration = args.ComponentRegistration;
+        builder.RegisterType<ServiceInterceptor>()
+            .InstancePerLifetimeScope();
 
-                if (registration.Lifetime.GetType() == typeof(MatchingScopeLifetime) &&
-                    registration.Sharing == InstanceSharing.Shared &&
-                    registration.Ownership == InstanceOwnership.OwnedByLifetimeScope)
-                {
-                    return;
-                }
+        builder.RegisterType<ActorFactoryRegistration>()
+            .As<IActorFactoryRegistration>()
+            .WithParameter(TypedParameter.From(exceptionCallback))
+            .WithParameter(TypedParameter.From(configurationCallback))
+            .SingleInstance();
 
-                var message = typeof(TService).GetServiceNotRegisteredAsInstancePerLifetimeScopeMessage();
-                throw new InvalidOperationException(message);
-            });
-        }
+        builder.RegisterType<StatelessServiceFactoryRegistration>()
+            .As<IStatelessServiceFactoryRegistration>()
+            .WithParameter(TypedParameter.From(exceptionCallback))
+            .WithParameter(TypedParameter.From(configurationCallback))
+            .SingleInstance();
 
-        private static void AddInternalRegistrations(
-            this ContainerBuilder builder,
-            Action<Exception>? constructorExceptionCallback = null,
-            Action<ContainerBuilder>? configurationAction = null)
-        {
-            var exceptionCallback = constructorExceptionCallback ?? (ex => { });
-            var configurationCallback = configurationAction ?? (_ => { });
+        builder.RegisterType<StatefulServiceFactoryRegistration>()
+            .As<IStatefulServiceFactoryRegistration>()
+            .WithParameter(TypedParameter.From(exceptionCallback))
+            .WithParameter(TypedParameter.From(configurationCallback))
+            .SingleInstance();
 
-            builder.RegisterType<ActorInterceptor>()
-                .InstancePerLifetimeScope();
-
-            builder.RegisterType<ServiceInterceptor>()
-                .InstancePerLifetimeScope();
-
-            builder.RegisterType<ActorFactoryRegistration>()
-                .As<IActorFactoryRegistration>()
-                .WithParameter(TypedParameter.From(exceptionCallback))
-                .WithParameter(TypedParameter.From(configurationCallback))
-                .SingleInstance();
-
-            builder.RegisterType<StatelessServiceFactoryRegistration>()
-                .As<IStatelessServiceFactoryRegistration>()
-                .WithParameter(TypedParameter.From(exceptionCallback))
-                .WithParameter(TypedParameter.From(configurationCallback))
-                .SingleInstance();
-
-            builder.RegisterType<StatefulServiceFactoryRegistration>()
-                .As<IStatefulServiceFactoryRegistration>()
-                .WithParameter(TypedParameter.From(exceptionCallback))
-                .WithParameter(TypedParameter.From(configurationCallback))
-                .SingleInstance();
-
-            builder.RegisterType<ActorService>()
-                .AsSelf()
-                .InstancePerDependency();
-        }
+        builder.RegisterType<ActorService>()
+            .AsSelf()
+            .InstancePerDependency();
     }
 }
