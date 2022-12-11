@@ -5,11 +5,13 @@
     <PlatformTarget>x64</PlatformTarget>
     <AssemblyOriginatorKeyFile>../../Autofac.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
-    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+    <CodeAnalysisRuleSet>../../build/Test.ruleset</CodeAnalysisRuleSet>
+    <IsPackable>false</IsPackable>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Castle.Core" Version="4.4.1" />
+    <PackageReference Include="Castle.Core" Version="5.1.0" />
     <PackageReference Include="Microsoft.ServiceFabric" Version="7.1.458" />
     <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="4.1.458" />
     <PackageReference Include="Microsoft.ServiceFabric.Data" Version="4.1.458" />

@@ -1,42 +1,34 @@
-﻿// This software is part of the Autofac IoC container
-// Copyright © 2017 Autofac Contributors
-// https://autofac.org
-//
-// Permission is hereby granted, free of charge, to any person
-// obtaining a copy of this software and associated documentation
-// files (the "Software"), to deal in the Software without
-// restriction, including without limitation the rights to use,
-// copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the
-// Software is furnished to do so, subject to the following
-// conditions:
-//
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-// OTHER DEALINGS IN THE SOFTWARE.
+﻿// Copyright (c) Autofac Project. All rights reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using System;
 using Microsoft.ServiceFabric.Actors.Runtime;
 
-namespace Autofac.Integration.ServiceFabric
+namespace Autofac.Integration.ServiceFabric;
+
+/// <summary>
+/// Defines a registration for a factory that can create an actor service.
+/// </summary>
+internal interface IActorFactoryRegistration
 {
-    internal interface IActorFactoryRegistration
-    {
-        void RegisterActorFactory<TActor>(
-            ILifetimeScope lifetimeScope,
-            Type actorServiceType,
-            Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = null,
-            IActorStateProvider stateProvider = null,
-            ActorServiceSettings settings = null,
-            object lifetimeScopeTag = null)
-            where TActor : ActorBase;
-    }
+    /// <summary>
+    /// Registers a factory for creating an actor service.
+    /// </summary>
+    /// <param name="lifetimeScope">
+    /// The root lifetime scope / container serving as the parent from which
+    /// the service lifetime will be created.
+    /// </param>
+    /// <param name="actorServiceType"><see cref="Type"/> of the actor service to create (defaults to <see cref="ActorService"/>).</param>
+    /// <param name="stateManagerFactory">A factory method to create <see cref="IActorStateManager"/>.</param>
+    /// <param name="stateProvider">State provider to store the state for actor objects.</param>
+    /// <param name="settings">Settings to configures behavior of Actor Service.</param>
+    /// <param name="lifetimeScopeTag">The tag applied to the <see cref="ILifetimeScope"/> in which the actor service is hosted.</param>
+    /// <typeparam name="TActor">The type of the actor to register.</typeparam>
+    void RegisterActorFactory<TActor>(
+        ILifetimeScope lifetimeScope,
+        Type actorServiceType,
+        Func<ActorBase, IActorStateProvider, IActorStateManager>? stateManagerFactory = null,
+        IActorStateProvider? stateProvider = null,
+        ActorServiceSettings? settings = null,
+        object? lifetimeScopeTag = null)
+        where TActor : ActorBase;
 }

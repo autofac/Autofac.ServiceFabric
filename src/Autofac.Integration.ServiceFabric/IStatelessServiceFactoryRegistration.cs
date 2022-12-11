@@ -1,36 +1,26 @@
-// This software is part of the Autofac IoC container
-// Copyright © 2017 Autofac Contributors
-// https://autofac.org
-//
-// Permission is hereby granted, free of charge, to any person
-// obtaining a copy of this software and associated documentation
-// files (the "Software"), to deal in the Software without
-// restriction, including without limitation the rights to use,
-// copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the
-// Software is furnished to do so, subject to the following
-// conditions:
-//
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-// OTHER DEALINGS IN THE SOFTWARE.
+// Copyright (c) Autofac Project. All rights reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using Microsoft.ServiceFabric.Services.Runtime;
 
-namespace Autofac.Integration.ServiceFabric
+namespace Autofac.Integration.ServiceFabric;
+
+/// <summary>
+/// Defines a registration for a factory that can create a stateless service.
+/// </summary>
+internal interface IStatelessServiceFactoryRegistration
 {
-    internal interface IStatelessServiceFactoryRegistration
-    {
-        void RegisterStatelessServiceFactory<TService>(
-            ILifetimeScope lifetimeScope, string serviceTypeName, object lifetimeScopeTag = null)
-            where TService : StatelessService;
-    }
+    /// <summary>
+    /// Registers a factory for creating a stateless service.
+    /// </summary>
+    /// <param name="lifetimeScope">
+    /// The root lifetime scope / container serving as the parent from which
+    /// the service lifetime will be created.
+    /// </param>
+    /// <param name="serviceTypeName">ServiceTypeName as provided in service manifest.</param>
+    /// <param name="lifetimeScopeTag">The tag applied to the <see cref="ILifetimeScope"/> in which the stateless service is hosted.</param>
+    /// <typeparam name="TService">The type of the stateless service to register.</typeparam>
+    void RegisterStatelessServiceFactory<TService>(
+        ILifetimeScope lifetimeScope, string serviceTypeName, object? lifetimeScopeTag = null)
+        where TService : StatelessService;
 }

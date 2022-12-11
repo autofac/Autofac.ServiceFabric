@@ -1,82 +1,72 @@
-﻿// This software is part of the Autofac IoC container
-// Copyright © 2017 Autofac Contributors
-// https://autofac.org
-//
-// Permission is hereby granted, free of charge, to any person
-// obtaining a copy of this software and associated documentation
-// files (the "Software"), to deal in the Software without
-// restriction, including without limitation the rights to use,
-// copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the
-// Software is furnished to do so, subject to the following
-// conditions:
-//
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-// OTHER DEALINGS IN THE SOFTWARE.
+﻿// Copyright (c) Autofac Project. All rights reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Fabric;
 using Microsoft.ServiceFabric.Services.Runtime;
 
-namespace Autofac.Integration.ServiceFabric
+namespace Autofac.Integration.ServiceFabric;
+
+/// <summary>
+/// Default implementation of <see cref="IStatefulServiceFactoryRegistration"/>.
+/// </summary>
+// ReSharper disable once ClassNeverInstantiated.Global
+[SuppressMessage("Microsoft.Performance", "CA1812", Justification = "Instantiated at runtime via dependency injection")]
+internal sealed class StatefulServiceFactoryRegistration : IStatefulServiceFactoryRegistration
 {
-    // ReSharper disable once ClassNeverInstantiated.Global
-    [SuppressMessage("Microsoft.Performance", "CA1812", Justification = "Instantiated at runtime via dependency injection")]
-    internal sealed class StatefulServiceFactoryRegistration : IStatefulServiceFactoryRegistration
+    /// <summary>
+    /// Gets a callback that will be invoked if an exception is thrown during resolving.
+    /// </summary>
+    internal Action<Exception> ConstructorExceptionCallback { get; }
+
+    /// <summary>
+    /// Gets a callback that will be invoked while configuring the lifetime scope for a service.
+    /// </summary>
+    internal Action<ContainerBuilder> ConfigurationAction { get; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StatefulServiceFactoryRegistration"/> class.
+    /// </summary>
+    /// <param name="constructorExceptionCallback">Callback will be invoked if an exception is thrown during resolving.</param>
+    /// <param name="configurationAction">Callback will be invoked while configuring the lifetime scope for a service.</param>
+    // ReSharper disable once UnusedMember.Global
+    public StatefulServiceFactoryRegistration(
+        Action<Exception> constructorExceptionCallback,
+        Action<ContainerBuilder> configurationAction)
     {
-        internal Action<Exception> ConstructorExceptionCallback { get; }
+        ConstructorExceptionCallback = constructorExceptionCallback;
+        ConfigurationAction = configurationAction;
+    }
 
-        internal Action<ContainerBuilder> ConfigurationAction { get; }
-
-        // ReSharper disable once UnusedMember.Global
-        public StatefulServiceFactoryRegistration(
-            Action<Exception> constructorExceptionCallback,
-            Action<ContainerBuilder> configurationAction)
+    /// <inheritdoc />
+    public void RegisterStatefulServiceFactory<TService>(
+        ILifetimeScope container, string serviceTypeName, object? lifetimeScopeTag = null)
+        where TService : StatefulServiceBase
+    {
+        ServiceRuntime.RegisterServiceAsync(serviceTypeName, context =>
         {
-            ConstructorExceptionCallback = constructorExceptionCallback;
-            ConfigurationAction = configurationAction;
-        }
-
-        public void RegisterStatefulServiceFactory<TService>(
-            ILifetimeScope container, string serviceTypeName, object lifetimeScopeTag = null)
-            where TService : StatefulServiceBase
-        {
-            ServiceRuntime.RegisterServiceAsync(serviceTypeName, context =>
+            var tag = lifetimeScopeTag ?? Constants.DefaultLifetimeScopeTag;
+            var lifetimeScope = container.BeginLifetimeScope(tag, builder =>
             {
-                var tag = lifetimeScopeTag ?? Constants.DefaultLifetimeScopeTag;
-                var lifetimeScope = container.BeginLifetimeScope(tag, builder =>
-                {
-                    builder.RegisterInstance(context)
-                        .As<StatefulServiceContext>()
-                        .As<ServiceContext>();
+                builder.RegisterInstance(context)
+                    .As<StatefulServiceContext>()
+                    .As<ServiceContext>();
 
-                    ConfigurationAction(builder);
-                });
+                ConfigurationAction(builder);
+            });
 
-                try
-                {
-                    var service = lifetimeScope.Resolve<TService>();
-                    return service;
-                }
-                catch (Exception ex)
-                {
-                    // Proactively dispose lifetime scope as interceptor will not be called.
-                    lifetimeScope.Dispose();
+            try
+            {
+                var service = lifetimeScope.Resolve<TService>();
+                return service;
+            }
+            catch (Exception ex)
+            {
+                // Proactively dispose lifetime scope as interceptor will not be called.
+                lifetimeScope.Dispose();
 
-                    ConstructorExceptionCallback(ex);
-                    throw;
-                }
-            }).GetAwaiter().GetResult();
-        }
+                ConstructorExceptionCallback(ex);
+                throw;
+            }
+        }).GetAwaiter().GetResult();
     }
 }

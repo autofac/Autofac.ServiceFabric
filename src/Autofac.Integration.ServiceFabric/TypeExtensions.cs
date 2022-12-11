@@ -1,56 +1,58 @@
-﻿// This software is part of the Autofac IoC container
-// Copyright © 2017 Autofac Contributors
-// https://autofac.org
-//
-// Permission is hereby granted, free of charge, to any person
-// obtaining a copy of this software and associated documentation
-// files (the "Software"), to deal in the Software without
-// restriction, including without limitation the rights to use,
-// copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the
-// Software is furnished to do so, subject to the following
-// conditions:
-//
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-// OTHER DEALINGS IN THE SOFTWARE.
+﻿// Copyright (c) Autofac Project. All rights reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using System;
 using System.Globalization;
 using Castle.DynamicProxy;
+using Microsoft.ServiceFabric.Actors.Runtime;
 
-namespace Autofac.Integration.ServiceFabric
+namespace Autofac.Integration.ServiceFabric;
+
+/// <summary>
+/// Extension methods for working with <see cref="Type"/>.
+/// </summary>
+internal static class TypeExtensions
 {
-    internal static class TypeExtensions
+    /// <summary>
+    /// Determines if a given type can be wrapped in a proxy.
+    /// </summary>
+    /// <param name="type">The <see cref="Type"/> to check.</param>
+    /// <returns>
+    /// <see langword="true"/> if the type can be wrapped in a proxy; otherwise <see langword="false"/>.
+    /// </returns>
+    internal static bool CanBeProxied(this Type type)
     {
-        internal static bool CanBeProxied(this Type type)
-        {
-            var open = type.IsClass && !type.IsSealed && !type.IsAbstract;
-            var visible = type.IsPublic || ProxyUtil.IsAccessible(type);
-            return open && visible;
-        }
+        var open = type.IsClass && !type.IsSealed && !type.IsAbstract;
+        var visible = type.IsPublic || ProxyUtil.IsAccessible(type);
+        return open && visible;
+    }
 
-        internal static string GetInvalidProxyTypeErrorMessage(this Type type)
-        {
-            return string.Format(CultureInfo.CurrentCulture, TypeExtensionsResources.InvalidProxyTypeErrorMessage, type.FullName);
-        }
+    /// <summary>
+    /// Creates an error message for when a given type can't be proxied.
+    /// </summary>
+    /// <param name="type">The <see cref="Type"/> to include in the message.</param>
+    /// <returns>A localized message for an exception.</returns>
+    internal static string GetInvalidProxyTypeErrorMessage(this Type type)
+    {
+        return string.Format(CultureInfo.CurrentCulture, TypeExtensionsResources.InvalidProxyTypeErrorMessage, type.FullName);
+    }
 
-        internal static string GetServiceNotRegisteredAsInstancePerLifetimeScopeMessage(this Type type)
-        {
-            return string.Format(CultureInfo.CurrentCulture, TypeExtensionsResources.ServiceNotRegisteredAsIntancePerLifetimeScope, type.FullName);
-        }
+    /// <summary>
+    /// Creates an error message for when a particular service type isn't registered instance per lifetime scope.
+    /// </summary>
+    /// <param name="type">The <see cref="Type"/> to include in the message.</param>
+    /// <returns>A localized message for an exception.</returns>
+    internal static string GetServiceNotRegisteredAsInstancePerLifetimeScopeMessage(this Type type)
+    {
+        return string.Format(CultureInfo.CurrentCulture, TypeExtensionsResources.ServiceNotRegisteredAsInstancePerLifetimeScope, type.FullName);
+    }
 
-        internal static string GetInvalidActorServiceTypeErrorMessage(this Type type)
-        {
-            return string.Format(CultureInfo.CurrentCulture, TypeExtensionsResources.InvalidActorServiceTypeErrorMessage, type.FullName);
-        }
+    /// <summary>
+    /// Creates an error message for when a given type isn't an <see cref="ActorService"/>.
+    /// </summary>
+    /// <param name="type">The <see cref="Type"/> to include in the message.</param>
+    /// <returns>A localized message for an exception.</returns>
+    internal static string GetInvalidActorServiceTypeErrorMessage(this Type type)
+    {
+        return string.Format(CultureInfo.CurrentCulture, TypeExtensionsResources.InvalidActorServiceTypeErrorMessage, type.FullName);
     }
 }
