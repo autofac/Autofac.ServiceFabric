@@ -7,7 +7,7 @@ Service Fabric support for [Autofac](https://autofac.org).
 Please file issues and pull requests for this package in this repository rather than in the Autofac core repo.
 
 - [Documentation](https://autofac.readthedocs.io/en/latest/integration/servicefabric.html)
-- [NuGet](https://www.nuget.org/packages/Autofac.WebApi2/)
+- [NuGet](https://www.nuget.org/packages/Autofac.ServiceFabric/)
 - [Contributing](https://autofac.readthedocs.io/en/latest/contributors.html)
 - [Open in Visual Studio Code](https://open.vscode.dev/autofac/Autofac.ServiceFabric)
 
