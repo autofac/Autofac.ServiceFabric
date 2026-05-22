@@ -1,4 +1,4 @@
-﻿// Copyright (c) Autofac Project. All rights reserved.
+// Copyright (c) Autofac Project. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using Autofac.Core;
@@ -16,7 +16,7 @@ public sealed class AutofacActorExtensionsTests
     {
         var builder = new ContainerBuilder();
         builder.RegisterActor<Actor1>();
-        builder.RegisterInstance(new Mock<IActorFactoryRegistration>().Object);
+        builder.RegisterInstance(Substitute.For<IActorFactoryRegistration>());
 
         var container = builder.Build();
 
@@ -28,7 +28,7 @@ public sealed class AutofacActorExtensionsTests
     {
         var builder = new ContainerBuilder();
         builder.RegisterServiceFabricSupport();
-        builder.RegisterInstance(new Mock<IActorFactoryRegistration>().Object);
+        builder.RegisterInstance(Substitute.For<IActorFactoryRegistration>());
         builder.RegisterActor<Actor1>();
 
         var container = builder.Build();
@@ -44,7 +44,7 @@ public sealed class AutofacActorExtensionsTests
     {
         var builder = new ContainerBuilder();
         builder.RegisterActor<Actor1>();
-        builder.RegisterInstance(new Mock<IActorFactoryRegistration>().Object);
+        builder.RegisterInstance(Substitute.For<IActorFactoryRegistration>());
 
         var container = builder.Build();
 
@@ -62,7 +62,7 @@ public sealed class AutofacActorExtensionsTests
         var builder = new ContainerBuilder();
         const string lifetimeScopeTag = "Tag";
         builder.RegisterActor<Actor1>(lifetimeScopeTag: lifetimeScopeTag);
-        builder.RegisterInstance(new Mock<IActorFactoryRegistration>().Object);
+        builder.RegisterInstance(Substitute.For<IActorFactoryRegistration>());
 
         var container = builder.Build();
 
@@ -79,12 +79,12 @@ public sealed class AutofacActorExtensionsTests
     {
         var builder = new ContainerBuilder();
         builder.RegisterActor<Actor1>();
-        var factoryMock = new Mock<IActorFactoryRegistration>();
-        builder.RegisterInstance(factoryMock.Object);
+        var factoryMock = Substitute.For<IActorFactoryRegistration>();
+        builder.RegisterInstance(factoryMock);
 
         var container = builder.Build();
 
-        factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, typeof(ActorService), null, null, null, null), Times.Once);
+        factoryMock.Received(1).RegisterActorFactory<Actor1>(container, typeof(ActorService), null, null, null, null);
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public sealed class AutofacActorExtensionsTests
     {
         var builder = new ContainerBuilder();
         builder.RegisterActor<InternalsVisibleActor>();
-        builder.RegisterInstance(new Mock<IActorFactoryRegistration>().Object);
+        builder.RegisterInstance(Substitute.For<IActorFactoryRegistration>());
 
         var container = builder.Build();
 
@@ -104,13 +104,13 @@ public sealed class AutofacActorExtensionsTests
     {
         var builder = new ContainerBuilder();
         builder.RegisterModule(new ActorModule());
-        var factoryMock = new Mock<IActorFactoryRegistration>();
-        builder.RegisterInstance(factoryMock.Object);
+        var factoryMock = Substitute.For<IActorFactoryRegistration>();
+        builder.RegisterInstance(factoryMock);
 
         var container = builder.Build();
 
         container.AssertRegistered<Actor1>();
-        factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, typeof(ActorService), null, null, null, null), Times.Once);
+        factoryMock.Received(1).RegisterActorFactory<Actor1>(container, typeof(ActorService), null, null, null, null);
     }
 
     [Fact]
@@ -121,28 +121,28 @@ public sealed class AutofacActorExtensionsTests
         // ReSharper disable once ConvertToLocalFunction
         Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = (actor, provider) => null;
         builder.RegisterActor<Actor1>(stateManagerFactory: stateManagerFactory);
-        var factoryMock = new Mock<IActorFactoryRegistration>();
-        builder.RegisterInstance(factoryMock.Object);
+        var factoryMock = Substitute.For<IActorFactoryRegistration>();
+        builder.RegisterInstance(factoryMock);
 
         var container = builder.Build();
 
         container.AssertRegistered<Actor1>();
-        factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, typeof(ActorService), stateManagerFactory, null, null, null), Times.Once);
+        factoryMock.Received(1).RegisterActorFactory<Actor1>(container, typeof(ActorService), stateManagerFactory, null, null, null);
     }
 
     [Fact]
     public void RegisterActorCanBeCalledWithStateProvider()
     {
         var builder = new ContainerBuilder();
-        var stateProvider = new Mock<IActorStateProvider>().Object;
+        var stateProvider = Substitute.For<IActorStateProvider>();
         builder.RegisterActor<Actor1>(stateProvider: stateProvider);
-        var factoryMock = new Mock<IActorFactoryRegistration>();
-        builder.RegisterInstance(factoryMock.Object);
+        var factoryMock = Substitute.For<IActorFactoryRegistration>();
+        builder.RegisterInstance(factoryMock);
 
         var container = builder.Build();
 
         container.AssertRegistered<Actor1>();
-        factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, typeof(ActorService), null, stateProvider, null, null), Times.Once);
+        factoryMock.Received(1).RegisterActorFactory<Actor1>(container, typeof(ActorService), null, stateProvider, null, null);
     }
 
     [Fact]
@@ -151,13 +151,13 @@ public sealed class AutofacActorExtensionsTests
         var builder = new ContainerBuilder();
         var settings = new ActorServiceSettings();
         builder.RegisterActor<Actor1>(settings: settings);
-        var factoryMock = new Mock<IActorFactoryRegistration>();
-        builder.RegisterInstance(factoryMock.Object);
+        var factoryMock = Substitute.For<IActorFactoryRegistration>();
+        builder.RegisterInstance(factoryMock);
 
         var container = builder.Build();
 
         container.AssertRegistered<Actor1>();
-        factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, typeof(ActorService), null, null, settings, null), Times.Once);
+        factoryMock.Received(1).RegisterActorFactory<Actor1>(container, typeof(ActorService), null, null, settings, null);
     }
 
     [Fact]
@@ -166,13 +166,13 @@ public sealed class AutofacActorExtensionsTests
         var builder = new ContainerBuilder();
         const string lifetimeScopeTag = "Tag";
         builder.RegisterActor<Actor1>(lifetimeScopeTag: lifetimeScopeTag);
-        var factoryMock = new Mock<IActorFactoryRegistration>();
-        builder.RegisterInstance(factoryMock.Object);
+        var factoryMock = Substitute.For<IActorFactoryRegistration>();
+        builder.RegisterInstance(factoryMock);
 
         var container = builder.Build();
 
         container.AssertRegistered<Actor1>();
-        factoryMock.Verify(x => x.RegisterActorFactory<Actor1>(container, typeof(ActorService), null, null, null, lifetimeScopeTag), Times.Once);
+        factoryMock.Received(1).RegisterActorFactory<Actor1>(container, typeof(ActorService), null, null, null, lifetimeScopeTag);
     }
 
     [Fact]
@@ -217,8 +217,8 @@ public sealed class AutofacActorExtensionsTests
     public void ContainerBuildThrowsIfRegisterActorLifetimeScopeChangedToInstancePerDependency()
     {
         var builder = new ContainerBuilder();
-        var factoryMock = new Mock<IActorFactoryRegistration>();
-        builder.RegisterInstance(factoryMock.Object);
+        var factoryMock = Substitute.For<IActorFactoryRegistration>();
+        builder.RegisterInstance(factoryMock);
         builder.RegisterActor<Actor1>().InstancePerDependency();
 
         var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
@@ -230,8 +230,8 @@ public sealed class AutofacActorExtensionsTests
     public void ContainerBuildThrowsIfRegisterActorLifetimeScopeChangedToSingleInstance()
     {
         var builder = new ContainerBuilder();
-        var factoryMock = new Mock<IActorFactoryRegistration>();
-        builder.RegisterInstance(factoryMock.Object);
+        var factoryMock = Substitute.For<IActorFactoryRegistration>();
+        builder.RegisterInstance(factoryMock);
         builder.RegisterActor<Actor1>().SingleInstance();
 
         var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
@@ -243,8 +243,8 @@ public sealed class AutofacActorExtensionsTests
     public void ContainerBuildThrowsIfRegisterActorLifetimeScopeChangedToExternallyOwned()
     {
         var builder = new ContainerBuilder();
-        var factoryMock = new Mock<IActorFactoryRegistration>();
-        builder.RegisterInstance(factoryMock.Object);
+        var factoryMock = Substitute.For<IActorFactoryRegistration>();
+        builder.RegisterInstance(factoryMock);
         builder.RegisterActor<Actor1>().ExternallyOwned();
 
         var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());

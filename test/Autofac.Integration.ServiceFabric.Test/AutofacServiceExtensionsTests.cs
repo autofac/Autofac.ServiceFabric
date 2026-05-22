@@ -1,4 +1,4 @@
-﻿// Copyright (c) Autofac Project. All rights reserved.
+// Copyright (c) Autofac Project. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System.Fabric;
@@ -17,7 +17,7 @@ public sealed class AutofacServiceExtensionsTests
     {
         var builder = new ContainerBuilder();
         builder.RegisterStatefulService<StatefulService1>("ServiceType");
-        builder.RegisterInstance(new Mock<IStatefulServiceFactoryRegistration>().Object);
+        builder.RegisterInstance(Substitute.For<IStatefulServiceFactoryRegistration>());
 
         var container = builder.Build();
 
@@ -29,7 +29,7 @@ public sealed class AutofacServiceExtensionsTests
     {
         var builder = new ContainerBuilder();
         builder.RegisterStatelessService<StatelessService1>("ServiceType");
-        builder.RegisterInstance(new Mock<IStatelessServiceFactoryRegistration>().Object);
+        builder.RegisterInstance(Substitute.For<IStatelessServiceFactoryRegistration>());
 
         var container = builder.Build();
 
@@ -42,7 +42,7 @@ public sealed class AutofacServiceExtensionsTests
         var builder = new ContainerBuilder();
         builder.RegisterStatefulService<StatefulService1>("ServiceType");
         builder.RegisterServiceFabricSupport();
-        builder.RegisterInstance(new Mock<IStatefulServiceFactoryRegistration>().Object);
+        builder.RegisterInstance(Substitute.For<IStatefulServiceFactoryRegistration>());
 
         var container = builder.Build();
 
@@ -58,7 +58,7 @@ public sealed class AutofacServiceExtensionsTests
         var builder = new ContainerBuilder();
         builder.RegisterStatelessService<StatelessService1>("ServiceType");
         builder.RegisterServiceFabricSupport();
-        builder.RegisterInstance(new Mock<IStatelessServiceFactoryRegistration>().Object);
+        builder.RegisterInstance(Substitute.For<IStatelessServiceFactoryRegistration>());
 
         var container = builder.Build();
 
@@ -73,7 +73,7 @@ public sealed class AutofacServiceExtensionsTests
     {
         var builder = new ContainerBuilder();
         builder.RegisterStatefulService<StatefulService1>("ServiceType");
-        builder.RegisterInstance(new Mock<IStatefulServiceFactoryRegistration>().Object);
+        builder.RegisterInstance(Substitute.For<IStatefulServiceFactoryRegistration>());
 
         var container = builder.Build();
 
@@ -90,7 +90,7 @@ public sealed class AutofacServiceExtensionsTests
     {
         var builder = new ContainerBuilder();
         builder.RegisterStatelessService<StatelessService1>("ServiceType");
-        builder.RegisterInstance(new Mock<IStatelessServiceFactoryRegistration>().Object);
+        builder.RegisterInstance(Substitute.For<IStatelessServiceFactoryRegistration>());
 
         var container = builder.Build();
 
@@ -108,7 +108,7 @@ public sealed class AutofacServiceExtensionsTests
         var builder = new ContainerBuilder();
         const string lifetimeScopeTag = "Tag";
         builder.RegisterStatefulService<StatefulService1>("ServiceType", lifetimeScopeTag);
-        builder.RegisterInstance(new Mock<IStatefulServiceFactoryRegistration>().Object);
+        builder.RegisterInstance(Substitute.For<IStatefulServiceFactoryRegistration>());
 
         var container = builder.Build();
 
@@ -126,7 +126,7 @@ public sealed class AutofacServiceExtensionsTests
         var builder = new ContainerBuilder();
         const string lifetimeScopeTag = "Tag";
         builder.RegisterStatelessService<StatelessService1>("ServiceType", lifetimeScopeTag);
-        builder.RegisterInstance(new Mock<IStatelessServiceFactoryRegistration>().Object);
+        builder.RegisterInstance(Substitute.For<IStatelessServiceFactoryRegistration>());
 
         var container = builder.Build();
 
@@ -143,12 +143,12 @@ public sealed class AutofacServiceExtensionsTests
     {
         var builder = new ContainerBuilder();
         builder.RegisterStatefulService<StatefulService1>("ServiceType");
-        var factoryMock = new Mock<IStatefulServiceFactoryRegistration>();
-        builder.RegisterInstance(factoryMock.Object);
+        var factoryMock = Substitute.For<IStatefulServiceFactoryRegistration>();
+        builder.RegisterInstance(factoryMock);
 
         var container = builder.Build();
 
-        factoryMock.Verify(x => x.RegisterStatefulServiceFactory<StatefulService1>(container, "ServiceType", null), Times.Once);
+        factoryMock.Received(1).RegisterStatefulServiceFactory<StatefulService1>(container, "ServiceType", null);
     }
 
     [Fact]
@@ -156,12 +156,12 @@ public sealed class AutofacServiceExtensionsTests
     {
         var builder = new ContainerBuilder();
         builder.RegisterStatelessService<StatelessService1>("ServiceType");
-        var factoryMock = new Mock<IStatelessServiceFactoryRegistration>();
-        builder.RegisterInstance(factoryMock.Object);
+        var factoryMock = Substitute.For<IStatelessServiceFactoryRegistration>();
+        builder.RegisterInstance(factoryMock);
 
         var container = builder.Build();
 
-        factoryMock.Verify(x => x.RegisterStatelessServiceFactory<StatelessService1>(container, "ServiceType", null), Times.Once);
+        factoryMock.Received(1).RegisterStatelessServiceFactory<StatelessService1>(container, "ServiceType", null);
     }
 
     [Fact]
@@ -170,13 +170,13 @@ public sealed class AutofacServiceExtensionsTests
         var builder = new ContainerBuilder();
         const string lifetimeScopeTag = "CustomTag";
         builder.RegisterStatefulService<StatefulService1>("ServiceType", lifetimeScopeTag);
-        var factoryMock = new Mock<IStatefulServiceFactoryRegistration>();
-        builder.RegisterInstance(factoryMock.Object);
+        var factoryMock = Substitute.For<IStatefulServiceFactoryRegistration>();
+        builder.RegisterInstance(factoryMock);
 
         var container = builder.Build();
 
         container.AssertRegistered<StatefulService1>();
-        factoryMock.Verify(x => x.RegisterStatefulServiceFactory<StatefulService1>(container, "ServiceType", lifetimeScopeTag), Times.Once);
+        factoryMock.Received(1).RegisterStatefulServiceFactory<StatefulService1>(container, "ServiceType", lifetimeScopeTag);
     }
 
     [Fact]
@@ -185,13 +185,13 @@ public sealed class AutofacServiceExtensionsTests
         var builder = new ContainerBuilder();
         const string lifetimeScopeTag = "CustomTag";
         builder.RegisterStatelessService<StatelessService1>("ServiceType", lifetimeScopeTag);
-        var factoryMock = new Mock<IStatelessServiceFactoryRegistration>();
-        builder.RegisterInstance(factoryMock.Object);
+        var factoryMock = Substitute.For<IStatelessServiceFactoryRegistration>();
+        builder.RegisterInstance(factoryMock);
 
         var container = builder.Build();
 
         container.AssertRegistered<StatelessService1>();
-        factoryMock.Verify(x => x.RegisterStatelessServiceFactory<StatelessService1>(container, "ServiceType", lifetimeScopeTag), Times.Once);
+        factoryMock.Received(1).RegisterStatelessServiceFactory<StatelessService1>(container, "ServiceType", lifetimeScopeTag);
     }
 
     [Fact]
@@ -199,7 +199,7 @@ public sealed class AutofacServiceExtensionsTests
     {
         var builder = new ContainerBuilder();
         builder.RegisterStatefulService<InternalsVisibleStatefulService>("ServiceType");
-        builder.RegisterInstance(new Mock<IStatefulServiceFactoryRegistration>().Object);
+        builder.RegisterInstance(Substitute.For<IStatefulServiceFactoryRegistration>());
 
         var container = builder.Build();
 
@@ -211,7 +211,7 @@ public sealed class AutofacServiceExtensionsTests
     {
         var builder = new ContainerBuilder();
         builder.RegisterStatelessService<InternalsVisibleStatelessService>("ServiceType");
-        builder.RegisterInstance(new Mock<IStatelessServiceFactoryRegistration>().Object);
+        builder.RegisterInstance(Substitute.For<IStatelessServiceFactoryRegistration>());
 
         var container = builder.Build();
 
@@ -223,13 +223,13 @@ public sealed class AutofacServiceExtensionsTests
     {
         var builder = new ContainerBuilder();
         builder.RegisterModule(new StatefulServiceModule());
-        var factoryMock = new Mock<IStatefulServiceFactoryRegistration>();
-        builder.RegisterInstance(factoryMock.Object);
+        var factoryMock = Substitute.For<IStatefulServiceFactoryRegistration>();
+        builder.RegisterInstance(factoryMock);
 
         var container = builder.Build();
 
         container.AssertRegistered<StatefulService1>();
-        factoryMock.Verify(x => x.RegisterStatefulServiceFactory<StatefulService1>(container, "serviceTypeName", null), Times.Once);
+        factoryMock.Received(1).RegisterStatefulServiceFactory<StatefulService1>(container, "serviceTypeName", null);
     }
 
     [Fact]
@@ -237,13 +237,13 @@ public sealed class AutofacServiceExtensionsTests
     {
         var builder = new ContainerBuilder();
         builder.RegisterModule(new StatelessServiceModule());
-        var factoryMock = new Mock<IStatelessServiceFactoryRegistration>();
-        builder.RegisterInstance(factoryMock.Object);
+        var factoryMock = Substitute.For<IStatelessServiceFactoryRegistration>();
+        builder.RegisterInstance(factoryMock);
 
         var container = builder.Build();
 
         container.AssertRegistered<StatelessService1>();
-        factoryMock.Verify(x => x.RegisterStatelessServiceFactory<StatelessService1>(container, "serviceTypeName", null), Times.Once);
+        factoryMock.Received(1).RegisterStatelessServiceFactory<StatelessService1>(container, "serviceTypeName", null);
     }
 
     [Fact]
@@ -357,8 +357,8 @@ public sealed class AutofacServiceExtensionsTests
     {
         var builder = new ContainerBuilder();
         builder.RegisterStatefulService<StatefulService1>("serviceTypeName").InstancePerDependency();
-        var factoryMock = new Mock<IStatefulServiceFactoryRegistration>();
-        builder.RegisterInstance(factoryMock.Object);
+        var factoryMock = Substitute.For<IStatefulServiceFactoryRegistration>();
+        builder.RegisterInstance(factoryMock);
 
         var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
 
@@ -370,8 +370,8 @@ public sealed class AutofacServiceExtensionsTests
     {
         var builder = new ContainerBuilder();
         builder.RegisterStatelessService<StatelessService1>("serviceTypeName").InstancePerDependency();
-        var factoryMock = new Mock<IStatelessServiceFactoryRegistration>();
-        builder.RegisterInstance(factoryMock.Object);
+        var factoryMock = Substitute.For<IStatelessServiceFactoryRegistration>();
+        builder.RegisterInstance(factoryMock);
 
         var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
 
@@ -383,8 +383,8 @@ public sealed class AutofacServiceExtensionsTests
     {
         var builder = new ContainerBuilder();
         builder.RegisterStatefulService<StatefulService1>("serviceTypeName").SingleInstance();
-        var factoryMock = new Mock<IStatefulServiceFactoryRegistration>();
-        builder.RegisterInstance(factoryMock.Object);
+        var factoryMock = Substitute.For<IStatefulServiceFactoryRegistration>();
+        builder.RegisterInstance(factoryMock);
 
         var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
 
@@ -396,8 +396,8 @@ public sealed class AutofacServiceExtensionsTests
     {
         var builder = new ContainerBuilder();
         builder.RegisterStatelessService<StatelessService1>("serviceTypeName").SingleInstance();
-        var factoryMock = new Mock<IStatelessServiceFactoryRegistration>();
-        builder.RegisterInstance(factoryMock.Object);
+        var factoryMock = Substitute.For<IStatelessServiceFactoryRegistration>();
+        builder.RegisterInstance(factoryMock);
 
         var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
 
@@ -409,8 +409,8 @@ public sealed class AutofacServiceExtensionsTests
     {
         var builder = new ContainerBuilder();
         builder.RegisterStatefulService<StatefulService1>("serviceTypeName").ExternallyOwned();
-        var factoryMock = new Mock<IStatefulServiceFactoryRegistration>();
-        builder.RegisterInstance(factoryMock.Object);
+        var factoryMock = Substitute.For<IStatefulServiceFactoryRegistration>();
+        builder.RegisterInstance(factoryMock);
 
         var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
 
@@ -422,8 +422,8 @@ public sealed class AutofacServiceExtensionsTests
     {
         var builder = new ContainerBuilder();
         builder.RegisterStatelessService<StatelessService1>("serviceTypeName").ExternallyOwned();
-        var factoryMock = new Mock<IStatelessServiceFactoryRegistration>();
-        builder.RegisterInstance(factoryMock.Object);
+        var factoryMock = Substitute.For<IStatelessServiceFactoryRegistration>();
+        builder.RegisterInstance(factoryMock);
 
         var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
 
