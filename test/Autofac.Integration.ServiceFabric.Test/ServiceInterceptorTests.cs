@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Autofac Project. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System.Reflection;
 using IInvocation = Castle.DynamicProxy.IInvocation;
 
 namespace Autofac.Integration.ServiceFabric.Test;
@@ -12,18 +13,19 @@ public sealed class ServiceInterceptorTests
     [InlineData("OnAbort")]
     public void DisposesLifetimeScopeWhenTriggerMethodInvoked(string methodName)
     {
-        var lifetimeScope = new Mock<ILifetimeScope>(MockBehavior.Strict);
-        lifetimeScope.Setup(x => x.Dispose()).Verifiable();
+        var lifetimeScope = Substitute.For<ILifetimeScope>();
 
-        var invocation = new Mock<IInvocation>(MockBehavior.Strict);
-        invocation.Setup(x => x.Proceed()).Verifiable();
-        invocation.Setup(x => x.Method.Name).Returns(methodName).Verifiable();
+        var method = Substitute.For<MethodInfo>();
+        method.Name.Returns(methodName);
 
-        var interceptor = new ServiceInterceptor(lifetimeScope.Object);
+        var invocation = Substitute.For<IInvocation>();
+        invocation.Method.Returns(method);
 
-        interceptor.Intercept(invocation.Object);
+        var interceptor = new ServiceInterceptor(lifetimeScope);
 
-        lifetimeScope.Verify();
-        invocation.Verify();
+        interceptor.Intercept(invocation);
+
+        lifetimeScope.Received(1).Dispose();
+        invocation.Received(1).Proceed();
     }
 }
