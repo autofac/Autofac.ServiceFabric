@@ -15,16 +15,6 @@ namespace Autofac.Integration.ServiceFabric;
 internal sealed class ActorFactoryRegistration : IActorFactoryRegistration
 {
     /// <summary>
-    /// Gets a callback that will be invoked if an exception is thrown during resolving.
-    /// </summary>
-    internal Action<Exception> ConstructorExceptionCallback { get; }
-
-    /// <summary>
-    /// Gets a callback that will be invoked while configuring the lifetime scope for a service.
-    /// </summary>
-    internal Action<ContainerBuilder> ConfigurationAction { get; }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="ActorFactoryRegistration"/> class.
     /// </summary>
     /// <param name="constructorExceptionCallback">Callback will be invoked if an exception is thrown during resolving.</param>
@@ -36,6 +26,22 @@ internal sealed class ActorFactoryRegistration : IActorFactoryRegistration
     {
         ConstructorExceptionCallback = constructorExceptionCallback;
         ConfigurationAction = configurationAction;
+    }
+
+    /// <summary>
+    /// Gets a callback that will be invoked if an exception is thrown during resolving.
+    /// </summary>
+    internal Action<Exception> ConstructorExceptionCallback
+    {
+        get;
+    }
+
+    /// <summary>
+    /// Gets a callback that will be invoked while configuring the lifetime scope for a service.
+    /// </summary>
+    internal Action<ContainerBuilder> ConfigurationAction
+    {
+        get;
     }
 
     /// <inheritdoc />

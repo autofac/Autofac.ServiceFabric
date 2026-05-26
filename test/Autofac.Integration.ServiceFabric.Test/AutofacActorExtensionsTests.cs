@@ -34,8 +34,8 @@ public sealed class AutofacActorExtensionsTests
         var container = builder.Build();
 
         var registration = container.RegistrationFor<Actor1>();
-        const string metadataKey = "Autofac.Extras.DynamicProxy.RegistrationExtensions.InterceptorsPropertyName";
-        var interceptorServices = (IEnumerable<Service>)registration.Metadata[metadataKey];
+        const string MetadataKey = "Autofac.Extras.DynamicProxy.RegistrationExtensions.InterceptorsPropertyName";
+        var interceptorServices = (IEnumerable<Service>)registration.Metadata[MetadataKey];
         Assert.Contains(new TypedService(typeof(ActorInterceptor)), interceptorServices);
     }
 
@@ -60,8 +60,8 @@ public sealed class AutofacActorExtensionsTests
     public void RegisterActorWithTagRegistersInstancePerMatchingLifetimeScope()
     {
         var builder = new ContainerBuilder();
-        const string lifetimeScopeTag = "Tag";
-        builder.RegisterActor<Actor1>(lifetimeScopeTag: lifetimeScopeTag);
+        const string LifetimeScopeTag = "Tag";
+        builder.RegisterActor<Actor1>(lifetimeScopeTag: LifetimeScopeTag);
         builder.RegisterInstance(Substitute.For<IActorFactoryRegistration>());
 
         var container = builder.Build();
@@ -71,7 +71,7 @@ public sealed class AutofacActorExtensionsTests
         container.AssertOwnership<Actor1>(InstanceOwnership.OwnedByLifetimeScope);
 
         var lifetime = (MatchingScopeLifetime)container.RegistrationFor<Actor1>().Lifetime;
-        Assert.Contains(lifetimeScopeTag, lifetime.TagsToMatch);
+        Assert.Contains(LifetimeScopeTag, lifetime.TagsToMatch);
     }
 
     [Fact]
@@ -164,15 +164,15 @@ public sealed class AutofacActorExtensionsTests
     public void RegisterActorCanBeCalledWithLifetimeScopeTag()
     {
         var builder = new ContainerBuilder();
-        const string lifetimeScopeTag = "Tag";
-        builder.RegisterActor<Actor1>(lifetimeScopeTag: lifetimeScopeTag);
+        const string LifetimeScopeTag = "Tag";
+        builder.RegisterActor<Actor1>(lifetimeScopeTag: LifetimeScopeTag);
         var factoryMock = Substitute.For<IActorFactoryRegistration>();
         builder.RegisterInstance(factoryMock);
 
         var container = builder.Build();
 
         container.AssertRegistered<Actor1>();
-        factoryMock.Received(1).RegisterActorFactory<Actor1>(container, typeof(ActorService), null, null, null, lifetimeScopeTag);
+        factoryMock.Received(1).RegisterActorFactory<Actor1>(container, typeof(ActorService), null, null, null, LifetimeScopeTag);
     }
 
     [Fact]

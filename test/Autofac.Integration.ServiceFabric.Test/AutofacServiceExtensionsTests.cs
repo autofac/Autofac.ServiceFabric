@@ -47,8 +47,8 @@ public sealed class AutofacServiceExtensionsTests
         var container = builder.Build();
 
         var registration = container.RegistrationFor<StatefulService1>();
-        const string metadataKey = "Autofac.Extras.DynamicProxy.RegistrationExtensions.InterceptorsPropertyName";
-        var interceptorServices = (IEnumerable<Service>)registration.Metadata[metadataKey];
+        const string MetadataKey = "Autofac.Extras.DynamicProxy.RegistrationExtensions.InterceptorsPropertyName";
+        var interceptorServices = (IEnumerable<Service>)registration.Metadata[MetadataKey];
         Assert.Contains(new TypedService(typeof(ServiceInterceptor)), interceptorServices);
     }
 
@@ -63,8 +63,8 @@ public sealed class AutofacServiceExtensionsTests
         var container = builder.Build();
 
         var registration = container.RegistrationFor<StatelessService1>();
-        const string metadataKey = "Autofac.Extras.DynamicProxy.RegistrationExtensions.InterceptorsPropertyName";
-        var interceptorServices = (IEnumerable<Service>)registration.Metadata[metadataKey];
+        const string MetadataKey = "Autofac.Extras.DynamicProxy.RegistrationExtensions.InterceptorsPropertyName";
+        var interceptorServices = (IEnumerable<Service>)registration.Metadata[MetadataKey];
         Assert.Contains(new TypedService(typeof(ServiceInterceptor)), interceptorServices);
     }
 
@@ -106,8 +106,8 @@ public sealed class AutofacServiceExtensionsTests
     public void RegisterStatefulServiceWithTagRegistersInstancePerMatchingLifetimeScope()
     {
         var builder = new ContainerBuilder();
-        const string lifetimeScopeTag = "Tag";
-        builder.RegisterStatefulService<StatefulService1>("ServiceType", lifetimeScopeTag);
+        const string LifetimeScopeTag = "Tag";
+        builder.RegisterStatefulService<StatefulService1>("ServiceType", LifetimeScopeTag);
         builder.RegisterInstance(Substitute.For<IStatefulServiceFactoryRegistration>());
 
         var container = builder.Build();
@@ -117,15 +117,15 @@ public sealed class AutofacServiceExtensionsTests
         container.AssertOwnership<StatefulService1>(InstanceOwnership.OwnedByLifetimeScope);
 
         var lifetime = (MatchingScopeLifetime)container.RegistrationFor<StatefulService1>().Lifetime;
-        Assert.Contains(lifetimeScopeTag, lifetime.TagsToMatch);
+        Assert.Contains(LifetimeScopeTag, lifetime.TagsToMatch);
     }
 
     [Fact]
     public void RegisterStatelessServiceWithTagRegistersInstancePerMatchingLifetimeScope()
     {
         var builder = new ContainerBuilder();
-        const string lifetimeScopeTag = "Tag";
-        builder.RegisterStatelessService<StatelessService1>("ServiceType", lifetimeScopeTag);
+        const string LifetimeScopeTag = "Tag";
+        builder.RegisterStatelessService<StatelessService1>("ServiceType", LifetimeScopeTag);
         builder.RegisterInstance(Substitute.For<IStatelessServiceFactoryRegistration>());
 
         var container = builder.Build();
@@ -135,7 +135,7 @@ public sealed class AutofacServiceExtensionsTests
         container.AssertOwnership<StatelessService1>(InstanceOwnership.OwnedByLifetimeScope);
 
         var lifetime = (MatchingScopeLifetime)container.RegistrationFor<StatelessService1>().Lifetime;
-        Assert.Contains(lifetimeScopeTag, lifetime.TagsToMatch);
+        Assert.Contains(LifetimeScopeTag, lifetime.TagsToMatch);
     }
 
     [Fact]
@@ -168,30 +168,30 @@ public sealed class AutofacServiceExtensionsTests
     public void RegisterStatefulServiceCanBeCalledWithLifetimeScopeTag()
     {
         var builder = new ContainerBuilder();
-        const string lifetimeScopeTag = "CustomTag";
-        builder.RegisterStatefulService<StatefulService1>("ServiceType", lifetimeScopeTag);
+        const string LifetimeScopeTag = "CustomTag";
+        builder.RegisterStatefulService<StatefulService1>("ServiceType", LifetimeScopeTag);
         var factoryMock = Substitute.For<IStatefulServiceFactoryRegistration>();
         builder.RegisterInstance(factoryMock);
 
         var container = builder.Build();
 
         container.AssertRegistered<StatefulService1>();
-        factoryMock.Received(1).RegisterStatefulServiceFactory<StatefulService1>(container, "ServiceType", lifetimeScopeTag);
+        factoryMock.Received(1).RegisterStatefulServiceFactory<StatefulService1>(container, "ServiceType", LifetimeScopeTag);
     }
 
     [Fact]
     public void RegisterStatelessServiceCanBeCalledWithLifetimeScopeTag()
     {
         var builder = new ContainerBuilder();
-        const string lifetimeScopeTag = "CustomTag";
-        builder.RegisterStatelessService<StatelessService1>("ServiceType", lifetimeScopeTag);
+        const string LifetimeScopeTag = "CustomTag";
+        builder.RegisterStatelessService<StatelessService1>("ServiceType", LifetimeScopeTag);
         var factoryMock = Substitute.For<IStatelessServiceFactoryRegistration>();
         builder.RegisterInstance(factoryMock);
 
         var container = builder.Build();
 
         container.AssertRegistered<StatelessService1>();
-        factoryMock.Received(1).RegisterStatelessServiceFactory<StatelessService1>(container, "ServiceType", lifetimeScopeTag);
+        factoryMock.Received(1).RegisterStatelessServiceFactory<StatelessService1>(container, "ServiceType", LifetimeScopeTag);
     }
 
     [Fact]
