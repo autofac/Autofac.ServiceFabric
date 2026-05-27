@@ -58,12 +58,6 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="9.1.0" />
     <PackageReference Include="Autofac.Extras.DynamicProxy" Version="6.0.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.ServiceFabric" Version="11.0.0" />
     <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="8.0.0" />
     <PackageReference Include="Microsoft.ServiceFabric.Data" Version="8.0.0" />
