@@ -46,7 +46,7 @@ internal sealed class ActorFactoryRegistration : IActorFactoryRegistration
 
     /// <inheritdoc />
     public void RegisterActorFactory<TActor>(
-        ILifetimeScope container,
+        ILifetimeScope lifetimeScope,
         Type actorServiceType,
         Func<ActorBase, IActorStateProvider, IActorStateManager>? stateManagerFactory = null,
         IActorStateProvider? stateProvider = null,
@@ -59,7 +59,7 @@ internal sealed class ActorFactoryRegistration : IActorFactoryRegistration
             ActorBase ActorFactory(ActorService actorService, ActorId actorId)
             {
                 var tag = lifetimeScopeTag ?? Constants.DefaultLifetimeScopeTag;
-                var lifetimeScope = container.BeginLifetimeScope(tag, builder =>
+                var lifetimeScope = lifetimeScope.BeginLifetimeScope(tag, builder =>
                 {
                     builder.RegisterInstance(context)
                         .As<StatefulServiceContext>()
@@ -87,7 +87,7 @@ internal sealed class ActorFactoryRegistration : IActorFactoryRegistration
                 }
             }
 
-            return (ActorService)container.Resolve(
+            return (ActorService)lifetimeScope.Resolve(
                 actorServiceType,
                 new TypedParameter(typeof(StatefulServiceContext), context),
                 new TypedParameter(typeof(ActorTypeInformation), actorTypeInfo),

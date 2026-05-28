@@ -45,13 +45,13 @@ internal sealed class StatefulServiceFactoryRegistration : IStatefulServiceFacto
 
     /// <inheritdoc />
     public void RegisterStatefulServiceFactory<TService>(
-        ILifetimeScope container, string serviceTypeName, object? lifetimeScopeTag = null)
+        ILifetimeScope lifetimeScope, string serviceTypeName, object? lifetimeScopeTag = null)
         where TService : StatefulServiceBase
     {
         ServiceRuntime.RegisterServiceAsync(serviceTypeName, context =>
         {
             var tag = lifetimeScopeTag ?? Constants.DefaultLifetimeScopeTag;
-            var lifetimeScope = container.BeginLifetimeScope(tag, builder =>
+            var lifetimeScope = lifetimeScope.BeginLifetimeScope(tag, builder =>
             {
                 builder.RegisterInstance(context)
                     .As<StatefulServiceContext>()
