@@ -45,13 +45,13 @@ internal sealed class StatelessServiceFactoryRegistration : IStatelessServiceFac
 
     /// <inheritdoc />
     public void RegisterStatelessServiceFactory<TService>(
-        ILifetimeScope container, string serviceTypeName, object? lifetimeScopeTag = null)
+        ILifetimeScope lifetimeScope, string serviceTypeName, object? lifetimeScopeTag = null)
         where TService : StatelessService
     {
         ServiceRuntime.RegisterServiceAsync(serviceTypeName, context =>
         {
             var tag = lifetimeScopeTag ?? Constants.DefaultLifetimeScopeTag;
-            var lifetimeScope = container.BeginLifetimeScope(tag, builder =>
+            var serviceScope = lifetimeScope.BeginLifetimeScope(tag, builder =>
             {
                 builder.RegisterInstance(context)
                     .As<StatelessServiceContext>()
@@ -62,13 +62,13 @@ internal sealed class StatelessServiceFactoryRegistration : IStatelessServiceFac
 
             try
             {
-                var service = lifetimeScope.Resolve<TService>();
+                var service = serviceScope.Resolve<TService>();
                 return service;
             }
             catch (Exception ex)
             {
                 // Proactively dispose lifetime scope as interceptor will not be called.
-                lifetimeScope.Dispose();
+                serviceScope.Dispose();
 
                 ConstructorExceptionCallback(ex);
                 throw;
