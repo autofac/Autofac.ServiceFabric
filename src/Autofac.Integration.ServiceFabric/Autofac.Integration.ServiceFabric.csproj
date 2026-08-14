@@ -51,10 +51,29 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="9.3.2" />
     <PackageReference Include="Autofac.Extras.DynamicProxy" Version="8.0.1" />
-    <PackageReference Include="Microsoft.ServiceFabric" Version="11.6.239" />
-    <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="8.6.239" />
-    <PackageReference Include="Microsoft.ServiceFabric.Data" Version="8.6.239" />
-    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="8.6.239" />
+    <!--
+      These are deliberately the OLDEST supported Service Fabric SDK, not the newest.
+      Every Microsoft.ServiceFabric.* package pins its siblings to an exact version, so
+      a high floor here forces consumers onto that exact SDK and produces NU1605
+      package downgrade errors for anyone on an earlier one. A low floor lets the
+      consumer's own Service Fabric version win instead.
+
+      This is safe because every Service Fabric assembly reports AssemblyVersion
+      6.0.0.0 regardless of its package version, so compiling against 8.0.0 and
+      running against a later 8.x is binding-identical. Compiling against the floor
+      also keeps us from silently taking a dependency on newer Service Fabric APIs.
+
+      Do NOT raise these as part of a routine dependency update; raise them only to
+      deliberately drop support for a Service Fabric SDK version. The test projects
+      reference the newest SDK on purpose, so CI exercises the combination of
+      building against the oldest and running against the newest.
+
+      Microsoft.ServiceFabric and Microsoft.ServiceFabric.Data arrive transitively
+      through .Services and are intentionally not referenced directly - each declared
+      floor is another version consumers would be forced to upgrade to.
+    -->
+    <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="8.0.0" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="8.0.0" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.400" Condition="Exists('$(MSBuildThisFileDirectory)../../.git')">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
