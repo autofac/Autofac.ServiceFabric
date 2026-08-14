@@ -24,7 +24,7 @@ public sealed class ServiceFabricModuleTests
     public void ActorFactoryRegistrationReceivesProvidedConstructorExceptionCallbackParameter()
     {
         var builder = new ContainerBuilder();
-        Exception capturedException = null;
+        Exception? capturedException = null;
         void ConstructorExceptionCallback(Exception ex) => capturedException = ex;
         builder.RegisterServiceFabricSupport(ConstructorExceptionCallback);
         var container = builder.Build();
@@ -76,7 +76,7 @@ public sealed class ServiceFabricModuleTests
     public void StatefulServiceFactoryRegistrationReceivesProvidedConstructorExceptionCallbackParameter()
     {
         var builder = new ContainerBuilder();
-        Exception capturedException = null;
+        Exception? capturedException = null;
         void ConstructorExceptionCallback(Exception ex) => capturedException = ex;
         builder.RegisterServiceFabricSupport(ConstructorExceptionCallback);
         var container = builder.Build();
@@ -128,7 +128,7 @@ public sealed class ServiceFabricModuleTests
     public void StatelessServiceFactoryRegistrationReceivesProvidedConstructorExceptionCallbackParameter()
     {
         var builder = new ContainerBuilder();
-        Exception capturedException = null;
+        Exception? capturedException = null;
         void ConstructorExceptionCallback(Exception ex) => capturedException = ex;
         builder.RegisterServiceFabricSupport(ConstructorExceptionCallback);
         var container = builder.Build();

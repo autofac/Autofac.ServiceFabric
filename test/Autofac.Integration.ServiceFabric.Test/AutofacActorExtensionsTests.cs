@@ -35,7 +35,8 @@ public sealed class AutofacActorExtensionsTests
 
         var registration = container.RegistrationFor<Actor1>();
         const string MetadataKey = "Autofac.Extras.DynamicProxy.RegistrationExtensions.InterceptorsPropertyName";
-        var interceptorServices = (IEnumerable<Service>)registration.Metadata[MetadataKey];
+        var interceptorServices = registration.Metadata[MetadataKey] as IEnumerable<Service>;
+        Assert.NotNull(interceptorServices);
         Assert.Contains(new TypedService(typeof(ActorInterceptor)), interceptorServices);
     }
 
@@ -118,8 +119,7 @@ public sealed class AutofacActorExtensionsTests
     {
         var builder = new ContainerBuilder();
 
-        // ReSharper disable once ConvertToLocalFunction
-        Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = (actor, provider) => null;
+        Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = (actor, provider) => null!;
         builder.RegisterActor<Actor1>(stateManagerFactory: stateManagerFactory);
         var factoryMock = Substitute.For<IActorFactoryRegistration>();
         builder.RegisterInstance(factoryMock);
@@ -178,7 +178,7 @@ public sealed class AutofacActorExtensionsTests
     [Fact]
     public void RegisterActorThrowsIfProvidedBuilderIsNull()
     {
-        var exception = Assert.Throws<ArgumentNullException>(() => AutofacActorExtensions.RegisterActor<Actor1>(null));
+        var exception = Assert.Throws<ArgumentNullException>(() => AutofacActorExtensions.RegisterActor<Actor1>(null!));
 
         Assert.Equal("builder", exception.ParamName);
     }

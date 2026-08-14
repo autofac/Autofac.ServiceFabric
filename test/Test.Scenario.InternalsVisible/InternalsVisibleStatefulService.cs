@@ -1,4 +1,7 @@
-﻿using System.Fabric;
+﻿// Copyright (c) Autofac Project. All rights reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+using System.Fabric;
 using Microsoft.ServiceFabric.Data;
 using Microsoft.ServiceFabric.Services.Runtime;
 

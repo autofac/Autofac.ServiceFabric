@@ -24,7 +24,7 @@ public sealed class RegistrationExtensionsTests
     [Fact]
     public void RegisterServiceFabricSupportThrowsWhenContainerBuilderIsNull()
     {
-        var exception = Assert.Throws<ArgumentNullException>(() => RegistrationExtensions.RegisterServiceFabricSupport(null));
+        var exception = Assert.Throws<ArgumentNullException>(() => RegistrationExtensions.RegisterServiceFabricSupport(null!));
 
         Assert.Equal("builder", exception.ParamName);
     }

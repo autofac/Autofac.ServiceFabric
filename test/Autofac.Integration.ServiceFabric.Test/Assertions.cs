@@ -8,6 +8,7 @@ namespace Autofac.Integration.ServiceFabric.Test;
 internal static class Assertions
 {
     internal static void AssertRegistered<TService>(this IComponentContext context)
+        where TService : notnull
     {
         Assert.True(context.IsRegistered<TService>());
     }

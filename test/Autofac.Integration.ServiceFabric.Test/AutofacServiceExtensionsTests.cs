@@ -48,7 +48,8 @@ public sealed class AutofacServiceExtensionsTests
 
         var registration = container.RegistrationFor<StatefulService1>();
         const string MetadataKey = "Autofac.Extras.DynamicProxy.RegistrationExtensions.InterceptorsPropertyName";
-        var interceptorServices = (IEnumerable<Service>)registration.Metadata[MetadataKey];
+        var interceptorServices = registration.Metadata[MetadataKey] as IEnumerable<Service>;
+        Assert.NotNull(interceptorServices);
         Assert.Contains(new TypedService(typeof(ServiceInterceptor)), interceptorServices);
     }
 
@@ -64,7 +65,8 @@ public sealed class AutofacServiceExtensionsTests
 
         var registration = container.RegistrationFor<StatelessService1>();
         const string MetadataKey = "Autofac.Extras.DynamicProxy.RegistrationExtensions.InterceptorsPropertyName";
-        var interceptorServices = (IEnumerable<Service>)registration.Metadata[MetadataKey];
+        var interceptorServices = registration.Metadata[MetadataKey] as IEnumerable<Service>;
+        Assert.NotNull(interceptorServices);
         Assert.Contains(new TypedService(typeof(ServiceInterceptor)), interceptorServices);
     }
 
@@ -294,7 +296,7 @@ public sealed class AutofacServiceExtensionsTests
     public void RegisterStatefulServiceThrowsIfProvidedBuilderIsNull()
     {
         var exception = Assert.Throws<ArgumentNullException>(
-                () => AutofacServiceExtensions.RegisterStatefulService<StatefulService1>(null, "ServiceType"));
+                () => AutofacServiceExtensions.RegisterStatefulService<StatefulService1>(null!, "ServiceType"));
 
         Assert.Equal("builder", exception.ParamName);
     }
@@ -303,7 +305,7 @@ public sealed class AutofacServiceExtensionsTests
     public void RegisterStatelessServiceThrowsIfProvidedBuilderIsNull()
     {
         var exception = Assert.Throws<ArgumentNullException>(
-            () => AutofacServiceExtensions.RegisterStatelessService<StatelessService1>(null, "ServiceType"));
+            () => AutofacServiceExtensions.RegisterStatelessService<StatelessService1>(null!, "ServiceType"));
 
         Assert.Equal("builder", exception.ParamName);
     }
@@ -314,7 +316,7 @@ public sealed class AutofacServiceExtensionsTests
         var builder = new ContainerBuilder();
 
         var exception = Assert.Throws<ArgumentException>(
-            () => builder.RegisterStatefulService<StatefulService1>(null));
+            () => builder.RegisterStatefulService<StatefulService1>(null!));
 
         Assert.Equal("serviceTypeName", exception.ParamName);
     }
@@ -325,7 +327,7 @@ public sealed class AutofacServiceExtensionsTests
         var builder = new ContainerBuilder();
 
         var exception = Assert.Throws<ArgumentException>(
-            () => builder.RegisterStatelessService<StatelessService1>(null));
+            () => builder.RegisterStatelessService<StatelessService1>(null!));
 
         Assert.Equal("serviceTypeName", exception.ParamName);
     }
