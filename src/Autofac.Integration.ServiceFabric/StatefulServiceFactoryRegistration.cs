@@ -16,11 +16,15 @@ internal sealed class StatefulServiceFactoryRegistration : IStatefulServiceFacto
     /// <summary>
     /// Initializes a new instance of the <see cref="StatefulServiceFactoryRegistration"/> class.
     /// </summary>
-    /// <param name="constructorExceptionCallback">Callback will be invoked if an exception is thrown during resolving.</param>
+    /// <param name="constructorExceptionCallback">
+    /// Callback will be invoked if an exception is thrown during resolving. The
+    /// lifetime scope created for the service is passed to the callback and is
+    /// disposed once the callback completes.
+    /// </param>
     /// <param name="configurationAction">Callback will be invoked while configuring the lifetime scope for a service.</param>
     // ReSharper disable once UnusedMember.Global
     public StatefulServiceFactoryRegistration(
-        Action<Exception> constructorExceptionCallback,
+        Action<ILifetimeScope, Exception> constructorExceptionCallback,
         Action<ContainerBuilder> configurationAction)
     {
         ConstructorExceptionCallback = constructorExceptionCallback;
@@ -30,7 +34,7 @@ internal sealed class StatefulServiceFactoryRegistration : IStatefulServiceFacto
     /// <summary>
     /// Gets a callback that will be invoked if an exception is thrown during resolving.
     /// </summary>
-    internal Action<Exception> ConstructorExceptionCallback
+    internal Action<ILifetimeScope, Exception> ConstructorExceptionCallback
     {
         get;
     }
@@ -60,19 +64,7 @@ internal sealed class StatefulServiceFactoryRegistration : IStatefulServiceFacto
                 ConfigurationAction(builder);
             });
 
-            try
-            {
-                var service = serviceScope.Resolve<TService>();
-                return service;
-            }
-            catch (Exception ex)
-            {
-                // Proactively dispose lifetime scope as interceptor will not be called.
-                serviceScope.Dispose();
-
-                ConstructorExceptionCallback(ex);
-                throw;
-            }
+            return ServiceScopeResolver.ResolveOrDispose<TService>(serviceScope, ConstructorExceptionCallback);
         }).GetAwaiter().GetResult();
     }
 }

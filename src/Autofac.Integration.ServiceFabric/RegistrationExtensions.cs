@@ -21,11 +21,16 @@ public static class RegistrationExtensions
     /// Adds the core services required by the Service Fabric integration.
     /// </summary>
     /// <param name="builder">The container builder to register the services with.</param>
-    /// <param name="constructorExceptionCallback">Callback will be invoked if an exception is thrown during resolving.</param>
+    /// <param name="constructorExceptionCallback">
+    /// Callback will be invoked if an exception is thrown during resolving. The
+    /// <see cref="ILifetimeScope"/> that was created for the service is passed to the
+    /// callback so dependencies (a logger, for example) can be resolved from it. The
+    /// scope is disposed after the callback completes.
+    /// </param>
     /// <param name="configurationAction">Callback will be invoked while configuring the lifetime scope for a service.</param>
     public static void RegisterServiceFabricSupport(
         this ContainerBuilder builder,
-        Action<Exception>? constructorExceptionCallback = null,
+        Action<ILifetimeScope, Exception>? constructorExceptionCallback = null,
         Action<ContainerBuilder>? configurationAction = null)
     {
         if (builder == null)
@@ -93,10 +98,10 @@ public static class RegistrationExtensions
 
     private static void AddInternalRegistrations(
         this ContainerBuilder builder,
-        Action<Exception>? constructorExceptionCallback = null,
+        Action<ILifetimeScope, Exception>? constructorExceptionCallback = null,
         Action<ContainerBuilder>? configurationAction = null)
     {
-        var exceptionCallback = constructorExceptionCallback ?? (ex => { });
+        var exceptionCallback = constructorExceptionCallback ?? ((_, _) => { });
         var configurationCallback = configurationAction ?? (_ => { });
 
         builder.RegisterType<ActorInterceptor>()

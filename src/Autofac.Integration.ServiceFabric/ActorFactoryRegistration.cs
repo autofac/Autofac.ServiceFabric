@@ -17,11 +17,15 @@ internal sealed class ActorFactoryRegistration : IActorFactoryRegistration
     /// <summary>
     /// Initializes a new instance of the <see cref="ActorFactoryRegistration"/> class.
     /// </summary>
-    /// <param name="constructorExceptionCallback">Callback will be invoked if an exception is thrown during resolving.</param>
+    /// <param name="constructorExceptionCallback">
+    /// Callback will be invoked if an exception is thrown during resolving. The
+    /// lifetime scope created for the service is passed to the callback and is
+    /// disposed once the callback completes.
+    /// </param>
     /// <param name="configurationAction">Callback will be invoked while configuring the lifetime scope for a service.</param>
     // ReSharper disable once UnusedMember.Global
     public ActorFactoryRegistration(
-        Action<Exception> constructorExceptionCallback,
+        Action<ILifetimeScope, Exception> constructorExceptionCallback,
         Action<ContainerBuilder> configurationAction)
     {
         ConstructorExceptionCallback = constructorExceptionCallback;
@@ -31,7 +35,7 @@ internal sealed class ActorFactoryRegistration : IActorFactoryRegistration
     /// <summary>
     /// Gets a callback that will be invoked if an exception is thrown during resolving.
     /// </summary>
-    internal Action<Exception> ConstructorExceptionCallback
+    internal Action<ILifetimeScope, Exception> ConstructorExceptionCallback
     {
         get;
     }
@@ -72,19 +76,7 @@ internal sealed class ActorFactoryRegistration : IActorFactoryRegistration
                     ConfigurationAction(builder);
                 });
 
-                try
-                {
-                    var actor = serviceScope.Resolve<TActor>();
-                    return actor;
-                }
-                catch (Exception ex)
-                {
-                    // Proactively dispose lifetime scope as interceptor will not be called.
-                    serviceScope.Dispose();
-
-                    ConstructorExceptionCallback(ex);
-                    throw;
-                }
+                return ServiceScopeResolver.ResolveOrDispose<TActor>(serviceScope, ConstructorExceptionCallback);
             }
 
             return (ActorService)lifetimeScope.Resolve(
