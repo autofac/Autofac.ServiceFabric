@@ -20,7 +20,6 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
     <ImplicitUsings>enable</ImplicitUsings>
-    <PlatformTarget>x64</PlatformTarget>
     <!-- Packaging -->
     <PackageId>Autofac.ServiceFabric</PackageId>
     <PackageTags>autofac;di;ioc;dependencyinjection;servicefabric;azure</PackageTags>
