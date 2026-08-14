@@ -25,15 +25,23 @@ public sealed class ServiceFabricModuleTests
     {
         var builder = new ContainerBuilder();
         Exception? capturedException = null;
-        void ConstructorExceptionCallback(Exception ex) => capturedException = ex;
+        ILifetimeScope? capturedScope = null;
+        void ConstructorExceptionCallback(ILifetimeScope scope, Exception ex)
+        {
+            capturedScope = scope;
+            capturedException = ex;
+        }
+
         builder.RegisterServiceFabricSupport(ConstructorExceptionCallback);
         var container = builder.Build();
 
         var factoryRegistration = (ActorFactoryRegistration)container.Resolve<IActorFactoryRegistration>();
         var thrownException = new Exception("Failed to construct instance");
-        factoryRegistration.ConstructorExceptionCallback(thrownException);
+        using var serviceScope = container.BeginLifetimeScope();
+        factoryRegistration.ConstructorExceptionCallback(serviceScope, thrownException);
 
         Assert.Same(thrownException, capturedException);
+        Assert.Same(serviceScope, capturedScope);
     }
 
     [Fact]
@@ -77,15 +85,23 @@ public sealed class ServiceFabricModuleTests
     {
         var builder = new ContainerBuilder();
         Exception? capturedException = null;
-        void ConstructorExceptionCallback(Exception ex) => capturedException = ex;
+        ILifetimeScope? capturedScope = null;
+        void ConstructorExceptionCallback(ILifetimeScope scope, Exception ex)
+        {
+            capturedScope = scope;
+            capturedException = ex;
+        }
+
         builder.RegisterServiceFabricSupport(ConstructorExceptionCallback);
         var container = builder.Build();
 
         var factoryRegistration = (StatefulServiceFactoryRegistration)container.Resolve<IStatefulServiceFactoryRegistration>();
         var thrownException = new Exception("Failed to construct instance");
-        factoryRegistration.ConstructorExceptionCallback(thrownException);
+        using var serviceScope = container.BeginLifetimeScope();
+        factoryRegistration.ConstructorExceptionCallback(serviceScope, thrownException);
 
         Assert.Same(thrownException, capturedException);
+        Assert.Same(serviceScope, capturedScope);
     }
 
     [Fact]
@@ -129,15 +145,23 @@ public sealed class ServiceFabricModuleTests
     {
         var builder = new ContainerBuilder();
         Exception? capturedException = null;
-        void ConstructorExceptionCallback(Exception ex) => capturedException = ex;
+        ILifetimeScope? capturedScope = null;
+        void ConstructorExceptionCallback(ILifetimeScope scope, Exception ex)
+        {
+            capturedScope = scope;
+            capturedException = ex;
+        }
+
         builder.RegisterServiceFabricSupport(ConstructorExceptionCallback);
         var container = builder.Build();
 
         var factoryRegistration = (StatelessServiceFactoryRegistration)container.Resolve<IStatelessServiceFactoryRegistration>();
         var thrownException = new Exception("Failed to construct instance");
-        factoryRegistration.ConstructorExceptionCallback(thrownException);
+        using var serviceScope = container.BeginLifetimeScope();
+        factoryRegistration.ConstructorExceptionCallback(serviceScope, thrownException);
 
         Assert.Same(thrownException, capturedException);
+        Assert.Same(serviceScope, capturedScope);
     }
 
     [Fact]
