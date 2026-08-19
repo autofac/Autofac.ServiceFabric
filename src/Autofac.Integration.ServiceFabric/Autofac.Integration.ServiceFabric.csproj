@@ -50,7 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autofac" Version="9.3.2" />
-    <PackageReference Include="Autofac.Extras.DynamicProxy" Version="8.0.1" />
+    <PackageReference Include="Autofac.Extras.DynamicProxy" Version="8.1.0" />
     <!--
       These are deliberately the OLDEST supported Service Fabric SDK, not the newest.
       Every Microsoft.ServiceFabric.* package pins its siblings to an exact version, so
